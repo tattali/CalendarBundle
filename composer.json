@@ -22,12 +22,12 @@
     },
     "autoload": {
         "psr-4": {
-            "FullCalendarBundle\\": ""
+            "CalendarBundle\\": ""
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "FullCalendarBundle\\Tests\\": "Tests/"
+            "CalendarBundle\\Tests\\": "Tests/"
         }
     }
 }
