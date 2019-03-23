@@ -1,0 +1,16 @@
+suites:
+    main:
+        namespace: FullCalendarBundle
+        psr4_prefix: FullCalendarBundle
+        src_path: '%paths.config%'
+
+extensions:
+    LeanPHP\PhpSpec\CodeCoverage\CodeCoverageExtension:
+        format:
+            - html
+            - clover
+        output:
+            html: coverage
+            clover: coverage/coverage.xml
+        whitelist:
+            - .

@@ -1,0 +1,33 @@
+{
+    "name": "tattali/calendar-bundle",
+    "description": "Provides event calendar for your Symfony 4 project. Compatible with Doctrine ORM & ODM, and custom storages.",
+    "type": "symfony-bundle",
+    "keywords": ["calendar", "fullcalendar", "jquery calendar", "symfony calendar"],
+    "homepage": "https://github.com/tattali/CalendarBundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Théo Attali",
+            "email": "theoattali@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.1",
+        "symfony/framework-bundle": "^3.4|^4.0"
+    },
+    "require-dev": {
+        "phpspec/phpspec": "^3.4",
+        "leanphp/phpspec-code-coverage": "^3.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "FullCalendarBundle\\": ""
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "FullCalendarBundle\\Tests\\": "tests/"
+        }
+    }
+}
