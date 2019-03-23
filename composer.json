@@ -27,7 +27,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "FullCalendarBundle\\Tests\\": "tests/"
+            "FullCalendarBundle\\Tests\\": "Tests/"
         }
     }
 }
