@@ -17,8 +17,7 @@
         "symfony/framework-bundle": "^3.4 || ^4.0"
     },
     "require-dev": {
-        "phpspec/phpspec": "^4.2",
-        "leanphp/phpspec-code-coverage": "^4.2"
+        "dragonrun1/phpspec-code-coverage": "^4.2"
     },
     "suggest": {
         "symfony/orm-pack": "To support Doctrine ORM and Migration.",
