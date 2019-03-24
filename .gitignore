@@ -1,5 +1,6 @@
-/coverage/
+/build/
 /vendor/
 .DS_Store
 .php_cs.cache
+.phpunit.result.cache
 composer.lock
