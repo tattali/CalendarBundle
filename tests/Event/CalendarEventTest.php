@@ -13,6 +13,8 @@ class CalendarEventTest extends TestCase
     private $start;
     private $end;
     private $filters;
+    private $eventEntity;
+    private $event;
 
     public function setUp(): void
     {

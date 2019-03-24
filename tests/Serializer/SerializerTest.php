@@ -10,6 +10,10 @@ use PHPUnit\Framework\TestCase;
 
 class SerializerTest extends TestCase
 {
+    private $eventEntity1;
+    private $eventEntity2;
+    private $serializer;
+
     public function setUp(): void
     {
         $this->eventEntity1 = $this->createMock(Event::class);

@@ -13,6 +13,7 @@ class EventTest extends TestCase
     private $start;
     private $end;
     private $options;
+    private $entity;
 
     public function setUp(): void
     {

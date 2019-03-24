@@ -38,9 +38,11 @@ class CalendarController extends AbstractController
         $end = new \DateTime($request->get('end'));
         $filters = $request->get('filters', []);
 
-        $event = new CalendarEvent($start, $end, $filters);
-        $events = $this->eventDispatcher->dispatch(CalendarEvents::SET_DATA, $event)->getEvents();
-        $content = $this->serializer->serialize($events);
+        $event = $this->eventDispatcher->dispatch(
+            CalendarEvents::SET_DATA,
+            new CalendarEvent($start, $end, $filters)
+        );
+        $content = $this->serializer->serialize($event->getEvents());
 
         $response = new Response();
         $response->headers->set('Content-Type', 'application/json');
