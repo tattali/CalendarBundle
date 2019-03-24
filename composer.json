@@ -1,7 +1,7 @@
 {
     "name": "tattali/calendar-bundle",
-    "description": "Provides event calendar for your Symfony 4 project. Compatible with Doctrine ORM & ODM, and custom storages.",
     "type": "symfony-bundle",
+    "description": "Provides event calendar for your Symfony 4 project. Compatible with Doctrine ORM & ODM, and custom storages.",
     "keywords": ["fullcalendar", "calendar", "jquery calendar", "symfony calendar"],
     "homepage": "https://github.com/tattali/CalendarBundle",
     "license": "MIT",
@@ -9,15 +9,22 @@
         {
             "name": "Théo Attali",
             "email": "theoattali@gmail.com",
-            "role": "Developer"
+            "homepage": "https://theoattali.fr"
         }
     ],
     "require": {
         "php": ">=7.1",
+        "symfony/dependency-injection": "^3.4 || ^4.0",
+        "symfony/event-dispatcher": "^3.4 || ^4.0",
         "symfony/framework-bundle": "^3.4 || ^4.0"
     },
     "require-dev": {
-        "dragonrun1/phpspec-code-coverage": "^4.2"
+        "php-mock/php-mock-phpunit": "^2.0",
+        "phpspec/prophecy": "^1.8",
+        "phpunit/phpunit": "^7.5.4",
+        "symfony/phpunit-bridge": "^3.4 || ^4.0",
+        "symfony/yaml": "^3.4 || ^4.0",
+        "symfony/dotenv": "^4.2"
     },
     "suggest": {
         "symfony/orm-pack": "To support Doctrine ORM and Migration.",
@@ -30,7 +37,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\CalendarBundle\\": "tests/"
+            "CalendarBundle\\Tests\\": "tests/"
         }
     }
 }
