@@ -4,7 +4,7 @@ suites:
         spec_prefix: Tests
         psr4_prefix: CalendarBundle
         src_path: '%paths.config%/src'
-        spec_path: '%paths.config%/tests'
+        spec_path: '%paths.config%'
 
 extensions:
     LeanPHP\PhpSpec\CodeCoverage\CodeCoverageExtension:
