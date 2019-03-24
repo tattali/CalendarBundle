@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace CalendarBundle\Controller;
 
 use CalendarBundle\CalendarEvents;
@@ -22,10 +24,6 @@ class CalendarController extends AbstractController
      */
     protected $eventDispatcher;
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param SerializerInterface      $serializer
-     */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         SerializerInterface $serializer
@@ -34,11 +32,6 @@ class CalendarController extends AbstractController
         $this->serializer = $serializer;
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return Response
-     */
     public function loadAction(Request $request): Response
     {
         $start = new \DateTime($request->get('start'));

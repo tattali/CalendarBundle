@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace CalendarBundle\Tests\Event;
 
-use PhpSpec\ObjectBehavior;
-use CalendarBundle\Event\CalendarEvent;
 use CalendarBundle\Entity\Event;
+use CalendarBundle\Event\CalendarEvent;
 use PHPUnit\Framework\TestCase;
 
 class CalendarEventTest extends TestCase
@@ -35,7 +36,8 @@ class CalendarEventTest extends TestCase
         $this->assertEquals($this->filters, $this->event->getFilters());
     }
 
-    public function testItHandleEvents() {
+    public function testItHandleEvents()
+    {
         $this->event->addEvent($this->eventEntity);
         $this->assertEquals([$this->eventEntity], $this->event->getEvents());
     }

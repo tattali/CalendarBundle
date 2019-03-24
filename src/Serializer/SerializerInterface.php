@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace CalendarBundle\Serializer;
 
 use CalendarBundle\Entity\Event;

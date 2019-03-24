@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace CalendarBundle\Tests\Entity;
 
-use PhpSpec\ObjectBehavior;
 use CalendarBundle\Entity\Event;
 use PHPUnit\Framework\TestCase;
 
@@ -52,7 +53,7 @@ class EventTest extends TestCase
         $this->entity->addOption('be-removed', 'value');
         $this->entity->removeOption('be-removed');
 
-        $this->assertEquals(null, $this->entity->removeOption('no-found-key'));
+        $this->assertNull($this->entity->removeOption('no-found-key'));
 
         $this->entity->setOptions($options);
         $this->assertEquals($options, $this->entity->getOptions());

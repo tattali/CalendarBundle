@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace CalendarBundle\Tests\Controller;
 
 use CalendarBundle\CalendarEvents;
@@ -8,10 +10,10 @@ use CalendarBundle\Entity\Event;
 use CalendarBundle\Event\CalendarEvent;
 use CalendarBundle\Serializer\SerializerInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Prophecy\Argument;
 
 class CalendarControllerTest extends TestCase
 {
@@ -51,15 +53,15 @@ class CalendarControllerTest extends TestCase
 
         $data = json_encode([
             [
-                "title" => "Birthday!",
-                "start" => "2016-03-01",
-                "allDay" => true,
+                'title' => 'Birthday!',
+                'start' => '2016-03-01',
+                'allDay' => true,
             ],
             [
-                "title" => "Flight to somewhere sunny",
-                "start" => "2016-03-12T08:55:00Z",
-                "allDay" => false,
-                "end" => "2016-03-12T11:50:00Z",
+                'title' => 'Flight to somewhere sunny',
+                'start' => '2016-03-12T08:55:00Z',
+                'allDay' => false,
+                'end' => '2016-03-12T11:50:00Z',
             ],
         ]);
 

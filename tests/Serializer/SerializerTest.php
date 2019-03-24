@@ -1,9 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace CalendarBundle\Tests\Serializer;
 
-use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 use CalendarBundle\Entity\Event;
 use CalendarBundle\Serializer\Serializer;
 use PHPUnit\Framework\TestCase;
@@ -47,7 +47,7 @@ class SerializerTest extends TestCase
                 'title' => 'Event 2',
                 'start' => '2015-01-22T11:50:00Z',
                 'allDay' => true,
-            ]
+            ],
         ]);
 
         $this->assertEquals($data, $this->serializer->serialize([$this->eventEntity1, $this->eventEntity2]));

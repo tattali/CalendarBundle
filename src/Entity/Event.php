@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace CalendarBundle\Entity;
 
 class Event
@@ -30,10 +32,7 @@ class Event
     protected $options = [];
 
     /**
-     * @param string             $title
-     * @param \DateTimeInterface $start
      * @param \DateTimeInterface $end
-     * @param array              $options
      */
     public function __construct(
         string $title,
@@ -55,9 +54,6 @@ class Event
         return $this->title;
     }
 
-    /**
-     * @param string $title
-     */
     public function setTitle(string $title): void
     {
         $this->title = $title;
@@ -71,17 +67,11 @@ class Event
         return $this->start;
     }
 
-    /**
-     * @param \DateTimeInterface $start
-     */
     public function setStart(\DateTimeInterface $start): void
     {
         $this->start = $start;
     }
 
-    /**
-     * @return \DateTimeInterface|null
-     */
     public function getEnd(): ?\DateTimeInterface
     {
         return $this->end;
@@ -98,62 +88,36 @@ class Event
         $this->end = $end;
     }
 
-    /**
-     * @return bool
-     */
     public function isAllDay(): bool
     {
         return $this->allDay;
     }
 
-    /**
-     * @param bool $allDay
-     */
     public function setAllDay(bool $allDay): void
     {
         $this->allDay = $allDay;
     }
 
-    /**
-     * @return array
-     */
     public function getOptions(): array
     {
         return $this->options;
     }
 
-    /**
-     * @param array $options
-     */
     public function setOptions(array $options): void
     {
         $this->options = $options;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return mixed
-     */
     public function getOption(string $name)
     {
         return $this->options[$name];
     }
 
-    /**
-     * @param string $name
-     * @param mixed  $value
-     */
     public function addOption(string $name, $value): void
     {
         $this->options[$name] = $value;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return mixed
-     */
     public function removeOption(string $name)
     {
         if (!isset($this->options[$name]) && !array_key_exists($name, $this->options)) {
@@ -166,9 +130,6 @@ class Event
         return $removed;
     }
 
-    /**
-     * @return array
-     */
     public function toArray(): array
     {
         $event = [

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace CalendarBundle\Event;
 
 use CalendarBundle\Entity\Event;
@@ -27,11 +29,6 @@ class CalendarEvent extends BaseEvent
      */
     protected $events = [];
 
-    /**
-     * @param \DateTimeInterface $start
-     * @param \DateTimeInterface $end
-     * @param array              $filters
-     */
     public function __construct(
         \DateTimeInterface $start,
         \DateTimeInterface $end,
@@ -42,38 +39,27 @@ class CalendarEvent extends BaseEvent
         $this->filters = $filters;
     }
 
-    /**
-     * @return \DateTimeInterface
-     */
     public function getStart(): \DateTimeInterface
     {
         return $this->start;
     }
 
-    /**
-     * @return \DateTimeInterface
-     */
     public function getEnd(): \DateTimeInterface
     {
         return $this->end;
     }
 
-    /**
-     * @return array
-     */
     public function getFilters(): array
     {
         return $this->filters;
     }
 
     /**
-     * @param Event $event
-     *
      * @return $this
      */
     public function addEvent(Event $event): self
     {
-        if (!in_array($event, $this->events, true)) {
+        if (!\in_array($event, $this->events, true)) {
             $this->events[] = $event;
         }
 
