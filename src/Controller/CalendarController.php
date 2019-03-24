@@ -52,7 +52,11 @@ class CalendarController extends AbstractController
         $response = new Response();
         $response->headers->set('Content-Type', 'application/json');
         $response->setContent($content);
-        $response->setStatusCode(empty($content) ? Response::HTTP_NO_CONTENT : Response::HTTP_OK);
+        $response->setStatusCode(
+            empty($content)
+                ? Response::HTTP_NO_CONTENT
+                : Response::HTTP_OK
+        );
 
         return $response;
     }
