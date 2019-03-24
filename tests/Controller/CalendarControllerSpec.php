@@ -73,7 +73,7 @@ JSON;
         $response->setContent($data);
         $response->setStatusCode(Response::HTTP_OK);
 
-        $this->load($request)->shouldBeLike($response);
+        $this->loadAction($request)->shouldBeLike($response);
     }
 
     public function it_not_find_any_events(
@@ -102,6 +102,6 @@ JSON;
         $response->setContent($data);
         $response->setStatusCode(Response::HTTP_NO_CONTENT);
 
-        $this->load($request)->shouldBeLike($response);
+        $this->loadAction($request)->shouldBeLike($response);
     }
 }

@@ -39,7 +39,7 @@ class CalendarController extends AbstractController
      *
      * @return Response
      */
-    public function load(Request $request): Response
+    public function loadAction(Request $request): Response
     {
         $start = new \DateTime($request->get('start'));
         $end = new \DateTime($request->get('end'));
