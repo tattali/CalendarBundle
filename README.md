@@ -10,7 +10,7 @@ CalendarBundle - jQuery Calendar bundle
 This bundle allow you to integrate [fullcalendar.js](http://fullcalendar.io/) library in your Symfony 4 project.
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/10502887/43464490-8499d962-94db-11e8-8455-f688c2e7ad1d.png" alt="Calendar image">
+  <img src="https://user-images.githubusercontent.com/10502887/54887938-897a4d00-4e98-11e9-8db1-aff8c43aa6d3.png" alt="Calendar image">
 </div>
 
 * Symfony 3.4+ or Symfony 4.0+
