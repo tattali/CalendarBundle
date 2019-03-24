@@ -31,10 +31,6 @@ return PhpCsFixer\Config::create()
             'after_array_assignments_equals' => false,
             'before_array_assignments_equals' => false,
         ],
-        'header_comment' => [
-            'header' => $header,
-            'location' => 'after_open',
-        ],
         'no_extra_blank_lines' => [
             'tokens' => [
                 'break',
