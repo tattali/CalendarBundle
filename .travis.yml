@@ -1,0 +1,36 @@
+language: php
+
+sudo: false
+
+matrix:
+  fast_finish: true
+  include:
+      # 3.4.*
+    - php: 7.0
+      env: SYMFONY_VERSION=3.4.*
+    - php: 7.1
+      env: SYMFONY_VERSION=3.4.*
+    - php: 7.2
+      env: SYMFONY_VERSION=3.4.*
+      # 4.2.*
+    - php: 7.1
+      env: SYMFONY_VERSION=4.2.*
+    - php: 7.2
+      env: SYMFONY_VERSION=4.2.*
+    - php: 7.3
+      env: SYMFONY_VERSION=4.2.*
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+before_install:
+  - echo "memory_limit=-1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+  - composer selfupdate
+  - if [ "$SYMFONY_VERSION" != "" ]; then composer require "symfony/skeleton:${SYMFONY_VERSION}" --no-update; fi;
+
+install:
+  - composer update --prefer-dist --no-interaction $COMPOSER_FLAGS
+
+script:
+  - ./bin/phpspec run -fpretty --verbose

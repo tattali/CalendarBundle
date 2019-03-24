@@ -1,8 +1,10 @@
 suites:
     main:
-        namespace: FullCalendarBundle
-        psr4_prefix: FullCalendarBundle
-        src_path: '%paths.config%'
+        namespace: CalendarBundle
+        spec_prefix: Tests
+        psr4_prefix: CalendarBundle
+        src_path: '%paths.config%/src'
+        spec_path: '%paths.config%'
 
 extensions:
     LeanPHP\PhpSpec\CodeCoverage\CodeCoverageExtension:
@@ -13,4 +15,4 @@ extensions:
             html: coverage
             clover: coverage/coverage.xml
         whitelist:
-            - .
+            - src

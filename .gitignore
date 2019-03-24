@@ -1,4 +1,5 @@
+.DS_Store
+.php_cs.cache
+/coverage/
 /vendor/
 composer.lock
-.DS_Store
-/coverage/
