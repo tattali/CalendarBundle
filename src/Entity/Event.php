@@ -90,7 +90,7 @@ class Event
     /**
      * @param \DateTimeInterface $end
      */
-    public function setEnd(\DateTimeInterface $end): void
+    public function setEnd(?\DateTimeInterface $end): void
     {
         if (null !== $end) {
             $this->allDay = false;
