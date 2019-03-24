@@ -20,9 +20,10 @@
     },
     "require-dev": {
         "phpspec/prophecy": "^1.8",
-        "phpunit/phpunit": "^8.0",
+        "phpunit/phpunit": "^7.5",
         "symfony/dotenv": "^4.2",
-        "symfony/phpunit-bridge": "^4.2"
+        "symfony/phpunit-bridge": "^4.2",
+        "symfony/yaml": "^4.2"
     },
     "suggest": {
         "symfony/orm-pack": "To support Doctrine ORM and Migration.",
