@@ -33,4 +33,4 @@ install:
   - composer update --prefer-dist --no-interaction $COMPOSER_FLAGS
 
 script:
-  - ./bin/phpspec run -fpretty --verbose
+  - vendor/bin/phpunit
