@@ -17,7 +17,7 @@ This documentation assumes that doctrine is already installed.
 > **NOTE:** `composer req doctrine` then update the database url in your `.env` and run `bin/console d:d:c`
 
 ```sh
-$ composer require toiba/calendar-bundle
+$ composer require tattali/calendar-bundle
 ```
 The recipe will import the routes for you
 
@@ -172,7 +172,7 @@ class BookingController extends AbstractController
      */
     public function calendar(): Response
     {
-        return $this->render('booking/calendar.html');
+        return $this->render('booking/calendar.html.twig');
     }
 
     // ...
@@ -187,7 +187,7 @@ Register the listener as a service to listen `calendar.set_data` event
 services:
     # ...
 
-    App\EventListener\FullCalendarListener:
+    App\EventListener\CalendarListener:
         tags:
             - { name: 'kernel.event_listener', event: 'calendar.set_data', method: load }
 ```
@@ -196,7 +196,7 @@ We now have to link the CRUD to the calendar by adding the `booking_show` route 
 
 To do this create a listener with access to the router component and your entity repository
 ```php
-// src/EventListener/FullCalendarListener.php
+// src/EventListener/CalendarListener.php
 <?php
 
 namespace App\EventListener;
@@ -205,7 +205,7 @@ namespace App\EventListener;
 use App\Repository\BookingRepository;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class FullCalendarListener
+class CalendarListener
 {
     private $bookingRepository;
     private $router;
@@ -224,7 +224,8 @@ class FullCalendarListener
 
 Then use `setUrl()` on each created event to link them to their own show action
 ```php
-$bookingEvent->setUrl(
+$bookingEvent->addOption(
+    'url',
     $this->router->generate('booking_show', [
         'id' => $booking->getId(),
     ])
@@ -233,7 +234,7 @@ $bookingEvent->setUrl(
 
 Full listener with `Booking` entity. Modify it to fit your needs.
 ```php
-// src/EventListener/FullCalendarListener.php
+// src/EventListener/CalendarListener.php
 <?php
 
 namespace App\EventListener;
@@ -244,7 +245,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use CalendarBundle\Entity\Event;
 use CalendarBundle\Event\CalendarEvent;
 
-class FullCalendarListener
+class CalendarListener
 {
     private $bookingRepository;
     private $router;
@@ -298,7 +299,7 @@ class FullCalendarListener
                 $this->router->generate('booking_show', [
                     'id' => $booking->getId(),
                 ])
-            ]);
+            );
 
             // finally, add the event to the CalendarEvent to fill the calendar
             $calendar->addEvent($bookingEvent);
@@ -318,32 +319,39 @@ add a link to the `booking_new` form
 
 and include the `calendar-holder`
 ```twig
-{% include '@FullCalendar/Calendar/calendar.html' %}
+{% include '@Calendar/calendar.html' %}
 ```
 
 Full template:
 ```twig
-{# templates/booking/calendar.html #}
+{# templates/booking/calendar.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block body %}
     <a href="{{ path('booking_new') }}">Create new booking</a>
 
-    {% include '@FullCalendar/Calendar/calendar.html' %}
+    {% include '@Calendar/calendar.html' %}
 {% endblock %}
 
 {% block stylesheets %}
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.0.1/main.min.css">
+    <link rel="stylesheet" href="https://fullcalendar.io/releases/core/4.0.1/main.min.css">
+    <link rel="stylesheet" href="https://fullcalendar.io/releases/daygrid/4.0.1/main.min.css">
+    <link rel="stylesheet" href="https://fullcalendar.io/releases/timegrid/4.0.1/main.min.css">
 {% endblock %}
 
 {% block javascripts %}
-    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.0.1/main.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.0.1/locales-all.min.js"></script>
+    <script src="https://fullcalendar.io/releases/core/4.0.1/main.min.js"></script>
+    <script src="https://fullcalendar.io/releases/interaction/4.0.1/main.min.js"></script>
+    <script src="https://fullcalendar.io/releases/daygrid/4.0.1/main.min.js"></script>
+    <script src="https://fullcalendar.io/releases/timegrid/4.0.1/main.min.js"></script>
 
     <script type="text/javascript">
-        $(document).ready(function() {
-            $("#calendar-holder").fullCalendar({
+        document.addEventListener('DOMContentLoaded', () => {
+            var calendarEl = document.getElementById('calendar-holder');
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                defaultView: 'dayGridMonth',
+                editable: true,
                 eventSources: [
                     {
                         url: "{{ path('fc_load_events') }}",
@@ -351,20 +359,20 @@ Full template:
                         data: {
                             filters: {},
                         },
-                        error: function () {
+                        error: () => {
                             // alert("There was an error while fetching FullCalendar!");
-                        }
-                    }
+                        },
+                    },
                 ],
                 header: {
-                    center: "title",
-                    left: "prev,next today",
-                    right: "month,agendaWeek,agendaDay"
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay',
                 },
-                lazyFetching: true,
-                locale: "fr",
-                navLinks: true, // can click day/week names to navigate views
+                plugins: [ 'interaction', 'dayGrid', 'timeGrid' ],
+                timeZone: 'UTC',
             });
+            calendar.render();
         });
     </script>
 {% endblock %}
@@ -382,7 +390,7 @@ Full template:
 
 ### Next steps
 
-* You may want to customize the calendar.js settings to meet your application needs. To do this, see the [official calendar documentation](https://fullcalendar.io/docs#toc) or also look the [extending basic functionalities](https://github.com/toiba/CalendarBundle/blob/master/doc/index.md#extending-basic-functionalities) in the bundle documentation.
+* You may want to customize the fullcalendar.js settings to meet your application needs. To do this, see the [official fullcalendar documentation](https://fullcalendar.io/docs#toc).
 
 <br>
 
