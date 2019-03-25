@@ -14,7 +14,7 @@ This example allow you to create, update, delete & show events with `CalendarBun
 
 This documentation assumes that doctrine is already installed.
 
-> **NOTE:** `composer req doctrine` then update the database url in your `.env` and run `bin/console d:d:c`
+> **NOTE:** `composer req symfony/orm-pack` then update the database url in your `.env` and run `bin/console d:d:c`
 
 ```sh
 $ composer require tattali/calendar-bundle
@@ -26,7 +26,7 @@ The recipe will import the routes for you
 Generate or create an entity with at least a *start date* and a *title*. You also can add an *end date*
 
 ```sh
-# Symfony flex (Need the maker: `composer req maker`)
+# Symfony flex (Need the maker: `composer req --dev symfony/maker`)
 $ php bin/console make:entity
 ```
 
