@@ -8,8 +8,6 @@ matrix:
       # 3.4.*
     - php: 7.1
       env: SYMFONY_VERSION=3.4.*
-    - php: 7.2
-      env: SYMFONY_VERSION=3.4.*
       # 4.2.*
     - php: 7.1
       env: SYMFONY_VERSION=4.2.*
