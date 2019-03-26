@@ -33,7 +33,7 @@ calendar:
 Generate or create an entity with at least a *start date* and a *title*. You also can add an *end date*
 
 ```sh
-# Symfony flex (Need the maker: `composer req --dev symfony/maker`)
+# Symfony flex (Need the maker: `composer req --dev symfony/maker-bundle`)
 $ php bin/console make:entity
 ```
 
