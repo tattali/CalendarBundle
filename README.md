@@ -119,7 +119,7 @@ Add styles and js. Click [here](https://fullcalendar.io/download) to see other c
 ### Basic functionalities
 
 You will probably want to customize the Calendar javascript to fit the needs of your application.
-To do this, you can copy the following settings and modify them by consulting the [fullcalendar.js documentation](https://fullcalendar.io/docs). You can also look at the [options.ts](https://github.com/calendar/calendar/blob/master/src/core/options.ts) file as an option reference.
+To do this, you can copy the following settings and modify them by consulting the [fullcalendar.js documentation](https://fullcalendar.io/docs). You can also look at the [options.ts](https://github.com/fullcalendar/fullcalendar/blob/master/src/core/options.ts) file as an option reference.
 ```js
 document.addEventListener('DOMContentLoaded', () => {
     var calendarEl = document.getElementById('calendar-holder');
