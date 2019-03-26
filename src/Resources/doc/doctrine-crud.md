@@ -194,6 +194,8 @@ services:
 
 We now have to link the CRUD to the calendar by adding the `booking_show` route in each events
 
+[TL;DR](#full-listener)
+
 To do this create a listener with access to the router component and your entity repository
 ```php
 // src/EventListener/CalendarListener.php
@@ -232,7 +234,10 @@ $bookingEvent->addOption(
 );
 ```
 
+#### Full listener
+
 Full listener with `Booking` entity. Modify it to fit your needs.
+
 ```php
 // src/EventListener/CalendarListener.php
 <?php
