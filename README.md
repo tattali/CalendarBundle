@@ -1,4 +1,4 @@
-CalendarBundle - jQuery Calendar bundle
+CalendarBundle - FullCalendar.js integration
 ===========================================
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/tattali/CalendarBundle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/tattali/CalendarBundle/?branch=master)
