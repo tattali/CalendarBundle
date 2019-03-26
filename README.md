@@ -53,7 +53,7 @@ services:
 
 Then, create the listener class to fill the calendar
 
-See the [doctrine listener example](src/Resources/doc/doctrine-crud.md#4-use-an-event-listener-to-connect-all-of-this-together)
+See the [doctrine listener example](src/Resources/doc/doctrine-crud.md#full-listener)
 
 ```php
 // src/EventListener/CalendarListener.php
