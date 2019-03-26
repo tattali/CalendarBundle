@@ -35,7 +35,14 @@ The source of the documentation is stored in the `src/Resources/doc/` folder in 
 ```sh
 $ composer require tattali/calendar-bundle
 ```
-The recipe will import the routes for you
+(pending) The recipe will import the routes for you
+
+Check the existence of the file `config/routes/calendar.yaml` or create it
+```yaml
+# config/routes/calendar.yaml
+calendar:
+    resource: "@CalendarBundle/Resources/config/routing.yaml"
+```
 
 #### 2. Create the listener
 You need to create a listener class to load your data into the calendar and register it as a service.
