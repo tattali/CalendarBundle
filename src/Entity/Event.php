@@ -6,6 +6,8 @@ namespace CalendarBundle\Entity;
 
 class Event
 {
+    const DATE_FORMAT = 'Y-m-d\\TH:i:s.u\\Z';
+
     /**
      * @var string
      */
@@ -134,12 +136,12 @@ class Event
     {
         $event = [
             'title' => $this->getTitle(),
-            'start' => $this->getStart()->format('Y-m-d\\TH:i:sP'),
+            'start' => $this->getStart()->format(self::DATE_FORMAT),
             'allDay' => $this->isAllDay(),
         ];
 
         if (null !== $this->getEnd()) {
-            $event['end'] = $this->getEnd()->format('Y-m-d\\TH:i:sP');
+            $event['end'] = $this->getEnd()->format(self::DATE_FORMAT);
         }
 
         return array_merge($event, $this->getOptions());

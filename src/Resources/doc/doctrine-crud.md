@@ -19,14 +19,21 @@ This documentation assumes that doctrine is already installed.
 ```sh
 $ composer require tattali/calendar-bundle
 ```
-The recipe will import the routes for you
+(pending) The recipe will import the routes for you
+
+Check the existence of the file `config/routes/calendar.yaml` or create it
+```yaml
+# config/routes/calendar.yaml
+calendar:
+    resource: "@CalendarBundle/Resources/config/routing.yaml"
+```
 
 ### 2. Create the entity
 
 Generate or create an entity with at least a *start date* and a *title*. You also can add an *end date*
 
 ```sh
-# Symfony flex (Need the maker: `composer req --dev symfony/maker`)
+# Symfony flex (Need the maker: `composer req --dev symfony/maker-bundle`)
 $ php bin/console make:entity
 ```
 
@@ -140,7 +147,7 @@ You can now create or generate the CRUD of your entity
 
 The following command will generate a `BookingController` with `index()`, `new()`, `show()`, `edit()` and `delete()` actions
 
-And also the according `templates` and `form`
+And also the according `templates` and `form` (You may need to install additional packages)
 ```sh
 $ php bin/console make:crud Booking
 ```
@@ -194,6 +201,8 @@ services:
 
 We now have to link the CRUD to the calendar by adding the `booking_show` route in each events
 
+[TL;DR](#full-listener)
+
 To do this create a listener with access to the router component and your entity repository
 ```php
 // src/EventListener/CalendarListener.php
@@ -232,7 +241,10 @@ $bookingEvent->addOption(
 );
 ```
 
+#### Full listener
+
 Full listener with `Booking` entity. Modify it to fit your needs.
+
 ```php
 // src/EventListener/CalendarListener.php
 <?php

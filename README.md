@@ -1,17 +1,17 @@
-CalendarBundle - jQuery Calendar bundle
+CalendarBundle - FullCalendar.js integration
 ===========================================
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/tattali/CalendarBundle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/tattali/CalendarBundle/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/tattali/CalendarBundle/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/tattali/CalendarBundle/?branch=master)
 [![Build Status](https://scrutinizer-ci.com/g/tattali/CalendarBundle/badges/build.png?b=master)](https://scrutinizer-ci.com/g/tattali/CalendarBundle/build-status/master)
 [![Total Downloads](https://poser.pugx.org/tattali/calendar-bundle/downloads)](https://packagist.org/packages/tattali/calendar-bundle)
-[![Packagist](https://poser.pugx.org/tattali/calendar-bundle/version)](https://packagist.org/packages/tattali/calendar-bundle)
+[![Latest Stable Version](https://poser.pugx.org/tattali/calendar-bundle/v/stable)](https://packagist.org/packages/tattali/calendar-bundle)
 
-This bundle allow you to integrate [fullcalendar.js](http://fullcalendar.io/) library in your Symfony 4 project.
+This bundle allow you to integrate [FullCalendar.js](http://fullcalendar.io/) library in your Symfony 4 project.
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/10502887/54887938-897a4d00-4e98-11e9-8db1-aff8c43aa6d3.png" alt="Calendar image">
-</div>
+</p>
 
 * Symfony 3.4+ or Symfony 4.0+
 * PHP v7.1+
@@ -35,7 +35,14 @@ The source of the documentation is stored in the `src/Resources/doc/` folder in 
 ```sh
 $ composer require tattali/calendar-bundle
 ```
-The recipe will import the routes for you
+(pending) The recipe will import the routes for you
+
+Check the existence of the file `config/routes/calendar.yaml` or create it
+```yaml
+# config/routes/calendar.yaml
+calendar:
+    resource: "@CalendarBundle/Resources/config/routing.yaml"
+```
 
 #### 2. Create the listener
 You need to create a listener class to load your data into the calendar and register it as a service.
@@ -53,7 +60,7 @@ services:
 
 Then, create the listener class to fill the calendar
 
-See the [doctrine listener example](src/Resources/doc/doctrine-crud.md#4-use-an-event-listener-to-connect-all-of-this-together)
+See the [doctrine listener example](src/Resources/doc/doctrine-crud.md#full-listener)
 
 ```php
 // src/EventListener/CalendarListener.php
@@ -119,7 +126,7 @@ Add styles and js. Click [here](https://fullcalendar.io/download) to see other c
 ### Basic functionalities
 
 You will probably want to customize the Calendar javascript to fit the needs of your application.
-To do this, you can copy the following settings and modify them by consulting the [fullcalendar.js documentation](https://fullcalendar.io/docs). You can also look at the [options.ts](https://github.com/calendar/calendar/blob/master/src/core/options.ts) file as an option reference.
+To do this, you can copy the following settings and modify them by consulting the [fullcalendar.js documentation](https://fullcalendar.io/docs). You can also look at the [options.ts](https://github.com/fullcalendar/fullcalendar/blob/master/src/core/options.ts) file as an option reference.
 ```js
 document.addEventListener('DOMContentLoaded', () => {
     var calendarEl = document.getElementById('calendar-holder');

@@ -64,9 +64,9 @@ class EventTest extends TestCase
         $this->assertEquals(
             [
                 'title' => $this->title,
-                'start' => $this->start->format('Y-m-d\\TH:i:sP'),
+                'start' => $this->start->format(Event::DATE_FORMAT),
                 'allDay' => $allDay,
-                'end' => $this->end->format('Y-m-d\\TH:i:sP'),
+                'end' => $this->end->format(Event::DATE_FORMAT),
                 $url => $urlValue,
             ],
             $this->entity->toArray()
