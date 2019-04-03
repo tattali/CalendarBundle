@@ -2,7 +2,7 @@
     "name": "tattali/calendar-bundle",
     "type": "symfony-bundle",
     "description": "Provides event calendar for your Symfony 4 project. Compatible with Doctrine ORM & ODM, and custom storages.",
-    "keywords": ["fullcalendar", "calendar", "jquery calendar", "symfony calendar"],
+    "keywords": ["fullcalendar", "calendar", "symfony", "symfony calendar"],
     "homepage": "https://github.com/tattali/CalendarBundle",
     "license": "MIT",
     "authors": [

@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
             center: 'title',
             right: 'dayGridMonth,timeGridWeek,timeGridDay',
         },
-        plugins: [ 'interaction', 'dayGrid', 'timeGrid' ],
+        plugins: [ 'interaction', 'dayGrid', 'timeGrid' ], // https://fullcalendar.io/docs/plugin-index
         timeZone: 'UTC',
     });
     calendar.render();
