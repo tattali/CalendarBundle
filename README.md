@@ -106,7 +106,7 @@ Include the html template were you want to display the calendar:
 {% endblock %}
 ```
 
-Add styles and js. Click [here](https://fullcalendar.io/download) to see other css and js download methods, the list of plugins is available [here](https://fullcalendar.io/docs/plugin-index)
+Add styles and js. Click [here](https://fullcalendar.io/download) to see other css and js download methods, you can also found the [plugins list](https://fullcalendar.io/docs/plugin-index)
 
 ```twig
 {% block stylesheets %}
