@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
         editable: true,
         eventSources: [
             {
-                url: "/fc_load_events",
+                url: "/fc-load-events",
                 type: "POST",
                 data: {
                     filters: {},
