@@ -35,7 +35,7 @@ The source of the documentation is stored in the `src/Resources/doc/` folder in 
 ```sh
 $ composer require tattali/calendar-bundle
 ```
-(pending) The recipe will import the routes for you
+The recipe will import the routes for you
 
 Check the existence of the file `config/routes/calendar.yaml` or create it
 ```yaml
