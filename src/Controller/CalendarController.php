@@ -36,7 +36,7 @@ class CalendarController extends AbstractController
     {
         $start = new \DateTime($request->get('start'));
         $end = new \DateTime($request->get('end'));
-        $filters = $request->get('filters', []);
+        $filters = json_decode($request->get('filters', '{}'), true);
 
         $event = $this->eventDispatcher->dispatch(
             CalendarEvents::SET_DATA,

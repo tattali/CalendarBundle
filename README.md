@@ -137,11 +137,11 @@ document.addEventListener('DOMContentLoaded', () => {
         eventSources: [
             {
                 url: "/fc-load-events",
-                type: "POST",
-                data: {
-                    filters: {},
+                method: "POST",
+                extraParams: {
+                    filters: JSON.stringify({})
                 },
-                error: () => {
+                failure: () => {
                     // alert("There was an error while fetching FullCalendar!");
                 },
             },

@@ -367,11 +367,11 @@ Full template:
                 eventSources: [
                     {
                         url: "{{ path('fc_load_events') }}",
-                        type: "POST",
-                        data: {
-                            filters: {},
+                        method: "POST",
+                        extraParams: {
+                            filters: JSON.stringify({})
                         },
-                        error: () => {
+                        failure: () => {
                             // alert("There was an error while fetching FullCalendar!");
                         },
                     },
