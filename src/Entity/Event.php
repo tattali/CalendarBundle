@@ -122,7 +122,7 @@ class Event
 
     public function removeOption(string $name)
     {
-        if (!isset($this->options[$name]) && !array_key_exists($name, $this->options)) {
+        if (!isset($this->options[$name]) && !\array_key_exists($name, $this->options)) {
             return null;
         }
 
