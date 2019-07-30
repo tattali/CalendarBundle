@@ -19,13 +19,8 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder('maker');
-        if (method_exists($treeBuilder, 'getRootNode')) {
-            $treeBuilder->getRootNode();
-        } else {
-            // BC layer for symfony/config 4.1 and older
-            $treeBuilder->root('maker');
-        }
+        $treeBuilder = new TreeBuilder('calendar');
+        $rootNode = method_exists(TreeBuilder::class, 'getRootNode') ? $treeBuilder->getRootNode() : $treeBuilder->root('calendar');
 
         return $treeBuilder;
     }
