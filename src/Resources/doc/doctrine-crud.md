@@ -346,16 +346,16 @@ Full template:
 {% endblock %}
 
 {% block stylesheets %}
-    <link rel="stylesheet" href="https://fullcalendar.io/releases/core/4.0.1/main.min.css">
-    <link rel="stylesheet" href="https://fullcalendar.io/releases/daygrid/4.0.1/main.min.css">
-    <link rel="stylesheet" href="https://fullcalendar.io/releases/timegrid/4.0.1/main.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.1.0/main.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@4.1.0/main.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@4.1.0/main.min.css">
 {% endblock %}
 
 {% block javascripts %}
-    <script src="https://fullcalendar.io/releases/core/4.0.1/main.min.js"></script>
-    <script src="https://fullcalendar.io/releases/interaction/4.0.1/main.min.js"></script>
-    <script src="https://fullcalendar.io/releases/daygrid/4.0.1/main.min.js"></script>
-    <script src="https://fullcalendar.io/releases/timegrid/4.0.1/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.1.0/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@4.1.0/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@4.1.0/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@4.1.0/main.min.js"></script>
 
     <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', () => {
