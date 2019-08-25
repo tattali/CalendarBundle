@@ -114,5 +114,5 @@ Modify the calendar with css
 
 To apply changes after any modification to the `js` or `css` run
 ```sh
-yarn dev # yarn dev --watch
+yarn dev # or yarn dev --watch
 ```
