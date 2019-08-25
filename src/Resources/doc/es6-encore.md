@@ -6,11 +6,13 @@ composer require symfony/webpack-encore-bundle
 yarn install
 ```
 
+Install FullCalendar then add plugins https://fullcalendar.io/docs/plugin-index
 ```sh
 yarn add @fullcalendar/core
 yarn add @fullcalendar/interaction @fullcalendar/daygrid @fullcalendar/timegrid
 ```
 
+Your calendar template should look like that
 ```twig
 {# templates/booking/calendar.html.twig #}
 {% extends 'base.html.twig' %}
@@ -34,6 +36,7 @@ yarn add @fullcalendar/interaction @fullcalendar/daygrid @fullcalendar/timegrid
 {% endblock %}
 ```
 
+Register the calendar component
 ```diff
 # webpack.config.js
 
@@ -43,6 +46,7 @@ yarn add @fullcalendar/interaction @fullcalendar/daygrid @fullcalendar/timegrid
 //.addEntry('page2', './assets/js/page2.js')
 ```
 
+Create the calendar component
 ```js
 // assets/js/calendar/index.js
 
@@ -89,6 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 ```
 
+Modify the calendar with css 
 ```css
 /* assets/js/calendar/index.css */
 
@@ -97,6 +102,8 @@ document.addEventListener("DOMContentLoaded", () => {
 }
 ```
 
+
+To apply changes after any modification to the js and css run
 ```sh
 yarn dev
 ```
