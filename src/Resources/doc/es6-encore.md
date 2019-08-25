@@ -97,8 +97,12 @@ Modify the calendar with css
 ```css
 /* assets/js/calendar/index.css */
 
+@import url("https://fonts.googleapis.com/css?family=Muli&display=swap");
+
 #calendar-holder {
-    with: "800px";
+  font-family: "Muli", sans-serif;
+  width: 800px;
+  margin: 0 auto;
 }
 ```
 
