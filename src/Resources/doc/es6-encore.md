@@ -97,12 +97,17 @@ Modify the calendar with css
 ```css
 /* assets/js/calendar/index.css */
 
-@import url("https://fonts.googleapis.com/css?family=Muli&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Muli:400,900&display=swap");
 
 #calendar-holder {
   font-family: "Muli", sans-serif;
   width: 800px;
   margin: 0 auto;
+}
+
+.fc-toolbar h2,
+.fc th {
+  font-weight: inherit;
 }
 ```
 
