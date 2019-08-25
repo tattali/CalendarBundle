@@ -342,7 +342,7 @@ Full template:
 {% block body %}
     <a href="{{ path('booking_new') }}">Create new booking</a>
 
-    {% include '@Calendar/calendar.html' %}
+    <div id="calendar-holder"></div>
 {% endblock %}
 
 {% block stylesheets %}
