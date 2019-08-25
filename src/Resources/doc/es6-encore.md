@@ -112,7 +112,7 @@ Modify the calendar with css
 ```
 
 
-To apply changes after any modification to the js and css run
+To apply changes after any modification to the `js` or `css` run
 ```sh
 yarn dev
 ```
