@@ -22,7 +22,7 @@ Your calendar template should look like that
 
     <div 
         id="calendar-holder"
-        data-url="{{ path('fc_load_events') }}"
+        data-events-url="{{ path('fc_load_events') }}"
     ></div>
 {% endblock %}
 
