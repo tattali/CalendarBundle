@@ -38,10 +38,11 @@ class CalendarController extends AbstractController
         $end = new \DateTime($request->get('end'));
         $filters = $request->get('filters', '{}');
         $filters = \is_array($filters) ? $filters : json_decode($filters, true);
+        $timezone = $request->get('timeZone');
 
         $event = $this->eventDispatcher->dispatch(
             CalendarEvents::SET_DATA,
-            new CalendarEvent($start, $end, $filters)
+            new CalendarEvent($start, $end, $filters, $timezone)
         );
         $content = $this->serializer->serialize($event->getEvents());
 
