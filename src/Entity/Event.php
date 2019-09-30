@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace CalendarBundle\Entity;
 
+use DateTimeInterface;
+
 class Event
 {
     const DATE_FORMAT = 'Y-m-d\\TH:i:s.u\\Z';
@@ -14,14 +16,14 @@ class Event
     protected $title;
 
     /**
-     * @var \DateTimeInterface
+     * @var DateTimeInterface
      */
     protected $start;
 
     /**
-     * @var \DateTimeInterface
+     * @var DateTimeInterface|null
      */
-    protected $end = null;
+    protected $end;
 
     /**
      * @var bool
@@ -34,12 +36,15 @@ class Event
     protected $options = [];
 
     /**
-     * @param \DateTimeInterface $end
+     * @param string $title
+     * @param DateTimeInterface $start
+     * @param DateTimeInterface|null $end
+     * @param array $options
      */
     public function __construct(
         string $title,
-        \DateTimeInterface $start,
-        \DateTimeInterface $end = null,
+        DateTimeInterface $start,
+        ?DateTimeInterface $end = null,
         array $options = []
     ) {
         $this->setTitle($title);
@@ -56,33 +61,42 @@ class Event
         return $this->title;
     }
 
+    /**
+     * @param string $title
+     */
     public function setTitle(string $title): void
     {
         $this->title = $title;
     }
 
     /**
-     * @return \DateTimeInterface
+     * @return DateTimeInterface|null
      */
-    public function getStart(): ?\DateTimeInterface
+    public function getStart(): ?DateTimeInterface
     {
         return $this->start;
     }
 
-    public function setStart(\DateTimeInterface $start): void
+    /**
+     * @param DateTimeInterface $start
+     */
+    public function setStart(DateTimeInterface $start): void
     {
         $this->start = $start;
     }
 
-    public function getEnd(): ?\DateTimeInterface
+    /**
+     * @return DateTimeInterface|null
+     */
+    public function getEnd(): ?DateTimeInterface
     {
         return $this->end;
     }
 
     /**
-     * @param \DateTimeInterface $end
+     * @param DateTimeInterface|null $end
      */
-    public function setEnd(?\DateTimeInterface $end): void
+    public function setEnd(?DateTimeInterface $end): void
     {
         if (null !== $end) {
             $this->allDay = false;
@@ -90,36 +104,60 @@ class Event
         $this->end = $end;
     }
 
+    /**
+     * @return bool
+     */
     public function isAllDay(): bool
     {
         return $this->allDay;
     }
 
+    /**
+     * @param bool $allDay
+     */
     public function setAllDay(bool $allDay): void
     {
         $this->allDay = $allDay;
     }
 
+    /**
+     * @return array
+     */
     public function getOptions(): array
     {
         return $this->options;
     }
 
+    /**
+     * @param array $options
+     */
     public function setOptions(array $options): void
     {
         $this->options = $options;
     }
 
+    /**
+     * @param string $name
+     * @return mixed
+     */
     public function getOption(string $name)
     {
         return $this->options[$name];
     }
 
+    /**
+     * @param string $name
+     * @param mixed $value
+     */
     public function addOption(string $name, $value): void
     {
         $this->options[$name] = $value;
     }
 
+    /**
+     * @param string $name
+     * @return mixed|null
+     */
     public function removeOption(string $name)
     {
         if (!isset($this->options[$name]) && !\array_key_exists($name, $this->options)) {
@@ -132,6 +170,9 @@ class Event
         return $removed;
     }
 
+    /**
+     * @return array
+     */
     public function toArray(): array
     {
         $event = [
