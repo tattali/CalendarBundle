@@ -78,6 +78,7 @@ class CalendarListener
     {
         $start = $calendar->getStart();
         $end = $calendar->getEnd();
+        $timezone = $calendar->getTimezone();
         $filters = $calendar->getFilters();
 
         // You may want to make a custom query to fill the calendar
@@ -92,6 +93,32 @@ class CalendarListener
         $calendar->addEvent(new Event(
             'All day event',
             new \DateTime('Friday this week')
+        ));
+
+        // If you want to specify DateTime format for correct timezone handling
+        // see examples here https://fullcalendar.io/docs/timeZone
+        $calendar->addEvent(new Event(
+            'Event 2018-09-01T12:30:00Z',
+            new \DateTime('12:30'),
+            new \DateTime('13:30'),
+            [],
+            Event::DATE_FORMAT_ISO_8601_UTC // this is default
+        ));
+
+        $calendar->addEvent(new Event(
+            'Event 2018-09-01T12:30:00+XX:XX',
+            new \DateTime('12:30'),
+            new \DateTime('13:30'),
+            [],
+            Event::DATE_FORMAT_ISO_8601_WITH_OFFSET
+        ));
+
+        $calendar->addEvent(new Event(
+            'Event 2018-09-01T12:30:00',
+            new \DateTime('12:30'),
+            new \DateTime('13:30'),
+            [],
+            Event::DATE_FORMAT_ISO_8601_WITHOUT_OFFSET
         ));
     }
 }
