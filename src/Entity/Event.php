@@ -35,12 +35,6 @@ class Event
      */
     protected $options = [];
 
-    /**
-     * @param string $title
-     * @param DateTimeInterface $start
-     * @param DateTimeInterface|null $end
-     * @param array $options
-     */
     public function __construct(
         string $title,
         DateTimeInterface $start,
@@ -53,49 +47,31 @@ class Event
         $this->setOptions($options);
     }
 
-    /**
-     * @return string
-     */
     public function getTitle(): ?string
     {
         return $this->title;
     }
 
-    /**
-     * @param string $title
-     */
     public function setTitle(string $title): void
     {
         $this->title = $title;
     }
 
-    /**
-     * @return DateTimeInterface|null
-     */
     public function getStart(): ?DateTimeInterface
     {
         return $this->start;
     }
 
-    /**
-     * @param DateTimeInterface $start
-     */
     public function setStart(DateTimeInterface $start): void
     {
         $this->start = $start;
     }
 
-    /**
-     * @return DateTimeInterface|null
-     */
     public function getEnd(): ?DateTimeInterface
     {
         return $this->end;
     }
 
-    /**
-     * @param DateTimeInterface|null $end
-     */
     public function setEnd(?DateTimeInterface $end): void
     {
         if (null !== $end) {
@@ -104,61 +80,48 @@ class Event
         $this->end = $end;
     }
 
-    /**
-     * @return bool
-     */
     public function isAllDay(): bool
     {
         return $this->allDay;
     }
 
-    /**
-     * @param bool $allDay
-     */
     public function setAllDay(bool $allDay): void
     {
         $this->allDay = $allDay;
     }
 
-    /**
-     * @return array
-     */
     public function getOptions(): array
     {
         return $this->options;
     }
 
-    /**
-     * @param array $options
-     */
     public function setOptions(array $options): void
     {
         $this->options = $options;
     }
 
     /**
-     * @param string $name
-     * @return mixed
+     * @param string|int $name
      */
-    public function getOption(string $name)
+    public function getOption($name)
     {
         return $this->options[$name];
     }
 
     /**
-     * @param string $name
-     * @param mixed $value
+     * @param string|int $name
      */
-    public function addOption(string $name, $value): void
+    public function addOption($name, $value): void
     {
         $this->options[$name] = $value;
     }
 
     /**
-     * @param string $name
+     * @param string|int $name
+     *
      * @return mixed|null
      */
-    public function removeOption(string $name)
+    public function removeOption($name)
     {
         if (!isset($this->options[$name]) && !\array_key_exists($name, $this->options)) {
             return null;
@@ -170,9 +133,6 @@ class Event
         return $removed;
     }
 
-    /**
-     * @return array
-     */
     public function toArray(): array
     {
         $event = [

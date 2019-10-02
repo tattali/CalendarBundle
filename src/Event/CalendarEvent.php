@@ -40,34 +40,21 @@ class CalendarEvent extends BaseEvent
         $this->filters = $filters;
     }
 
-    /**
-     * @return DateTimeInterface
-     */
     public function getStart(): DateTimeInterface
     {
         return $this->start;
     }
 
-    /**
-     * @return DateTimeInterface
-     */
     public function getEnd(): DateTimeInterface
     {
         return $this->end;
     }
 
-    /**
-     * @return array
-     */
     public function getFilters(): array
     {
         return $this->filters;
     }
 
-    /**
-     * @param Event $event
-     * @return $this
-     */
     public function addEvent(Event $event): self
     {
         if (!\in_array($event, $this->events, true)) {
