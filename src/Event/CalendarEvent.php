@@ -5,17 +5,18 @@ declare(strict_types=1);
 namespace CalendarBundle\Event;
 
 use CalendarBundle\Entity\Event;
+use DateTimeInterface;
 use Symfony\Component\EventDispatcher\Event as BaseEvent;
 
 class CalendarEvent extends BaseEvent
 {
     /**
-     * @var \DateTimeInterface
+     * @var DateTimeInterface
      */
     protected $start;
 
     /**
-     * @var \DateTimeInterface
+     * @var DateTimeInterface
      */
     protected $end;
 
@@ -30,8 +31,8 @@ class CalendarEvent extends BaseEvent
     protected $events = [];
 
     public function __construct(
-        \DateTimeInterface $start,
-        \DateTimeInterface $end,
+        DateTimeInterface $start,
+        DateTimeInterface $end,
         array $filters
     ) {
         $this->start = $start;
@@ -39,12 +40,12 @@ class CalendarEvent extends BaseEvent
         $this->filters = $filters;
     }
 
-    public function getStart(): \DateTimeInterface
+    public function getStart(): DateTimeInterface
     {
         return $this->start;
     }
 
-    public function getEnd(): \DateTimeInterface
+    public function getEnd(): DateTimeInterface
     {
         return $this->end;
     }
@@ -54,9 +55,6 @@ class CalendarEvent extends BaseEvent
         return $this->filters;
     }
 
-    /**
-     * @return $this
-     */
     public function addEvent(Event $event): self
     {
         if (!\in_array($event, $this->events, true)) {

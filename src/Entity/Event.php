@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace CalendarBundle\Entity;
 
+use DateTimeInterface;
+
 class Event
 {
     const DATE_FORMAT = 'Y-m-d\\TH:i:s.u\\Z';
@@ -14,14 +16,14 @@ class Event
     protected $title;
 
     /**
-     * @var \DateTimeInterface
+     * @var DateTimeInterface
      */
     protected $start;
 
     /**
-     * @var \DateTimeInterface
+     * @var DateTimeInterface|null
      */
-    protected $end = null;
+    protected $end;
 
     /**
      * @var bool
@@ -33,13 +35,10 @@ class Event
      */
     protected $options = [];
 
-    /**
-     * @param \DateTimeInterface $end
-     */
     public function __construct(
         string $title,
-        \DateTimeInterface $start,
-        \DateTimeInterface $end = null,
+        DateTimeInterface $start,
+        ?DateTimeInterface $end = null,
         array $options = []
     ) {
         $this->setTitle($title);
@@ -48,9 +47,6 @@ class Event
         $this->setOptions($options);
     }
 
-    /**
-     * @return string
-     */
     public function getTitle(): ?string
     {
         return $this->title;
@@ -61,28 +57,22 @@ class Event
         $this->title = $title;
     }
 
-    /**
-     * @return \DateTimeInterface
-     */
-    public function getStart(): ?\DateTimeInterface
+    public function getStart(): ?DateTimeInterface
     {
         return $this->start;
     }
 
-    public function setStart(\DateTimeInterface $start): void
+    public function setStart(DateTimeInterface $start): void
     {
         $this->start = $start;
     }
 
-    public function getEnd(): ?\DateTimeInterface
+    public function getEnd(): ?DateTimeInterface
     {
         return $this->end;
     }
 
-    /**
-     * @param \DateTimeInterface $end
-     */
-    public function setEnd(?\DateTimeInterface $end): void
+    public function setEnd(?DateTimeInterface $end): void
     {
         if (null !== $end) {
             $this->allDay = false;
@@ -110,17 +100,28 @@ class Event
         $this->options = $options;
     }
 
-    public function getOption(string $name)
+    /**
+     * @param string|int $name
+     */
+    public function getOption($name)
     {
         return $this->options[$name];
     }
 
-    public function addOption(string $name, $value): void
+    /**
+     * @param string|int $name
+     */
+    public function addOption($name, $value): void
     {
         $this->options[$name] = $value;
     }
 
-    public function removeOption(string $name)
+    /**
+     * @param string|int $name
+     *
+     * @return mixed|null
+     */
+    public function removeOption($name)
     {
         if (!isset($this->options[$name]) && !\array_key_exists($name, $this->options)) {
             return null;
