@@ -9,6 +9,7 @@ use CalendarBundle\Event\CalendarEvent;
 use CalendarBundle\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\LegacyEventDispatcherProxy;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -28,6 +29,9 @@ class CalendarController extends AbstractController
         EventDispatcherInterface $eventDispatcher,
         SerializerInterface $serializer
     ) {
+        if (class_exists(LegacyEventDispatcherProxy::class)) {
+            $eventDispatcher = LegacyEventDispatcherProxy::decorate($eventDispatcher);
+        }
         $this->eventDispatcher = $eventDispatcher;
         $this->serializer = $serializer;
     }
@@ -39,9 +43,9 @@ class CalendarController extends AbstractController
         $filters = $request->get('filters', '{}');
         $filters = \is_array($filters) ? $filters : json_decode($filters, true);
 
-        $event = $this->eventDispatcher->dispatch(
-            CalendarEvents::SET_DATA,
-            new CalendarEvent($start, $end, $filters)
+        $event = $this->dispatchWithBC(
+            new CalendarEvent($start, $end, $filters),
+            CalendarEvents::SET_DATA
         );
         $content = $this->serializer->serialize($event->getEvents());
 
@@ -51,5 +55,14 @@ class CalendarController extends AbstractController
         $response->setStatusCode(empty($content) ? Response::HTTP_NO_CONTENT : Response::HTTP_OK);
 
         return $response;
+    }
+
+    private function dispatchWithBC($event, string $eventName)
+    {
+        if (class_exists(LegacyEventDispatcherProxy::class)) {
+            return $this->eventDispatcher->dispatch($event, $eventName);
+        }
+
+        return $this->eventDispatcher->dispatch($eventName, $event);
     }
 }

@@ -8,6 +8,11 @@ use CalendarBundle\Entity\Event;
 use DateTimeInterface;
 use Symfony\Component\EventDispatcher\Event as BaseEvent;
 
+/**
+ * This event is triggered before the serialization of the events.
+ *
+ * This event allows you to fill the calendar with your events.
+ */
 class CalendarEvent extends BaseEvent
 {
     /**

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace CalendarBundle\Tests\Controller;
 
-use CalendarBundle\CalendarEvents;
 use CalendarBundle\Controller\CalendarController;
 use CalendarBundle\Entity\Event;
 use CalendarBundle\Event\CalendarEvent;
@@ -47,7 +46,7 @@ class CalendarControllerTest extends TestCase
         $this->calendarEvent->getEvents()->willReturn([$this->event]);
 
         $this->eventDispatcher
-            ->dispatch(CalendarEvents::SET_DATA, Argument::type(CalendarEvent::class))
+            ->dispatch(Argument::type(CalendarEvent::class))
             ->willReturn($this->calendarEvent)
         ;
 
@@ -87,7 +86,7 @@ class CalendarControllerTest extends TestCase
         $this->calendarEvent->getEvents()->willReturn([$this->event]);
 
         $this->eventDispatcher
-            ->dispatch(CalendarEvents::SET_DATA, Argument::type(CalendarEvent::class))
+            ->dispatch(Argument::type(CalendarEvent::class))
             ->willReturn($this->calendarEvent)
         ;
 
