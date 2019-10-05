@@ -147,17 +147,11 @@ class Event
         return $removed;
     }
 
-    /**
-     * @return string
-     */
     public function getDateFormat(): string
     {
         return $this->dateFormat;
     }
 
-    /**
-     * @param string $dateFormat
-     */
     public function setDateFormat(string $dateFormat): void
     {
         $this->dateFormat = $dateFormat;
