@@ -10,6 +10,8 @@ class Serializer implements SerializerInterface
 {
     /**
      * @param Event[] $events
+     *
+     * @return string json
      */
     public function serialize(array $events): string
     {
