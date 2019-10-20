@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface as ContractsEventDispatcherInterface;
 
 class CalendarController extends AbstractController
 {
@@ -39,9 +40,9 @@ class CalendarController extends AbstractController
         $filters = $request->get('filters', '{}');
         $filters = \is_array($filters) ? $filters : json_decode($filters, true);
 
-        $event = $this->eventDispatcher->dispatch(
-            CalendarEvents::SET_DATA,
-            new CalendarEvent($start, $end, $filters)
+        $event = $this->dispatchWithBC(
+            new CalendarEvent($start, $end, $filters),
+            CalendarEvents::SET_DATA
         );
         $content = $this->serializer->serialize($event->getEvents());
 
@@ -51,5 +52,14 @@ class CalendarController extends AbstractController
         $response->setStatusCode(empty($content) ? Response::HTTP_NO_CONTENT : Response::HTTP_OK);
 
         return $response;
+    }
+
+    public function dispatchWithBC($event, string $eventName)
+    {
+        if ($this->eventDispatcher instanceof ContractsEventDispatcherInterface) {
+            return $this->eventDispatcher->dispatch($event, $eventName);
+        }
+
+        return $this->eventDispatcher->dispatch($eventName, $event);
     }
 }
