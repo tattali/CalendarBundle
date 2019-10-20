@@ -9,9 +9,9 @@ use CalendarBundle\Event\CalendarEvent;
 use CalendarBundle\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\LegacyEventDispatcherProxy;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface as ContractsEventDispatcherInterface;
 
 class CalendarController extends AbstractController
 {
@@ -29,9 +29,6 @@ class CalendarController extends AbstractController
         EventDispatcherInterface $eventDispatcher,
         SerializerInterface $serializer
     ) {
-        if (class_exists(LegacyEventDispatcherProxy::class)) {
-            $eventDispatcher = LegacyEventDispatcherProxy::decorate($eventDispatcher);
-        }
         $this->eventDispatcher = $eventDispatcher;
         $this->serializer = $serializer;
     }
@@ -57,9 +54,9 @@ class CalendarController extends AbstractController
         return $response;
     }
 
-    private function dispatchWithBC($event, string $eventName)
+    public function dispatchWithBC($event, string $eventName)
     {
-        if (class_exists(LegacyEventDispatcherProxy::class)) {
+        if ($this->eventDispatcher instanceof ContractsEventDispatcherInterface) {
             return $this->eventDispatcher->dispatch($event, $eventName);
         }
 
