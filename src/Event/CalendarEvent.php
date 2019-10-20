@@ -11,7 +11,7 @@ use DateTimeInterface;
 /**
  * This event is triggered before the serialization of the events.
  *
- * This event allows you to fill the calendar with your events.
+ * This event allows you to fill the calendar with your data.
  */
 class CalendarEvent extends BaseEvent
 {
