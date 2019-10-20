@@ -7,7 +7,7 @@ This example allow you to create, update, delete & show events with `CalendarBun
 1. [Download CalendarBundle using composer](#1-download-calendarbundle-using-composer)
 2. [Create the entity](#2-create-the-entity)
 3. [Create the CRUD](#3-create-the-crud)
-4. [Use an event listener to connect all of this together](#4-use-an-event-listener-to-connect-all-of-this-together)
+4. [Use an event subscriber to connect all of this together](#4-use-an-event-subscriber-to-connect-all-of-this-together)
 5. [Display your calendar](#5-display-your-calendar)
 
 ### 1. Download CalendarBundle using composer
@@ -186,35 +186,35 @@ class BookingController extends AbstractController
 }
 ```
 
-### 4. Use an event listener to connect all of this together
+### 4. Use an event subscriber to connect all of this together
 
-Register the listener as a service to listen `calendar.set_data` event
+Register the subscriber as a service to listen `calendar.set_data` event
 ```yaml
 # config/services.yaml
 services:
     # ...
 
-    App\EventListener\CalendarListener:
+    App\EventSubscriber\CalendarSubscriber:
         tags:
-            - { name: 'kernel.event_listener', event: 'calendar.set_data', method: load }
+            - { name: 'kernel.event_subscriber', event: 'calendar.set_data', method: load }
 ```
 
 We now have to link the CRUD to the calendar by adding the `booking_show` route in each events
 
-[TL;DR](#full-listener)
+[TL;DR](#full-subscriber)
 
-To do this create a listener with access to the router component and your entity repository
+To do this create a subscriber with access to the router component and your entity repository
 ```php
-// src/EventListener/CalendarListener.php
+// src/EventSubscriber/CalendarSubscriber.php
 <?php
 
-namespace App\EventListener;
+namespace App\EventSubscriber;
 
 // ...
 use App\Repository\BookingRepository;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class CalendarListener
+class CalendarSubscriber
 {
     private $bookingRepository;
     private $router;
@@ -241,23 +241,24 @@ $bookingEvent->addOption(
 );
 ```
 
-#### Full listener
+#### Full subscriber
 
-Full listener with `Booking` entity. Modify it to fit your needs.
+Full subscriber with `Booking` entity. Modify it to fit your needs.
 
 ```php
-// src/EventListener/CalendarListener.php
+// src/EventSubscriber/CalendarSubscriber.php
 <?php
 
-namespace App\EventListener;
+namespace App\EventSubscriber;
 
-use App\Entity\Booking;
 use App\Repository\BookingRepository;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use CalendarBundle\CalendarEvents;
 use CalendarBundle\Entity\Event;
 use CalendarBundle\Event\CalendarEvent;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class CalendarListener
+class CalendarSubscriber implements EventSubscriberInterface
 {
     private $bookingRepository;
     private $router;
@@ -270,7 +271,14 @@ class CalendarListener
         $this->router = $router;
     }
 
-    public function load(CalendarEvent $calendar): void
+    public static function getSubscribedEvents()
+    {
+        return [
+            CalendarEvents::SET_DATA => 'onCalendarSetData',
+        ];
+    }
+
+    public function onCalendarSetData(CalendarEvent $calendar)
     {
         $start = $calendar->getStart();
         $end = $calendar->getEnd();
@@ -325,16 +333,19 @@ class CalendarListener
 Then create the calendar template
 
 add a link to the `booking_new` form
+
 ```twig
 <a href="{{ path('booking_new') }}">Create new booking</a>
 ```
 
 and include the `calendar-holder`
+
 ```twig
 {% include '@Calendar/calendar.html' %}
 ```
 
 Full template:
+
 ```twig
 {# templates/booking/calendar.html.twig #}
 {% extends 'base.html.twig' %}
@@ -389,13 +400,14 @@ Full template:
     </script>
 {% endblock %}
 ```
-* Now visit: http://localhost:8000/booking/calendar
+
+* Now visit: <http://localhost:8000/booking/calendar>
 
 * In the calendar when you click on an event it call the `show()` action that should contains an edit and delete link
 
 * And when you create a new `Booking` (or your custom entity name) it appear on the calendar
 
-* If you have created a custom entity don't forget to modify the listener:
+* If you have created a custom entity don't forget to modify the subscriber:
     - Replace all `Booking` or `booking` by your custom entity name
     - In the query near the `where` modify `beginAt` to your custom start date property
     - Also when you create each `Event` in the `foreach` modify the getters to fit with your entity

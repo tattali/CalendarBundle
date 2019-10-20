@@ -28,7 +28,7 @@ The source of the documentation is stored in the `src/Resources/doc/` folder in 
 ### Installation
 
 1. [Download CalendarBundle using composer](#1-download-calendarbundle-using-composer)
-2. [Create the listener](#2-create-the-listener)
+2. [Create the subscriber](#2-create-the-subscriber)
 3. [Add styles and scripts in your template](#3-add-styles-and-scripts-in-your-template)
 
 #### 1. Download CalendarBundle using composer
@@ -45,42 +45,49 @@ calendar:
     resource: "@CalendarBundle/Resources/config/routing.yaml"
 ```
 
-#### 2. Create the listener
-You need to create a listener class to load your data into the calendar and register it as a service.
+#### 2. Create the subscriber
+You need to create a subscriber class to load your data into the calendar.
 
-This listener must be called when the event `calendar.set_data` is launched.
+This subscriber must be registered only if autoconfigure is false.
 ```yaml
 # config/services.yaml
 services:
     # ...
 
-    App\EventListener\CalendarListener:
-        tags:
-            - { name: 'kernel.event_listener', event: 'calendar.set_data', method: load }
+    App\EventSubscriber\CalendarSubscriber:
 ```
 
-Then, create the listener class to fill the calendar
+Then, create the subscriber class to fill the calendar
 
-See the [doctrine listener example](src/Resources/doc/doctrine-crud.md#full-listener)
+See the [doctrine subscriber example](src/Resources/doc/doctrine-crud.md#full-subscriber)
 
 ```php
-// src/EventListener/CalendarListener.php
+// src/EventSubscriber/CalendarSubscriber.php
 <?php
 
-namespace App\EventListener;
+namespace App\EventSubscriber;
 
+use CalendarBundle\CalendarEvents;
 use CalendarBundle\Entity\Event;
 use CalendarBundle\Event\CalendarEvent;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class CalendarListener
+class CalendarSubscriber implements EventSubscriberInterface
 {
-    public function load(CalendarEvent $calendar)
+    public static function getSubscribedEvents()
+    {
+        return [
+            CalendarEvents::SET_DATA => 'onCalendarSetData',
+        ];
+    }
+
+    public function onCalendarSetData(CalendarEvent $calendar)
     {
         $start = $calendar->getStart();
         $end = $calendar->getEnd();
         $filters = $calendar->getFilters();
 
-        // You may want to make a custom query to fill the calendar
+        // You may want to make a custom query from your database to fill the calendar
 
         $calendar->addEvent(new Event(
             'Event 1',
