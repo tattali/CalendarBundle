@@ -188,15 +188,13 @@ class BookingController extends AbstractController
 
 ### 4. Use an event subscriber to connect all of this together
 
-Register the subscriber as a service to listen `calendar.set_data` event
+This subscriber must be registered only if autoconfigure is false.
 ```yaml
 # config/services.yaml
 services:
     # ...
 
     App\EventSubscriber\CalendarSubscriber:
-        tags:
-            - { name: 'kernel.event_subscriber', event: 'calendar.set_data', method: load }
 ```
 
 We now have to link the CRUD to the calendar by adding the `booking_show` route in each events
