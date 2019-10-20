@@ -210,9 +210,10 @@ namespace App\EventSubscriber;
 
 // ...
 use App\Repository\BookingRepository;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class CalendarSubscriber
+class CalendarSubscriber implements EventSubscriberInterface
 {
     private $bookingRepository;
     private $router;
