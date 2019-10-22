@@ -340,7 +340,7 @@ add a link to the `booking_new` form
 and include the `calendar-holder`
 
 ```twig
-{% include '@Calendar/calendar.html' %}
+<div id="calendar-holder"></div>
 ```
 
 Full template:
