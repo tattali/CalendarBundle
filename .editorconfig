@@ -15,10 +15,6 @@ charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
 
-[*.feature]
-indent_style = space
-indent_size = 2
-
 [*.json]
 indent_style = space
 indent_size = 2
@@ -34,14 +30,15 @@ indent_size = 4
 indent_style = space
 indent_size = 4
 
-[*.yml]
+[*.yaml]
 indent_style = space
 indent_size = 4
 trim_trailing_whitespace = false
 
-[.circleci/config.yml]
+[*.yml]
 indent_style = space
-indent_size = 2
+indent_size = 4
+trim_trailing_whitespace = false
 
 [.gitmodules]
 indent_style = tab
@@ -50,19 +47,11 @@ indent_style = tab
 indent_style = space
 indent_size = 4
 
-[.styleci.yml]
+[.php_cs.xml.dist]
 indent_style = space
 indent_size = 2
 
 [.travis.yml]
-indent_style = space
-indent_size = 2
-
-[appveyor.yml]
-indent_style = space
-indent_size = 2
-
-[behat.yml]
 indent_style = space
 indent_size = 2
 

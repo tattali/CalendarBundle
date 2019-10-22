@@ -5,9 +5,14 @@ declare(strict_types=1);
 namespace CalendarBundle\Event;
 
 use CalendarBundle\Entity\Event;
+use CalendarBundle\Event\Event as BaseEvent;
 use DateTimeInterface;
-use Symfony\Component\EventDispatcher\Event as BaseEvent;
 
+/**
+ * This event is triggered before the serialization of the events.
+ *
+ * This event allows you to fill the calendar with your data.
+ */
 class CalendarEvent extends BaseEvent
 {
     /**

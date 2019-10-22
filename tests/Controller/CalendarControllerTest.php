@@ -14,6 +14,7 @@ use Prophecy\Argument;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface as ContractsEventDispatcherInterface;
 
 class CalendarControllerTest extends TestCase
 {
@@ -47,10 +48,18 @@ class CalendarControllerTest extends TestCase
 
         $this->calendarEvent->getEvents()->willReturn([$this->event]);
 
-        $this->eventDispatcher
-            ->dispatch(CalendarEvents::SET_DATA, Argument::type(CalendarEvent::class))
-            ->willReturn($this->calendarEvent)
-        ;
+        $dispatcher = $this->getEventDispatcherMock();
+        if ($dispatcher instanceof ContractsEventDispatcherInterface) {
+            $this->eventDispatcher
+                ->dispatch(Argument::type(CalendarEvent::class), CalendarEvents::SET_DATA)
+                ->willReturn($this->calendarEvent)
+            ;
+        } else {
+            $this->eventDispatcher
+                ->dispatch(CalendarEvents::SET_DATA, Argument::type(CalendarEvent::class))
+                ->willReturn($this->calendarEvent)
+            ;
+        }
 
         $data = json_encode([
             [
@@ -87,11 +96,18 @@ class CalendarControllerTest extends TestCase
         $this->request->get('timeZone')->willReturn(null);
 
         $this->calendarEvent->getEvents()->willReturn([$this->event]);
-
-        $this->eventDispatcher
-            ->dispatch(CalendarEvents::SET_DATA, Argument::type(CalendarEvent::class))
-            ->willReturn($this->calendarEvent)
-        ;
+        $dispatcher = $this->getEventDispatcherMock();
+        if ($dispatcher instanceof ContractsEventDispatcherInterface) {
+            $this->eventDispatcher
+                ->dispatch(Argument::type(CalendarEvent::class), CalendarEvents::SET_DATA)
+                ->willReturn($this->calendarEvent)
+            ;
+        } else {
+            $this->eventDispatcher
+                ->dispatch(CalendarEvents::SET_DATA, Argument::type(CalendarEvent::class))
+                ->willReturn($this->calendarEvent)
+            ;
+        }
 
         $data = '';
 
@@ -106,5 +122,12 @@ class CalendarControllerTest extends TestCase
         $this->assertEquals('application/json', $response->headers->get('Content-Type'));
         $this->assertEquals($data, $response->getContent());
         $this->assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
+    }
+
+    private function getEventDispatcherMock()
+    {
+        return $this->getMockBuilder(EventDispatcherInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 }
