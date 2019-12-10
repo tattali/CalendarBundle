@@ -13,7 +13,7 @@ This bundle allow you to integrate [FullCalendar.js](http://fullcalendar.io/) li
   <img src="https://user-images.githubusercontent.com/10502887/56835704-47687080-6875-11e9-9102-0533d2bbbf18.png" alt="Calendar image">
 </p>
 
-* Symfony 3.4+ or Symfony 4.0+
+* Symfony 3.4+ or Symfony 4.0+ or Symfony 5.0+
 * PHP v7.1+
 * No storage dependencies (Compatible with: Doctrine, MongoDB, CouchDB...)
 
