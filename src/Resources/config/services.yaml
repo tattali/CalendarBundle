@@ -1,9 +1,0 @@
-services:
-  CalendarBundle\Serializer\Serializer:
-    public: false
-
-  CalendarBundle\Controller\CalendarController:
-    public: true
-    arguments:
-      - "@event_dispatcher"
-      - "@CalendarBundle\\Serializer\\Serializer"
