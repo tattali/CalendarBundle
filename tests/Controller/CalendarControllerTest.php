@@ -14,6 +14,7 @@ use Prophecy\Argument;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface as ContractsEventDispatcherInterface;
 
 class CalendarControllerTest extends TestCase
@@ -48,7 +49,7 @@ class CalendarControllerTest extends TestCase
         $this->calendarEvent->getEvents()->willReturn([$this->event]);
 
         $dispatcher = $this->getEventDispatcherMock();
-        if ($dispatcher instanceof ContractsEventDispatcherInterface) {
+        if (Kernel::VERSION_ID >= 40300) {
             $this->eventDispatcher
                 ->dispatch(Argument::type(CalendarEvent::class), CalendarEvents::SET_DATA)
                 ->willReturn($this->calendarEvent)
