@@ -54,7 +54,7 @@ class CalendarController extends AbstractController
         return $response;
     }
 
-    public function dispatchWithBC($event, string $eventName)
+    public function dispatchWithBC($event, ?string $eventName = null)
     {
         if ($this->eventDispatcher instanceof ContractsEventDispatcherInterface) {
             return $this->eventDispatcher->dispatch($event, $eventName);
