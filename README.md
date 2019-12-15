@@ -3,7 +3,7 @@ CalendarBundle - FullCalendar.js integration
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/tattali/CalendarBundle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/tattali/CalendarBundle/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/tattali/CalendarBundle/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/tattali/CalendarBundle/?branch=master)
-[![Build Status](https://scrutinizer-ci.com/g/tattali/CalendarBundle/badges/build.png?b=master)](https://scrutinizer-ci.com/g/tattali/CalendarBundle/build-status/master)
+[![Build Status](https://travis-ci.com/tattali/CalendarBundle.svg?branch=master)](https://travis-ci.com/tattali/CalendarBundle)
 [![Total Downloads](https://poser.pugx.org/tattali/calendar-bundle/downloads)](https://packagist.org/packages/tattali/calendar-bundle)
 [![Latest Stable Version](https://poser.pugx.org/tattali/calendar-bundle/v/stable)](https://packagist.org/packages/tattali/calendar-bundle)
 
