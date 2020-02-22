@@ -48,7 +48,7 @@ calendar:
 #### 2. Create the subscriber
 You need to create a subscriber class to load your data into the calendar.
 
-This subscriber must be registered only if autoconfigure is false.
+This subscriber must be registered **only if autoconfigure is false**.
 ```yaml
 # config/services.yaml
 services:
