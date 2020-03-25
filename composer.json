@@ -1,7 +1,7 @@
 {
     "name": "tattali/calendar-bundle",
     "type": "symfony-bundle",
-    "description": "Provides event calendar for your Symfony 4 project. Compatible with Doctrine ORM & ODM, and API like Google Calendar.",
+    "description": "Provides event calendar for your Symfony 4/5 project. Compatible with Doctrine ORM & ODM, and API like Google Calendar.",
     "keywords": [
         "fullcalendar",
         "calendar",
