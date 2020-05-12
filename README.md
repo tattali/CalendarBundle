@@ -112,7 +112,7 @@ Include the html template were you want to display the calendar:
 
 ```twig
 {% block body %}
-    {% include '@Calendar/calendar.html' %}
+    <div id="calendar-holder"></div>
 {% endblock %}
 ```
 
