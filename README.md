@@ -26,6 +26,7 @@ The source of the documentation is stored in the `src/Resources/doc/` folder in 
 
 - [Link the calendar to a CRUD and allow create, update, delete & show events](src/Resources/doc/doctrine-crud.md)
 - [Webpack Encore and fullcalendar.js](src/Resources/doc/es6-encore.md)
+- [Multi calendar](src/Resources/doc/multi-calendar.md)
 
 ### Installation
 
