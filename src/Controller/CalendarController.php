@@ -7,13 +7,12 @@ namespace CalendarBundle\Controller;
 use CalendarBundle\CalendarEvents;
 use CalendarBundle\Event\CalendarEvent;
 use CalendarBundle\Serializer\SerializerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface as ContractsEventDispatcherInterface;
 
-class CalendarController extends AbstractController
+class CalendarController
 {
     /**
      * @var SerializerInterface
