@@ -34,16 +34,23 @@ class Event
      * @var array
      */
     protected $options = [];
+    
+    /**
+     * @var string
+     */
+    protected $resourceId;
 
     public function __construct(
         string $title,
         DateTimeInterface $start,
         ?DateTimeInterface $end = null,
+        ?string $resourceId = null,
         array $options = []
     ) {
         $this->setTitle($title);
         $this->setStart($start);
         $this->setEnd($end);
+        $this->setResourceId($resourceId);
         $this->setOptions($options);
     }
 
@@ -88,6 +95,16 @@ class Event
     public function setAllDay(bool $allDay): void
     {
         $this->allDay = $allDay;
+    }
+    
+    public function getResourceId(): ?string
+    {
+        return $this->resourceId;
+    }
+
+    public function setResourceId(?string $resourceId): void
+    {
+        $this->resourceId = $resourceId;
     }
 
     public function getOptions(): array
@@ -143,6 +160,10 @@ class Event
 
         if (null !== $this->getEnd()) {
             $event['end'] = $this->getEnd()->format(self::DATE_FORMAT);
+        }
+        
+        if (null !== $this->getResourceId()) {
+            $event['resourceId'] = $this->getResourceId();
         }
 
         return array_merge($event, $this->getOptions());
