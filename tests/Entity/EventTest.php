@@ -26,6 +26,7 @@ class EventTest extends TestCase
             $this->title,
             $this->start,
             $this->end,
+            null,
             $this->options
         );
     }
