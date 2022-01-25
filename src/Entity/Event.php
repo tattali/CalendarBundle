@@ -8,7 +8,7 @@ use DateTimeInterface;
 
 class Event
 {
-    const DATE_FORMAT = 'Y-m-d\\TH:i:s.u\\Z';
+    public const DATE_FORMAT = 'Y-m-d\\TH:i:s.u\\Z';
 
     /**
      * @var string
@@ -34,7 +34,7 @@ class Event
      * @var array
      */
     protected $options = [];
-    
+
     /**
      * @var string
      */
@@ -96,7 +96,7 @@ class Event
     {
         $this->allDay = $allDay;
     }
-    
+
     public function getResourceId(): ?string
     {
         return $this->resourceId;
@@ -161,7 +161,7 @@ class Event
         if (null !== $this->getEnd()) {
             $event['end'] = $this->getEnd()->format(self::DATE_FORMAT);
         }
-        
+
         if (null !== $this->getResourceId()) {
             $event['resourceId'] = $this->getResourceId();
         }
