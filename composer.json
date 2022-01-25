@@ -18,14 +18,13 @@
         }
     ],
     "require": {
-        "php": ">=7.1",
         "symfony/dependency-injection": "^3.4 || ^4.4 || ^5.0 || ^6.0",
         "symfony/event-dispatcher": "^3.4 || ^4.4 || ^5.0 || ^6.0",
         "symfony/framework-bundle": "^3.4 || ^4.4 || ^5.0 || ^6.0"
     },
     "require-dev": {
         "phpspec/prophecy": "^1.8",
-        "phpunit/phpunit": "^7.5",
+        "phpunit/phpunit": "^8.5",
         "symfony/dotenv": "^4.4",
         "symfony/phpunit-bridge": "^4.4",
         "symfony/yaml": "^4.4"
