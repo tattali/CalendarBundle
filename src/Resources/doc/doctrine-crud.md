@@ -17,7 +17,7 @@ This documentation assumes that doctrine is already installed.
 > **NOTE:** `composer req symfony/orm-pack` then update the database url in your `.env` and run `bin/console d:d:c`
 
 ```sh
-$ composer require tattali/calendar-bundle
+composer require tattali/calendar-bundle
 ```
 The recipe will import the routes for you
 
@@ -34,7 +34,7 @@ Generate or create an entity with at least a *start date* and a *title*. You als
 
 ```sh
 # Symfony flex (Need the maker: `composer req --dev symfony/maker-bundle`)
-$ php bin/console make:entity
+php bin/console make:entity
 ```
 
 In this example we call the entity `Booking`
@@ -137,8 +137,8 @@ class BookingRepository extends ServiceEntityRepository
 
 Then, update your database schema
 ```
-$ php bin/console doctrine:migration:diff
-$ php bin/console doctrine:migration:migrate -n
+php bin/console doctrine:migration:diff
+php bin/console doctrine:migration:migrate -n
 ```
 
 
@@ -149,7 +149,7 @@ The following command will generate a `BookingController` with `index()`, `new()
 
 And also the according `templates` and `form` (You may need to install additional packages)
 ```sh
-$ php bin/console make:crud Booking
+php bin/console make:crud Booking
 ```
 
 Edit the `BookingController` by adding a `calendar()` action to display the calendar
