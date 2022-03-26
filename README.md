@@ -7,7 +7,7 @@ CalendarBundle - FullCalendar.js integration
 [![Total Downloads](https://poser.pugx.org/tattali/calendar-bundle/downloads)](https://packagist.org/packages/tattali/calendar-bundle)
 [![Latest Stable Version](https://poser.pugx.org/tattali/calendar-bundle/v/stable)](https://packagist.org/packages/tattali/calendar-bundle)
 
-This bundle allow you to integrate [FullCalendar.js](http://fullcalendar.io/) library in your Symfony 4/5 project.
+This bundle allow you to integrate [FullCalendar.js](http://fullcalendar.io/) library in your Symfony 3 to 6 project.
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/10502887/56835704-47687080-6875-11e9-9102-0533d2bbbf18.png" alt="Calendar image">
@@ -15,7 +15,7 @@ This bundle allow you to integrate [FullCalendar.js](http://fullcalendar.io/) li
 
 
 
-* Symfony 3.4+ or Symfony 4.0+ or Symfony 5.0+
+* Symfony 3.4+ or Symfony 4.0+ or Symfony 5.0+ or Symfony 6.0+
 * PHP v7.1+
 * No storage dependencies (Compatible with: Doctrine, MongoDB, CouchDB...)
 
