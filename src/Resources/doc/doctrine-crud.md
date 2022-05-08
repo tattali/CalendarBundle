@@ -350,7 +350,7 @@ Full template:
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <a href="{{ path('booking_new') }}">Create new booking</a>
+    <a href="{{ path('app_booking_new') }}">Create new booking</a>
 
     <div id="calendar-holder"></div>
 {% endblock %}
