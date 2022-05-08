@@ -7,18 +7,29 @@ php:
   - 7.2
   - 7.3
   - 7.4
+  - 8.0
+  - 8.1
 
 env:
   matrix:
     - SYMFONY_VERSION="3.4.*"
     - SYMFONY_VERSION="4.4.*"
-    - SYMFONY_VERSION="5.0.*"
+    - SYMFONY_VERSION="5.4.*"
+    - SYMFONY_VERSION="6.0.*"
 
 matrix:
   fast_finish: true
   exclude:
     - php: 7.1
-      env: SYMFONY_VERSION="5.0.*"
+      env: SYMFONY_VERSION="5.4.*"
+    - php: 7.1
+      env: SYMFONY_VERSION="6.0.*"
+    - php: 7.2
+      env: SYMFONY_VERSION="6.0.*"
+    - php: 7.3
+      env: SYMFONY_VERSION="6.0.*"
+    - php: 7.4
+      env: SYMFONY_VERSION="6.0.*"
 
 cache:
   directories:

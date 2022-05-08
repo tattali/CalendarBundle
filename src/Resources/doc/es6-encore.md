@@ -20,7 +20,7 @@ Your calendar template should look like that
 {% block body %}
     <a href="{{ path('app_booking_new') }}">Create new booking</a>
 
-    <div 
+    <div
         id="calendar-holder"
         data-events-url="{{ path('fc_load_events') }}"
     ></div>
@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 ```
 
-Modify the calendar with css 
+Modify the calendar with css
 ```css
 /* assets/js/calendar/index.css */
 

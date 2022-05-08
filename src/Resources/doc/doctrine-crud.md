@@ -175,7 +175,7 @@ class BookingController extends AbstractController
     // ...
 
     /**
-     * @Route("/calendar", name="booking_calendar", methods={"GET"})
+     * @Route("/calendar", name="app_booking_calendar", methods={"GET"})
      */
     public function calendar(): Response
     {
@@ -197,7 +197,7 @@ services:
     App\EventSubscriber\CalendarSubscriber:
 ```
 
-We now have to link the CRUD to the calendar by adding the `booking_show` route in each events
+We now have to link the CRUD to the calendar by adding the `app_booking_show` route in each events
 
 [TL;DR](#full-subscriber)
 
@@ -234,7 +234,7 @@ Then use `setUrl()` on each created event to link them to their own show action
 ```php
 $bookingEvent->addOption(
     'url',
-    $this->router->generate('booking_show', [
+    $this->router->generate('app_booking_show', [
         'id' => $booking->getId(),
     ])
 );
@@ -315,7 +315,7 @@ class CalendarSubscriber implements EventSubscriberInterface
             ]);
             $bookingEvent->addOption(
                 'url',
-                $this->router->generate('booking_show', [
+                $this->router->generate('app_booking_show', [
                     'id' => $booking->getId(),
                 ])
             );
@@ -331,10 +331,10 @@ class CalendarSubscriber implements EventSubscriberInterface
 
 Then create the calendar template
 
-add a link to the `booking_new` form
+add a link to the `app_booking_new` form
 
 ```twig
-<a href="{{ path('booking_new') }}">Create new booking</a>
+<a href="{{ path('app_booking_new') }}">Create new booking</a>
 ```
 
 and include the `calendar-holder`
