@@ -10,9 +10,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class CalendarExtensionTest extends TestCase
 {
-    private $builder;
-    private $loader;
-    private $configuration;
+    private ContainerBuilder $builder;
+    private CalendarExtension $loader;
+    private array $configuration;
 
     public function setUp(): void
     {
@@ -22,7 +22,7 @@ class CalendarExtensionTest extends TestCase
         $this->configuration = [];
     }
 
-    public function testConfiguration()
+    public function testConfiguration(): void
     {
         $this->loader->load($this->configuration, $this->builder);
 

@@ -12,7 +12,7 @@ class SerializerTest extends TestCase
 {
     private $eventEntity1;
     private $eventEntity2;
-    private $serializer;
+    private Serializer $serializer;
 
     public function setUp(): void
     {
@@ -22,7 +22,7 @@ class SerializerTest extends TestCase
         $this->serializer = new Serializer();
     }
 
-    public function testItSerializesDataSuccessfully()
+    public function testItSerializesDataSuccessfully(): void
     {
         $this->eventEntity1->method('toArray')->willReturn(
             [
@@ -57,7 +57,7 @@ class SerializerTest extends TestCase
         $this->assertEquals($data, $this->serializer->serialize([$this->eventEntity1, $this->eventEntity2]));
     }
 
-    public function testSerializesShouldReturnEmtpyIfEventsAreEmpty()
+    public function testSerializesShouldReturnEmtpyIfEventsAreEmpty(): void
     {
         $this->assertEquals('[]', $this->serializer->serialize([]));
     }

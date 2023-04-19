@@ -10,28 +10,18 @@ use CalendarBundle\Serializer\SerializerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface as ContractsEventDispatcherInterface;
 
 class CalendarController
 {
-    /**
-     * @var SerializerInterface
-     */
-    protected $serializer;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
     public function __construct(
-        EventDispatcherInterface $eventDispatcher,
-        SerializerInterface $serializer
-    ) {
-        $this->eventDispatcher = $eventDispatcher;
-        $this->serializer = $serializer;
-    }
+        protected EventDispatcherInterface $eventDispatcher,
+        protected SerializerInterface $serializer
+    )
+    {}
 
+    /**
+     * @throws \Exception
+     */
     public function loadAction(Request $request): Response
     {
         $start = new \DateTime($request->get('start'));
@@ -39,7 +29,7 @@ class CalendarController
         $filters = $request->get('filters', '{}');
         $filters = \is_array($filters) ? $filters : json_decode($filters, true);
 
-        $event = $this->dispatchWithBC(
+        $event = $this->eventDispatcher->dispatch(
             new CalendarEvent($start, $end, $filters),
             CalendarEvents::SET_DATA
         );
@@ -51,14 +41,5 @@ class CalendarController
         $response->setStatusCode(empty($content) ? Response::HTTP_NO_CONTENT : Response::HTTP_OK);
 
         return $response;
-    }
-
-    public function dispatchWithBC($event, ?string $eventName = null)
-    {
-        if ($this->eventDispatcher instanceof ContractsEventDispatcherInterface) {
-            return $this->eventDispatcher->dispatch($event, $eventName);
-        }
-
-        return $this->eventDispatcher->dispatch($eventName, $event);
     }
 }

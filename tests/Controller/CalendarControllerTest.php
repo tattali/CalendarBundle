@@ -11,19 +11,19 @@ use CalendarBundle\Event\CalendarEvent;
 use CalendarBundle\Serializer\SerializerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Kernel;
 
 class CalendarControllerTest extends TestCase
 {
-    private $calendarEvent;
-    private $event;
-    private $eventDispatcher;
-    private $request;
-    private $serializer;
-    private $controller;
+    private ObjectProphecy|CalendarEvent $calendarEvent;
+    private Event|ObjectProphecy $event;
+    private ObjectProphecy|EventDispatcherInterface $eventDispatcher;
+    private Request|ObjectProphecy $request;
+    private SerializerInterface|ObjectProphecy $serializer;
+    private CalendarController $controller;
 
     public function setUp(): void
     {
@@ -39,7 +39,7 @@ class CalendarControllerTest extends TestCase
         );
     }
 
-    public function testItProvidesAnEventsFeedForACalendar()
+    public function testItProvidesAnEventsFeedForACalendar(): void
     {
         $this->request->get('start')->willReturn('2016-03-01');
         $this->request->get('end')->willReturn('2016-03-19 15:11:00');
@@ -47,7 +47,7 @@ class CalendarControllerTest extends TestCase
 
         $this->calendarEvent->getEvents()->willReturn([$this->event]);
 
-        $this->eventDispatcherWithBC(Argument::type(CalendarEvent::class), CalendarEvents::SET_DATA);
+        $this->eventDispatcher(Argument::type(CalendarEvent::class), CalendarEvents::SET_DATA);
 
         $data = json_encode([
             [
@@ -76,14 +76,14 @@ class CalendarControllerTest extends TestCase
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
     }
 
-    public function testItNotFindAnyEvents()
+    public function testItNotFindAnyEvents(): void
     {
         $this->request->get('start')->willReturn('2016-03-01');
         $this->request->get('end')->willReturn('2016-03-19 15:11:00');
         $this->request->get('filters', '{}')->willReturn('{}');
 
         $this->calendarEvent->getEvents()->willReturn([$this->event]);
-        $this->eventDispatcherWithBC(Argument::type(CalendarEvent::class), CalendarEvents::SET_DATA);
+        $this->eventDispatcher(Argument::type(CalendarEvent::class), CalendarEvents::SET_DATA);
 
         $data = '';
 
@@ -100,16 +100,10 @@ class CalendarControllerTest extends TestCase
         $this->assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
     }
 
-    private function eventDispatcherWithBC($event, ?string $eventName = null)
+    private function eventDispatcher($event, ?string $eventName = null): void
     {
-        if (Kernel::VERSION_ID >= 40300) {
-            $this->eventDispatcher
-                ->dispatch($event, $eventName)
-                ->willReturn($this->calendarEvent)
-            ;
-        }
         $this->eventDispatcher
-            ->dispatch($eventName, $event)
+            ->dispatch($event, $eventName)
             ->willReturn($this->calendarEvent)
         ;
     }

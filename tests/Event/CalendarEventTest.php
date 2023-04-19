@@ -10,11 +10,11 @@ use PHPUnit\Framework\TestCase;
 
 class CalendarEventTest extends TestCase
 {
-    private $start;
-    private $end;
-    private $filters;
+    private \DateTime $start;
+    private \DateTime $end;
+    private array $filters;
     private $eventEntity;
-    private $event;
+    private CalendarEvent $event;
 
     public function setUp(): void
     {
@@ -31,14 +31,14 @@ class CalendarEventTest extends TestCase
         );
     }
 
-    public function testItHasRequireValues()
+    public function testItHasRequireValues(): void
     {
         $this->assertEquals($this->start, $this->event->getStart());
         $this->assertEquals($this->end, $this->event->getEnd());
         $this->assertEquals($this->filters, $this->event->getFilters());
     }
 
-    public function testItHandleEvents()
+    public function testItHandleEvents(): void
     {
         $this->event->addEvent($this->eventEntity);
         $this->assertEquals([$this->eventEntity], $this->event->getEvents());

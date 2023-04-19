@@ -9,11 +9,11 @@ use PHPUnit\Framework\TestCase;
 
 class EventTest extends TestCase
 {
-    private $title;
-    private $start;
-    private $end;
-    private $options;
-    private $entity;
+    private string $title;
+    private \DateTime $start;
+    private \DateTime $end;
+    private array $options;
+    private Event $entity;
 
     public function setUp(): void
     {
@@ -31,7 +31,7 @@ class EventTest extends TestCase
         );
     }
 
-    public function testItHasRequireValues()
+    public function testItHasRequireValues(): void
     {
         $this->assertEquals($this->title, $this->entity->getTitle());
         $this->assertEquals($this->start, $this->entity->getStart());
@@ -39,7 +39,7 @@ class EventTest extends TestCase
         $this->assertEquals($this->options, $this->entity->getOptions());
     }
 
-    public function testItShouldConvertItsValuesInToArray()
+    public function testItShouldConvertItsValuesInToArray(): void
     {
         $url = 'url';
         $urlValue = 'www.url.com';
