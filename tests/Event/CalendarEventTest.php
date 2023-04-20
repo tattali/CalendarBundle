@@ -6,6 +6,7 @@ namespace CalendarBundle\Tests\Event;
 
 use CalendarBundle\Entity\Event;
 use CalendarBundle\Event\CalendarEvent;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class CalendarEventTest extends TestCase
@@ -13,7 +14,10 @@ class CalendarEventTest extends TestCase
     private \DateTime $start;
     private \DateTime $end;
     private array $filters;
+    /** @var Event&MockObject $eventEntity */
     private $eventEntity;
+    /** @var Event&MockObject $eventEntity2 */
+    private $eventEntity2;
     private CalendarEvent $event;
 
     public function setUp(): void
@@ -23,6 +27,7 @@ class CalendarEventTest extends TestCase
         $this->filters = [];
 
         $this->eventEntity = $this->createMock(Event::class);
+        $this->eventEntity2 = $this->createMock(Event::class);
 
         $this->event = new CalendarEvent(
             $this->start,
@@ -40,7 +45,19 @@ class CalendarEventTest extends TestCase
 
     public function testItHandleEvents(): void
     {
+        $this->assertCount(0, $this->event->getEvents());
+
         $this->event->addEvent($this->eventEntity);
         $this->assertEquals([$this->eventEntity], $this->event->getEvents());
+        $this->assertCount(1, $this->event->getEvents());
+
+        $this->event->addEvent($this->eventEntity, true);
+        $this->assertCount(1, $this->event->getEvents());
+
+        $this->event->addEvent($this->eventEntity);
+        $this->assertCount(2, $this->event->getEvents());
+
+        $this->event->addEvent($this->eventEntity2, true);
+        $this->assertCount(3, $this->event->getEvents());
     }
 }
