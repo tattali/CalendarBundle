@@ -13,5 +13,5 @@ class CalendarEvents
      *
      * @Event("CalendarBundle\Event\CalendarEvent")
      */
-    const SET_DATA = 'calendar.set_data';
+    public const SET_DATA = 'calendar.set_data';
 }

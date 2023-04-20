@@ -10,48 +10,16 @@ class Event
 {
     public const DATE_FORMAT = 'Y-m-d\\TH:i:s.u\\Z';
 
-    /**
-     * @var string
-     */
-    protected $title;
-
-    /**
-     * @var DateTimeInterface
-     */
-    protected $start;
-
-    /**
-     * @var DateTimeInterface|null
-     */
-    protected $end;
-
-    /**
-     * @var bool
-     */
-    protected $allDay = true;
-
-    /**
-     * @var array
-     */
-    protected $options = [];
-
-    /**
-     * @var string
-     */
-    protected $resourceId;
+    protected bool $allDay = true;
 
     public function __construct(
-        string $title,
-        DateTimeInterface $start,
-        ?DateTimeInterface $end = null,
-        ?string $resourceId = null,
-        array $options = []
+        protected string $title,
+        protected DateTimeInterface $start,
+        protected ?DateTimeInterface $end = null,
+        protected ?string $resourceId = null,
+        protected array $options = []
     ) {
-        $this->setTitle($title);
-        $this->setStart($start);
-        $this->setEnd($end);
-        $this->setResourceId($resourceId);
-        $this->setOptions($options);
+        $this->setEnd($this->end);
     }
 
     public function getTitle(): ?string
@@ -117,28 +85,17 @@ class Event
         $this->options = $options;
     }
 
-    /**
-     * @param string|int $name
-     */
-    public function getOption($name)
+    public function getOption(int|string $name)
     {
         return $this->options[$name];
     }
 
-    /**
-     * @param string|int $name
-     */
-    public function addOption($name, $value): void
+    public function addOption(int|string $name, $value): void
     {
         $this->options[$name] = $value;
     }
 
-    /**
-     * @param string|int $name
-     *
-     * @return mixed|null
-     */
-    public function removeOption($name)
+    public function removeOption(int|string $name): mixed
     {
         if (!isset($this->options[$name]) && !\array_key_exists($name, $this->options)) {
             return null;

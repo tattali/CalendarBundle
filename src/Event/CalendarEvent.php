@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace CalendarBundle\Event;
 
 use CalendarBundle\Entity\Event;
-use CalendarBundle\Event\Event as BaseEvent;
 use DateTimeInterface;
 
 /**
@@ -13,36 +12,18 @@ use DateTimeInterface;
  *
  * This event allows you to fill the calendar with your data.
  */
-class CalendarEvent extends BaseEvent
+class CalendarEvent
 {
-    /**
-     * @var DateTimeInterface
-     */
-    protected $start;
-
-    /**
-     * @var DateTimeInterface
-     */
-    protected $end;
-
-    /**
-     * @var array
-     */
-    protected $filters;
-
     /**
      * @var Event[]
      */
-    protected $events = [];
+    protected array $events = [];
 
     public function __construct(
-        DateTimeInterface $start,
-        DateTimeInterface $end,
-        array $filters
+        protected DateTimeInterface $start,
+        protected DateTimeInterface $end,
+        protected array $filters
     ) {
-        $this->start = $start;
-        $this->end = $end;
-        $this->filters = $filters;
     }
 
     public function getStart(): DateTimeInterface
