@@ -7,16 +7,19 @@ CalendarBundle - FullCalendar.js integration
 [![Total Downloads](https://poser.pugx.org/tattali/calendar-bundle/downloads)](https://packagist.org/packages/tattali/calendar-bundle)
 [![Latest Stable Version](https://poser.pugx.org/tattali/calendar-bundle/v/stable)](https://packagist.org/packages/tattali/calendar-bundle)
 
-This bundle allow you to integrate [FullCalendar.js](http://fullcalendar.io/) library in your Symfony 3 to 6 project.
+This bundle allow you to integrate [FullCalendar.js](https://fullcalendar.io/) library in your Symfony 3 to 6 project.
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/10502887/56835704-47687080-6875-11e9-9102-0533d2bbbf18.png" alt="Calendar image">
 </p>
 
+The following table shows the compatibilities of different versions of the bundle :
 
+| Version                                                               | Symfony        | PHP          |
+|-----------------------------------------------------------------------|----------------|--------------|
+| [1.3 (master)](https://github.com/tattali/CalendarBundle/tree/master) | ^5.4 + ^6.2    | >=8.0        |
+| [1.0](https://github.com/tattali/CalendarBundle/tree/1.x)             | ^3.4 - ^6.2    | ^7.1 and 8.0 |
 
-* Symfony 3.4+ or Symfony 4.0+ or Symfony 5.0+ or Symfony 6.0+
-* PHP v7.1+
 * No storage dependencies (Compatible with: Doctrine, MongoDB, CouchDB...)
 
 Documentation
@@ -120,17 +123,8 @@ Include the html template were you want to display the calendar:
 Add styles and js. Click [here](https://fullcalendar.io/download) to see other css and js download methods, you can also found the [plugins list](https://fullcalendar.io/docs/plugin-index)
 
 ```twig
-{% block stylesheets %}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.1.0/main.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@4.1.0/main.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@4.1.0/main.min.css">
-{% endblock %}
-
 {% block javascripts %}
-    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.1.0/main.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@4.1.0/main.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@4.1.0/main.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@4.1.0/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.5/index.global.min.js" integrity="sha256-dHUNnePy81fXq4D/wfu7cPsEIP7zl6MvLb84jtZf+UY=" crossorigin="anonymous"></script>
 {% endblock %}
 ```
 
@@ -157,17 +151,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
             },
         ],
-        header: {
-            left: 'prev,next today',
+        headerToolbar: {
+            start: 'prev,next today',
             center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay',
+            end: 'dayGridMonth,timeGridWeek,timeGridDay'
         },
-        plugins: [ 'interaction', 'dayGrid', 'timeGrid' ], // https://fullcalendar.io/docs/plugin-index
         timeZone: 'UTC',
     });
     calendar.render();
 });
 ```
+
+You can use [Plugins](https://fullcalendar.io/docs/plugin-index) to reduce loadtime.
 
 ## Troubleshoot AJAX requests
 

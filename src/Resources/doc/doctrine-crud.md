@@ -45,33 +45,24 @@ In this example we call the entity `Booking`
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\BookingRepository;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\BookingRepository")
- */
+#[ORM\Entity(repositoryClass: BookingRepository::class)]
 class Booking
 {
-    /**
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue
-     * @ORM\Id
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    private ?int $id; # nullable for EasyAdmin
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $beginAt;
+    #[ORM\Column(type: 'datetime')]
+    private ?\DateTimeInterface $beginAt;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $endAt = null;
+    #[ORM\Column(type: 'datetime', nullable:true)]
+    private ?\DateTimeInterface $endAt = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $title;
+    #[ORM\Column(type: 'string', length: 255)]
+    private string $title;
 
     public function getId(): ?int
     {
@@ -167,16 +158,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/booking")
- */
+#[Route(path: '/booking')]
 class BookingController extends AbstractController
 {
     // ...
 
-    /**
-     * @Route("/calendar", name="app_booking_calendar", methods={"GET"})
-     */
+    #[Route(path: '/calendar', name: "app_booking_calendar", methods: ['GET'])]
     public function calendar(): Response
     {
         return $this->render('booking/calendar.html.twig');
@@ -215,16 +202,11 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CalendarSubscriber implements EventSubscriberInterface
 {
-    private $bookingRepository;
-    private $router;
-
     public function __construct(
-        BookingRepository $bookingRepository,
-        UrlGeneratorInterface $router
-    ) {
-        $this->bookingRepository = $bookingRepository;
-        $this->router = $router;
-    }
+        private BookingRepository $bookingRepository,
+        private UrlGeneratorInterface $router
+    )
+    {}
 
     // ...
 }
@@ -259,16 +241,11 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CalendarSubscriber implements EventSubscriberInterface
 {
-    private $bookingRepository;
-    private $router;
-
     public function __construct(
-        BookingRepository $bookingRepository,
-        UrlGeneratorInterface $router
-    ) {
-        $this->bookingRepository = $bookingRepository;
-        $this->router = $router;
-    }
+        private BookingRepository $bookingRepository,
+        private UrlGeneratorInterface $router
+    )
+    {}
 
     public static function getSubscribedEvents()
     {
@@ -355,17 +332,8 @@ Full template:
     <div id="calendar-holder"></div>
 {% endblock %}
 
-{% block stylesheets %}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.1.0/main.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@4.1.0/main.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@4.1.0/main.min.css">
-{% endblock %}
-
 {% block javascripts %}
-    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.1.0/main.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@4.1.0/main.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@4.1.0/main.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@4.1.0/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.5/index.global.min.js" integrity="sha256-dHUNnePy81fXq4D/wfu7cPsEIP7zl6MvLb84jtZf+UY=" crossorigin="anonymous"></script>
 
     <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', () => {
@@ -386,12 +354,11 @@ Full template:
                         },
                     },
                 ],
-                header: {
-                    left: 'prev,next today',
+                headerToolbar: {
+                    start: 'prev,next today',
                     center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay',
+                    end: 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
-                plugins: [ 'interaction', 'dayGrid', 'timeGrid' ], // https://fullcalendar.io/docs/plugin-index
                 timeZone: 'UTC',
             });
             calendar.render();
@@ -399,6 +366,8 @@ Full template:
     </script>
 {% endblock %}
 ```
+
+You can use [Plugins](https://fullcalendar.io/docs/plugin-index) to reduce loadtime.
 
 * Now visit: <http://localhost:8000/booking/calendar>
 
