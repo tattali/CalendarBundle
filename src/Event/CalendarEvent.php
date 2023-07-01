@@ -41,9 +41,9 @@ class CalendarEvent
         return $this->filters;
     }
 
-    public function addEvent(Event $event): self
+    public function addEvent(Event $event, bool $checkUnique=false): self
     {
-        if (!\in_array($event, $this->events, true)) {
+        if (!$checkUnique || !\in_array($event, $this->events, true)) {
             $this->events[] = $event;
         }
 
