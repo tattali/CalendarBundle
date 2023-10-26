@@ -20,16 +20,16 @@
     "require": {
         "php": ">=8.0",
         "ext-json": "*",
-        "symfony/dependency-injection": "^5.4 || ^6.2",
-        "symfony/event-dispatcher": "^5.4 || ^6.2",
-        "symfony/framework-bundle": "^5.4 || ^6.2"
+        "symfony/dependency-injection": "^5.4 || ^6.3 || ^7.0",
+        "symfony/event-dispatcher": "^5.4 || ^6.3 || ^7.0",
+        "symfony/framework-bundle": "^5.4 || ^6.3 || ^7.0"
     },
     "require-dev": {
         "phpspec/prophecy": "^1.17",
         "phpunit/phpunit": "^9.6",
-        "symfony/dotenv": "^5.4 || ^6.2",
-        "symfony/phpunit-bridge": "^5.4 || ^6.2",
-        "symfony/yaml": "^5.4 || ^6.2"
+        "symfony/dotenv": "^5.4 || ^6.3 || ^7.0",
+        "symfony/phpunit-bridge": "^5.4 || ^6.3 || ^7.0",
+        "symfony/yaml": "^5.4 || ^6.3 || ^7.0"
     },
     "suggest": {
         "symfony/orm-pack": "To support Doctrine ORM and Migration.",
