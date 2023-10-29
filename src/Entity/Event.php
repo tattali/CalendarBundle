@@ -123,10 +123,12 @@ class Event
             $event['resourceId'] = $this->getResourceId();
         }
 
-         $toReturn = array_merge($event, $this->getOptions());
+        $toReturn = array_merge($event, $this->getOptions());
 
-        if ($toReturn['allDay'])
-            $toReturn['start'] =  $this->getStart()->format('Y-m-d');
+        if (isset($toReturn['allDay']) && $toReturn['allDay']) {
+            $toReturn['start'] = $this->getStart()->format('Y-m-d');
+        }
+
         return $toReturn;
     }
 }
