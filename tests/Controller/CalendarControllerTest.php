@@ -12,12 +12,15 @@ use CalendarBundle\Serializer\SerializerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class CalendarControllerTest extends TestCase
 {
+    use ProphecyTrait;
+
     private ObjectProphecy|CalendarEvent $calendarEvent;
     private Event|ObjectProphecy $event;
     private ObjectProphecy|EventDispatcherInterface $eventDispatcher;
