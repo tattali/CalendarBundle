@@ -13,14 +13,6 @@ This bundle allow you to integrate [FullCalendar.js](https://fullcalendar.io/) l
   <img src="https://user-images.githubusercontent.com/10502887/56835704-47687080-6875-11e9-9102-0533d2bbbf18.png" alt="Calendar image">
 </p>
 
-The following table shows the compatibilities of different versions of the bundle :
-
-| Version                                                               | Symfony            | PHP          |
-|-----------------------------------------------------------------------|--------------------|--------------|
-| [1.3 (master)](https://github.com/tattali/CalendarBundle/tree/master) | ^5.4 + ^6.3 + ^7.0 | >=8.0        |
-
-* No storage dependencies (Compatible with: Doctrine, MongoDB, CouchDB...)
-
 Documentation
 -------------
 
