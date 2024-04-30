@@ -8,7 +8,7 @@ use DateTimeInterface;
 
 class Event
 {
-    public const DATE_FORMAT = 'Y-m-d\\TH:i:s.u\\Z';
+    public const DATE_FORMAT = 'c';
 
     protected bool $allDay = true;
 
