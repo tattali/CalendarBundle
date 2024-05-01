@@ -16,6 +16,9 @@ jobs:
           - php: '8.3'
             symfony-version: 7.0.*
             stability: prefer-stable
+          - php: '8.4'
+            symfony-version: 7.0.*
+            stability: prefer-stable
 
     name: PHP ${{ matrix.php }} - ${{ matrix.symfony-version }} - ${{ matrix.stability }}
     steps:
@@ -42,9 +45,15 @@ jobs:
           composer global require --no-progress --no-scripts --no-plugins symfony/flex
           composer config minimum-stability ${{ matrix.minimum-stability }}
           composer update --no-interaction --prefer-dist
-          vendor/bin/simple-phpunit install
 
       - name: Execute tests
         env:
           SYMFONY_DEPRECATIONS_HELPER: weak
         run: vendor/bin/phpunit
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODE_COV_TOKEN }}
+          files: ./build/coverage.xml
+          verbose: true
