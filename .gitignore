@@ -1,7 +1,9 @@
-/build/
 /vendor/
-.DS_Store
-.php_cs.cache
-.phpunit.result.cache
 composer.lock
-.phpunit.cache
+
+# phpunit
+/build/
+.phpunit.result.cache
+
+# php-cs-fixer
+.php-cs-fixer.cache

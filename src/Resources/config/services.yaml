@@ -1,0 +1,10 @@
+services:
+    CalendarBundle\Serializer\Serializer:
+        public: false
+
+    CalendarBundle\Controller\CalendarController:
+        public: true
+        autowire: true
+        arguments:
+            $eventDispatcher: '@event_dispatcher'
+            $serializer: '@CalendarBundle\Serializer\Serializer'

@@ -4,53 +4,58 @@ declare(strict_types=1);
 
 namespace CalendarBundle\Tests\Controller;
 
-use CalendarBundle\CalendarEvents;
 use CalendarBundle\Controller\CalendarController;
 use CalendarBundle\Entity\Event;
-use CalendarBundle\Event\CalendarEvent;
+use CalendarBundle\Event\SetDataEvent;
 use CalendarBundle\Serializer\SerializerInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\Prophecy\ObjectProphecy;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
-class CalendarControllerTest extends TestCase
+final class CalendarControllerTest extends TestCase
 {
-    use ProphecyTrait;
-
-    private ObjectProphecy|CalendarEvent $calendarEvent;
-    private Event|ObjectProphecy $event;
-    private ObjectProphecy|EventDispatcherInterface $eventDispatcher;
-    private Request|ObjectProphecy $request;
-    private SerializerInterface|ObjectProphecy $serializer;
+    private Event&MockObject $event;
+    private EventDispatcherInterface&MockObject $eventDispatcher;
+    private SerializerInterface&MockObject $serializer;
+    private SetDataEvent&MockObject $calendarEvent;
+    private Request&MockObject $request;
     private CalendarController $controller;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
-        $this->calendarEvent = $this->prophesize(CalendarEvent::class);
-        $this->event = $this->prophesize(Event::class);
-        $this->eventDispatcher = $this->prophesize(EventDispatcherInterface::class);
-        $this->request = $this->prophesize(Request::class);
-        $this->serializer = $this->prophesize(SerializerInterface::class);
+        $this->calendarEvent = $this->createMock(SetDataEvent::class);
+        $this->event = $this->createMock(Event::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->request = $this->createMock(Request::class);
+        $this->serializer = $this->createMock(SerializerInterface::class);
 
         $this->controller = new CalendarController(
-            $this->eventDispatcher->reveal(),
-            $this->serializer->reveal()
+            $this->eventDispatcher,
+            $this->serializer,
         );
     }
 
     public function testItProvidesAnEventsFeedForACalendar(): void
     {
-        $this->request->get('start')->willReturn('2016-03-01');
-        $this->request->get('end')->willReturn('2016-03-19 15:11:00');
-        $this->request->get('filters', '{}')->willReturn('{}');
+        $this->request->method('get')
+            ->willReturnCallback(static fn(string $key) => match ($key) {
+                'start' => '2016-03-01',
+                'end' => '2016-03-19',
+                'filters' => '{}',
+                default => throw new \LogicException(),
+            })
+        ;
 
-        $this->calendarEvent->getEvents()->willReturn([$this->event]);
+        $this->calendarEvent->method('getEvents')
+            ->willReturn([$this->event])
+        ;
 
-        $this->eventDispatcher(Argument::type(CalendarEvent::class), CalendarEvents::SET_DATA);
+        $this->eventDispatcher->method('dispatch')
+            ->with(self::isInstanceOf(SetDataEvent::class))
+            ->willReturnReference($this->calendarEvent)
+        ;
 
         $data = json_encode([
             [
@@ -66,48 +71,51 @@ class CalendarControllerTest extends TestCase
             ],
         ]);
 
-        $this->serializer->serialize([$this->event])
+        $this->serializer->method('serialize')
+            ->with([$this->event])
             ->willReturn($data)
         ;
 
-        $response = $this->controller->loadAction($this->request->reveal());
+        $response = $this->controller->load($this->request);
 
-        $this->assertInstanceOf(Response::class, $response);
+        self::assertInstanceOf(JsonResponse::class, $response);
 
-        $this->assertEquals('application/json', $response->headers->get('Content-Type'));
-        $this->assertEquals($data, $response->getContent());
-        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        self::assertJson($response->getContent());
+        self::assertSame(JsonResponse::HTTP_OK, $response->getStatusCode());
     }
 
     public function testItNotFindAnyEvents(): void
     {
-        $this->request->get('start')->willReturn('2016-03-01');
-        $this->request->get('end')->willReturn('2016-03-19 15:11:00');
-        $this->request->get('filters', '{}')->willReturn('{}');
+        $this->request->method('get')
+            ->willReturnCallback(static fn(string $key) => match ($key) {
+                'start' => '2016-03-01',
+                'end' => '2016-03-19',
+                'filters' => '{}',
+                default => throw new \LogicException(),
+            })
+        ;
 
-        $this->calendarEvent->getEvents()->willReturn([$this->event]);
-        $this->eventDispatcher(Argument::type(CalendarEvent::class), CalendarEvents::SET_DATA);
+        $this->calendarEvent->method('getEvents')
+            ->willReturn([$this->event])
+        ;
+
+        $this->eventDispatcher->method('dispatch')
+            ->with(self::isInstanceOf(SetDataEvent::class))
+            ->willReturnReference($this->calendarEvent)
+        ;
 
         $data = '';
 
-        $this->serializer->serialize([$this->event])
+        $this->serializer->method('serialize')
+            ->with([$this->event])
             ->willReturn($data)
         ;
 
-        $response = $this->controller->loadAction($this->request->reveal());
+        $response = $this->controller->load($this->request);
 
-        $this->assertInstanceOf(Response::class, $response);
+        self::assertInstanceOf(JsonResponse::class, $response);
 
-        $this->assertEquals('application/json', $response->headers->get('Content-Type'));
-        $this->assertEquals($data, $response->getContent());
-        $this->assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
-    }
-
-    private function eventDispatcher($event, ?string $eventName = null): void
-    {
-        $this->eventDispatcher
-            ->dispatch($event, $eventName)
-            ->willReturn($this->calendarEvent)
-        ;
+        self::assertJson($response->getContent());
+        self::assertSame(JsonResponse::HTTP_NO_CONTENT, $response->getStatusCode());
     }
 }
