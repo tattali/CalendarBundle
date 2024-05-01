@@ -1,11 +1,11 @@
 CalendarBundle - FullCalendar.js integration
 ===========================================
 
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/tattali/CalendarBundle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/tattali/CalendarBundle/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/tattali/CalendarBundle/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/tattali/CalendarBundle/?branch=master)
-[![Build Status](https://travis-ci.com/tattali/CalendarBundle.svg?branch=master)](https://travis-ci.com/tattali/CalendarBundle)
-[![Total Downloads](https://poser.pugx.org/tattali/calendar-bundle/downloads)](https://packagist.org/packages/tattali/calendar-bundle)
-[![Latest Stable Version](https://poser.pugx.org/tattali/calendar-bundle/v/stable)](https://packagist.org/packages/tattali/calendar-bundle)
+[![Build Status](https://github.com/tattali/calendar-bundle/workflows/Continuous%20Integration/badge.svg)](https://github.com/tattali/calendar-bundle/actions)
+[![Code Coverage](https://codecov.io/gh/tattali/calendar-bundle/branch/master/graph/badge.svg)](https://codecov.io/gh/tattali/calendar-bundle/branch/master)
+[![Packagist Downloads](https://img.shields.io/packagist/dm/tattali/calendar-bundle)](https://packagist.org/packages/tattali/calendar-bundle)
+[![Packagist Version](https://img.shields.io/packagist/v/tattali/calendar-bundle)](https://packagist.org/packages/tattali/calendar-bundle)
+[![GitHub license](https://img.shields.io/github/license/tattali/calendar-bundle)](LICENSE)
 
 This bundle allow you to integrate [FullCalendar.js](https://fullcalendar.io/) library in your Symfony 5.4 to 7 project.
 
