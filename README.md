@@ -2,7 +2,7 @@ CalendarBundle - FullCalendar.js integration
 ===========================================
 
 [![Build Status](https://github.com/tattali/calendar-bundle/workflows/Continuous%20Integration/badge.svg)](https://github.com/tattali/calendar-bundle/actions)
-[![Code Coverage](https://codecov.io/gh/tattali/calendar-bundle/branch/master/graph/badge.svg)](https://codecov.io/gh/tattali/calendar-bundle/branch/master)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=tattali_CalendarBundle&metric=coverage)](https://sonarcloud.io/summary/new_code?id=tattali_CalendarBundle)
 [![Packagist Downloads](https://img.shields.io/packagist/dm/tattali/calendar-bundle)](https://packagist.org/packages/tattali/calendar-bundle)
 [![Packagist Version](https://img.shields.io/packagist/v/tattali/calendar-bundle)](https://packagist.org/packages/tattali/calendar-bundle)
 [![GitHub license](https://img.shields.io/github/license/tattali/calendar-bundle)](LICENSE)
