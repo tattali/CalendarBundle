@@ -1,11 +1,10 @@
 CalendarBundle - FullCalendar.js integration
 ===========================================
 
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/tattali/CalendarBundle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/tattali/CalendarBundle/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/tattali/CalendarBundle/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/tattali/CalendarBundle/?branch=master)
-[![Build Status](https://travis-ci.com/tattali/CalendarBundle.svg?branch=master)](https://travis-ci.com/tattali/CalendarBundle)
-[![Total Downloads](https://poser.pugx.org/tattali/calendar-bundle/downloads)](https://packagist.org/packages/tattali/calendar-bundle)
-[![Latest Stable Version](https://poser.pugx.org/tattali/calendar-bundle/v/stable)](https://packagist.org/packages/tattali/calendar-bundle)
+[![Build Status](https://github.com/tattali/CalendarBundle/actions/workflows/code_checks.yaml/badge.svg)](https://github.com/tattali/CalendarBundle/actions)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=tattali_CalendarBundle&metric=coverage)](https://sonarcloud.io/summary/new_code?id=tattali_CalendarBundle)
+[![Packagist Downloads](https://img.shields.io/packagist/dm/tattali/calendar-bundle)](https://packagist.org/packages/tattali/calendar-bundle)
+[![Packagist Version](https://img.shields.io/packagist/v/tattali/calendar-bundle)](https://packagist.org/packages/tattali/calendar-bundle)
 
 This bundle allow you to integrate [FullCalendar.js](https://fullcalendar.io/) library in your Symfony 5.4 to 7 project.
 
@@ -39,7 +38,7 @@ Check the existence of the file `config/routes/calendar.yaml` or create it
 ```yaml
 # config/routes/calendar.yaml
 calendar:
-    resource: "@CalendarBundle/Resources/config/routing.yaml"
+    resource: '@CalendarBundle/Resources/config/routing.yaml'
 ```
 
 #### 2. Create the subscriber
@@ -66,7 +65,7 @@ namespace App\EventSubscriber;
 
 use CalendarBundle\CalendarEvents;
 use CalendarBundle\Entity\Event;
-use CalendarBundle\Event\CalendarEvent;
+use CalendarBundle\Event\SetDataEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class CalendarSubscriber implements EventSubscriberInterface
@@ -74,26 +73,26 @@ class CalendarSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            CalendarEvents::SET_DATA => 'onCalendarSetData',
+            SetDataEvent::class => 'onCalendarSetData',
         ];
     }
 
-    public function onCalendarSetData(CalendarEvent $calendar)
+    public function onCalendarSetData(SetDataEvent $event)
     {
-        $start = $calendar->getStart();
-        $end = $calendar->getEnd();
-        $filters = $calendar->getFilters();
+        $start = $event->getStart();
+        $end = $event->getEnd();
+        $filters = $event->getFilters();
 
         // You may want to make a custom query from your database to fill the calendar
 
-        $calendar->addEvent(new Event(
+        $event->addEvent(new Event(
             'Event 1',
             new \DateTime('Tuesday this week'),
             new \DateTime('Wednesdays this week')
         ));
 
         // If the end date is null or not defined, it creates a all day event
-        $calendar->addEvent(new Event(
+        $event->addEvent(new Event(
             'All day event',
             new \DateTime('Friday this week')
         ));
@@ -115,14 +114,14 @@ Add styles and js. Click [here](https://fullcalendar.io/download) to see other c
 
 ```twig
 {% block javascripts %}
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.5/index.global.min.js" integrity="sha256-dHUNnePy81fXq4D/wfu7cPsEIP7zl6MvLb84jtZf+UY=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
 {% endblock %}
 ```
 
 ### Basic functionalities
 
 You will probably want to customize the Calendar javascript to fit the needs of your application.
-To do this, you can copy the following settings and modify them by consulting the [fullcalendar.js documentation](https://fullcalendar.io/docs). You can also look at the [options.ts](https://github.com/fullcalendar/fullcalendar/blob/master/src/core/options.ts) file as an option reference.
+To do this, you can copy the following settings and modify them by consulting the [fullcalendar.js documentation](https://fullcalendar.io/docs).
 ```js
 document.addEventListener('DOMContentLoaded', () => {
     var calendarEl = document.getElementById('calendar-holder');
@@ -132,13 +131,13 @@ document.addEventListener('DOMContentLoaded', () => {
         editable: true,
         eventSources: [
             {
-                url: "/fc-load-events",
-                method: "POST",
+                url: '/fc-load-events',
+                method: 'POST',
                 extraParams: {
                     filters: JSON.stringify({})
                 },
                 failure: () => {
-                    // alert("There was an error while fetching FullCalendar!");
+                    // alert('There was an error while fetching FullCalendar!');
                 },
             },
         ],

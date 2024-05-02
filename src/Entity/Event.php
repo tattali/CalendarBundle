@@ -4,22 +4,19 @@ declare(strict_types=1);
 
 namespace CalendarBundle\Entity;
 
-use DateTimeInterface;
-
 class Event
 {
-    public const DATE_FORMAT = 'Y-m-d\\TH:i:s.u\\Z';
-
     protected bool $allDay = true;
 
     public function __construct(
         protected string $title,
-        protected DateTimeInterface $start,
-        protected ?DateTimeInterface $end = null,
+        protected \DateTime $start,
+        protected ?\DateTime $end = null,
         protected ?string $resourceId = null,
-        protected array $options = []
+        protected array $options = [],
     ) {
-        $this->setEnd($this->end);
+        $this->setEnd($end);
+        $this->setStart($start);
     }
 
     public function getTitle(): ?string
@@ -32,24 +29,27 @@ class Event
         $this->title = $title;
     }
 
-    public function getStart(): ?DateTimeInterface
+    public function getStart(): ?\DateTime
     {
         return $this->start;
     }
 
-    public function setStart(DateTimeInterface $start): void
+    public function setStart(\DateTime $start): void
     {
+        if ($this->allDay) {
+            $start->setTime(0, 0, 0, 0);
+        }
         $this->start = $start;
     }
 
-    public function getEnd(): ?DateTimeInterface
+    public function getEnd(): ?\DateTime
     {
         return $this->end;
     }
 
-    public function setEnd(?DateTimeInterface $end): void
+    public function setEnd(?\DateTime $end): void
     {
-        if (null !== $end) {
+        if ($end) {
             $this->allDay = false;
         }
         $this->end = $end;
@@ -97,7 +97,7 @@ class Event
 
     public function removeOption(int|string $name): mixed
     {
-        if (!isset($this->options[$name]) && !\array_key_exists($name, $this->options)) {
+        if (!isset($this->options[$name])) {
             return null;
         }
 
@@ -111,24 +111,18 @@ class Event
     {
         $event = [
             'title' => $this->getTitle(),
-            'start' => $this->getStart()->format(self::DATE_FORMAT),
+            'start' => $this->getStart()->format(\DateTime::ATOM),
             'allDay' => $this->isAllDay(),
         ];
 
         if (null !== $this->getEnd()) {
-            $event['end'] = $this->getEnd()->format(self::DATE_FORMAT);
+            $event['end'] = $this->getEnd()->format(\DateTime::ATOM);
         }
 
         if (null !== $this->getResourceId()) {
             $event['resourceId'] = $this->getResourceId();
         }
 
-        $toReturn = array_merge($event, $this->getOptions());
-
-        if (isset($toReturn['allDay']) && $toReturn['allDay']) {
-            $toReturn['start'] = $this->getStart()->format('Y-m-d');
-        }
-
-        return $toReturn;
+        return [...$event, ...$this->getOptions()];
     }
 }

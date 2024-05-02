@@ -10,8 +10,6 @@ class Serializer implements SerializerInterface
 {
     /**
      * @param Event[] $events
-     *
-     * @return string json
      */
     public function serialize(array $events): string
     {
@@ -21,6 +19,6 @@ class Serializer implements SerializerInterface
             $result[] = $event->toArray();
         }
 
-        return json_encode($result);
+        return json_encode($result, \JSON_THROW_ON_ERROR);
     }
 }
