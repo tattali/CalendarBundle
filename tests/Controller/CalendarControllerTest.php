@@ -21,6 +21,7 @@ final class CalendarControllerTest extends TestCase
     private SerializerInterface&MockObject $serializer;
     private SetDataEvent&MockObject $calendarEvent;
     private Request&MockObject $request;
+
     private CalendarController $controller;
 
     protected function setUp(): void
@@ -40,7 +41,7 @@ final class CalendarControllerTest extends TestCase
     public function testItProvidesAnEventsFeedForACalendar(): void
     {
         $this->request->method('get')
-            ->willReturnCallback(static fn(string $key) => match ($key) {
+            ->willReturnCallback(static fn (string $key) => match ($key) {
                 'start' => '2016-03-01',
                 'end' => '2016-03-19',
                 'filters' => '{}',
@@ -60,7 +61,7 @@ final class CalendarControllerTest extends TestCase
         $data = json_encode([
             [
                 'title' => 'Birthday!',
-                'start' => '2016-03-01',
+                'start' => '2016-03-01T12:55:00Z',
                 'allDay' => true,
             ],
             [
@@ -87,7 +88,7 @@ final class CalendarControllerTest extends TestCase
     public function testItNotFindAnyEvents(): void
     {
         $this->request->method('get')
-            ->willReturnCallback(static fn(string $key) => match ($key) {
+            ->willReturnCallback(static fn (string $key) => match ($key) {
                 'start' => '2016-03-01',
                 'end' => '2016-03-19',
                 'filters' => '{}',
