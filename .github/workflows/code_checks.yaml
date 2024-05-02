@@ -52,6 +52,8 @@ jobs:
         run: vendor/bin/phpunit
 
       - name: SonarCloud Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         uses: SonarSource/sonarcloud-github-action@master
         with:
           args: >
