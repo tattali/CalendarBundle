@@ -55,7 +55,5 @@ jobs:
         uses: SonarSource/sonarcloud-github-action@master
         with:
           args: >
-            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION_KEY }}
-            -Dsonar.projectKey=${{ secrets.SONAR_TOKEN }}
             -Dsonar.python.coverage.reportPaths=build/coverage.xml
             -Dsonar.verbose=true
