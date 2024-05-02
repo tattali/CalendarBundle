@@ -51,9 +51,11 @@ jobs:
           SYMFONY_DEPRECATIONS_HELPER: weak
         run: vendor/bin/phpunit
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
-          token: ${{ secrets.CODE_COV_TOKEN }}
-          files: ./build/coverage.xml
-          verbose: true
+          args: >
+            -Dsonar.python.coverage.reportPaths=build/coverage.xml
+            -Dsonar.verbose=true
