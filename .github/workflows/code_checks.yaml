@@ -53,7 +53,7 @@ jobs:
       - name: Execute tests
         env:
           SYMFONY_DEPRECATIONS_HELPER: weak
-        run: vendor/bin/phpunit --coverage-clover=coverage.xml
+        run: vendor/bin/phpunit
 
       - name: SonarCloud Scan
         env:
