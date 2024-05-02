@@ -30,12 +30,10 @@ jobs:
           path: ~/.composer/cache/files
           key: dependencies-php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
 
-      # use PHP of specific version
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: pcov
-          coverage: pcov
+          coverage: xdebug
 
       - name: Install dependencies
         env:
@@ -49,11 +47,9 @@ jobs:
       - name: Execute tests
         env:
           SYMFONY_DEPRECATIONS_HELPER: weak
-        run: vendor/bin/phpunit
+        run: vendor/bin/phpunit --coverage-clover=coverage.xml
 
       - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # SonarCloud access token should be generated from https://sonarcloud.io/account/security/
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        uses: sonarsource/sonarcloud-github-action@master
