@@ -5,7 +5,6 @@ CalendarBundle - FullCalendar.js integration
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=tattali_CalendarBundle&metric=coverage)](https://sonarcloud.io/summary/new_code?id=tattali_CalendarBundle)
 [![Packagist Downloads](https://img.shields.io/packagist/dm/tattali/calendar-bundle)](https://packagist.org/packages/tattali/calendar-bundle)
 [![Packagist Version](https://img.shields.io/packagist/v/tattali/calendar-bundle)](https://packagist.org/packages/tattali/calendar-bundle)
-[![GitHub license](https://img.shields.io/github/license/tattali/calendar-bundle)](LICENSE)
 
 This bundle allow you to integrate [FullCalendar.js](https://fullcalendar.io/) library in your Symfony 5.4 to 7 project.
 
