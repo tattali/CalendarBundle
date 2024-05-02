@@ -57,7 +57,3 @@ jobs:
           # SonarCloud access token should be generated from https://sonarcloud.io/account/security/
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         uses: sonarsource/sonarcloud-github-action@master
-        with:
-          args: >
-            -Dsonar.python.coverage.reportPaths=build/coverage.xml
-            -Dsonar.verbose=true
