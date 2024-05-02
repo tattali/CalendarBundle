@@ -50,6 +50,4 @@ jobs:
         run: vendor/bin/phpunit --coverage-clover=coverage.xml
 
       - name: SonarCloud Scan
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         uses: SonarSource/sonarcloud-github-action@v2
