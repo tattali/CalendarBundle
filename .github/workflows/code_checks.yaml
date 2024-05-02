@@ -1,6 +1,11 @@
 name: Code_Checks
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 jobs:
   tests:
@@ -52,5 +57,6 @@ jobs:
 
       - name: SonarCloud Scan
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        uses: SonarSource/sonarcloud-github-action@v2
+        uses: sonarsource/sonarcloud-github-action@v2
