@@ -4,6 +4,7 @@ on: [push, pull_request]
 
 jobs:
   tests:
+    environment: main
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -50,4 +51,6 @@ jobs:
         run: vendor/bin/phpunit --coverage-clover=coverage.xml
 
       - name: SonarCloud Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         uses: SonarSource/sonarcloud-github-action@v2
