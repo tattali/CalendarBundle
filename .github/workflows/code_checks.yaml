@@ -49,7 +49,7 @@ jobs:
           SYMFONY_DEPRECATIONS_HELPER: weak
         run: vendor/bin/phpunit --coverage-clover=coverage.xml
 
-      - name: SonarCloud Sca
-        uses: SonarSource/sonarcloud-github-action@master
+      - name: SonarCloud Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        uses: SonarSource/sonarcloud-github-action@master
