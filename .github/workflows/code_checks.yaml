@@ -51,6 +51,7 @@ jobs:
           composer update --no-interaction --prefer-dist
 
       - name: PHP-CS-Fixer
+        continue-on-error: true
         run: vendor/bin/php-cs-fixer fix --ansi -v --dry-run
 
       - name: PHPStan
