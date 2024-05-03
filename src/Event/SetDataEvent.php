@@ -18,6 +18,9 @@ class SetDataEvent
      */
     private array $events;
 
+    /**
+     * @param mixed[] $filters
+     */
     public function __construct(
         private readonly \DateTime $start,
         private readonly \DateTime $end,
@@ -36,6 +39,9 @@ class SetDataEvent
         return $this->end;
     }
 
+    /**
+     * @return mixed[]
+     */
     public function getFilters(): array
     {
         return $this->filters;

@@ -29,7 +29,8 @@
         "symfony/dotenv": "^7.0",
         "symfony/phpunit-bridge": "^7.0",
         "symfony/yaml": "^7.0",
-        "friendsofphp/php-cs-fixer": "^3.54"
+        "friendsofphp/php-cs-fixer": "^3.54",
+        "phpstan/phpstan": "^1.10"
     },
     "suggest": {
         "symfony/orm-pack": "To support Doctrine ORM and Migration.",

@@ -50,6 +50,12 @@ jobs:
           composer config minimum-stability ${{ matrix.minimum-stability }}
           composer update --no-interaction --prefer-dist
 
+      - name: PHP-CS-Fixer
+        run: vendor/bin/php-cs-fixer fix --ansi -v --dry-run
+
+      - name: PHPStan
+        run: vendor/bin/phpstan analyse src tests --level 9
+
       - name: Execute tests
         env:
           SYMFONY_DEPRECATIONS_HELPER: weak

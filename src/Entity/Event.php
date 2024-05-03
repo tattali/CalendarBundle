@@ -8,6 +8,9 @@ class Event
 {
     protected bool $allDay = true;
 
+    /**
+     * @param mixed[] $options
+     */
     public function __construct(
         protected string $title,
         protected \DateTime $start,
@@ -75,27 +78,33 @@ class Event
         $this->resourceId = $resourceId;
     }
 
+    /**
+     * @return mixed[]
+     */
     public function getOptions(): array
     {
         return $this->options;
     }
 
+    /**
+     * @param mixed[] $options
+     */
     public function setOptions(array $options): void
     {
         $this->options = $options;
     }
 
-    public function getOption(int|string $name)
+    public function getOption(string $name): mixed
     {
         return $this->options[$name];
     }
 
-    public function addOption(int|string $name, $value): void
+    public function addOption(string $name, mixed $value): void
     {
         $this->options[$name] = $value;
     }
 
-    public function removeOption(int|string $name): mixed
+    public function removeOption(string $name): mixed
     {
         if (!isset($this->options[$name])) {
             return null;
@@ -107,19 +116,22 @@ class Event
         return $removed;
     }
 
+    /**
+     * @return mixed[]
+     */
     public function toArray(): array
     {
         $event = [
             'title' => $this->getTitle(),
-            'start' => $this->getStart()->format(\DateTime::ATOM),
+            'start' => $this->getStart()?->format(\DateTime::ATOM),
             'allDay' => $this->isAllDay(),
         ];
 
-        if (null !== $this->getEnd()) {
+        if ($this->getEnd()) {
             $event['end'] = $this->getEnd()->format(\DateTime::ATOM);
         }
 
-        if (null !== $this->getResourceId()) {
+        if ($this->getResourceId()) {
             $event['resourceId'] = $this->getResourceId();
         }
 
