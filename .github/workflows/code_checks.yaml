@@ -52,11 +52,11 @@ jobs:
           composer update --no-interaction --prefer-dist
 
       - name: PHP-CS-Fixer
-        if: ${{ matrix.is-current }}
+        continue-on-error: ${{ !matrix.is-current }}
         run: vendor/bin/php-cs-fixer fix --ansi -v --dry-run
 
       - name: PHPStan
-        if: ${{ matrix.is-current }}
+        continue-on-error: ${{ !matrix.is-current }}
         run: vendor/bin/phpstan analyse src tests --level 9
 
       - name: Execute tests
