@@ -18,6 +18,7 @@ jobs:
         stability: [prefer-stable]
         minimum-stability: [stable]
         symfony-version: [7.0.*]
+        is-current: [true]
         include:
           - php: '8.3'
             symfony-version: 7.0.*
@@ -34,7 +35,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.composer/cache/files
-          key: dependencies-php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
+          key: composer-packages-${{ hashFiles('composer.lock') }}
 
       - uses: shivammathur/setup-php@v2
         with:
@@ -51,10 +52,11 @@ jobs:
           composer update --no-interaction --prefer-dist
 
       - name: PHP-CS-Fixer
-        continue-on-error: true
+        if: ${{ matrix.is-current }}
         run: vendor/bin/php-cs-fixer fix --ansi -v --dry-run
 
       - name: PHPStan
+        if: ${{ matrix.is-current }}
         run: vendor/bin/phpstan analyse src tests --level 9
 
       - name: Execute tests
