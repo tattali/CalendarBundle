@@ -12,6 +12,10 @@ final class CalendarExtensionTest extends TestCase
 {
     private ContainerBuilder $builder;
     private CalendarExtension $loader;
+
+    /**
+     * @var array<array<mixed>>
+     */
     private array $configuration;
 
     protected function setUp(): void

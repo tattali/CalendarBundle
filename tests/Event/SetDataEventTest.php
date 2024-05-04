@@ -13,11 +13,10 @@ final class SetDataEventTest extends TestCase
 {
     private \DateTime $start;
     private \DateTime $end;
+    /** @var mixed[] */
     private array $filters;
-    /** @var Event&MockObject */
-    private $eventEntity;
-    /** @var Event&MockObject */
-    private $eventEntity2;
+    private Event&MockObject $eventEntity;
+    private Event&MockObject $eventEntity2;
     private SetDataEvent $event;
 
     protected function setUp(): void

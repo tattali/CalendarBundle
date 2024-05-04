@@ -6,12 +6,13 @@ namespace CalendarBundle\Tests\Serializer;
 
 use CalendarBundle\Entity\Event;
 use CalendarBundle\Serializer\Serializer;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 final class SerializerTest extends TestCase
 {
-    private $eventEntity1;
-    private $eventEntity2;
+    private Event&MockObject $eventEntity1;
+    private Event&MockObject $eventEntity2;
     private Serializer $serializer;
 
     protected function setUp(): void

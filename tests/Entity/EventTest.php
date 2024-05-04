@@ -13,6 +13,7 @@ final class EventTest extends TestCase
     private \DateTime $start;
     private \DateTime $end;
     private string $resourceId;
+    /** @var mixed[] */
     private array $options;
     private Event $entity;
 
@@ -63,7 +64,7 @@ final class EventTest extends TestCase
         $this->entity->setOptions($options);
         self::assertSame($options, $this->entity->getOptions());
 
-        self::assertSame($optionValue, $this->entity->getOption($optionName, $optionValue));
+        self::assertSame($optionValue, $this->entity->getOption($optionName));
 
         self::assertSame(
             [

@@ -13,6 +13,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 final class CalendarControllerTest extends TestCase
 {
@@ -41,7 +42,7 @@ final class CalendarControllerTest extends TestCase
     public function testItProvidesAnEventsFeedForACalendar(): void
     {
         $this->request->method('get')
-            ->willReturnCallback(static fn (string $key) => match ($key) {
+            ->willReturnCallback(static fn(string $key) => match ($key) {
                 'start' => '2016-03-01',
                 'end' => '2016-03-19',
                 'filters' => '{}',
@@ -81,14 +82,14 @@ final class CalendarControllerTest extends TestCase
 
         self::assertInstanceOf(JsonResponse::class, $response);
 
-        self::assertJson($response->getContent());
+        self::assertJson((string) $response->getContent());
         self::assertSame(JsonResponse::HTTP_OK, $response->getStatusCode());
     }
 
     public function testItNotFindAnyEvents(): void
     {
         $this->request->method('get')
-            ->willReturnCallback(static fn (string $key) => match ($key) {
+            ->willReturnCallback(static fn(string $key) => match ($key) {
                 'start' => '2016-03-01',
                 'end' => '2016-03-19',
                 'filters' => '{}',
@@ -116,7 +117,37 @@ final class CalendarControllerTest extends TestCase
 
         self::assertInstanceOf(JsonResponse::class, $response);
 
-        self::assertJson($response->getContent());
+        self::assertJson((string) $response->getContent());
         self::assertSame(JsonResponse::HTTP_NO_CONTENT, $response->getStatusCode());
+    }
+
+    public function testItShouldThrowErrorOnStartParam(): void
+    {
+        $this->expectException(BadRequestHttpException::class);
+
+        $this->request->method('get')
+            ->willReturnCallback(static fn(string $key) => match ($key) {
+                'start' => '',
+                'end' => '',
+                default => throw new \LogicException(),
+            })
+        ;
+
+        $this->controller->load($this->request);
+    }
+
+    public function testItShouldThrowErrorOnEndParam(): void
+    {
+        $this->expectException(BadRequestHttpException::class);
+
+        $this->request->method('get')
+            ->willReturnCallback(static fn(string $key) => match ($key) {
+                'start' => '2016-03-01',
+                'end' => '',
+                default => throw new \LogicException(),
+            })
+        ;
+
+        $this->controller->load($this->request);
     }
 }
