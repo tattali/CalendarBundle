@@ -27,14 +27,14 @@ class CalendarController extends AbstractController
             if ($start && \is_string($start)) {
                 $start = new \DateTime($start);
             } else {
-                throw new \Exception('Query parameter "start" should be a string');
+                throw new \UnexpectedValueException('Query parameter "start" should be a string');
             }
 
             $end = $request->get('end');
             if ($end && \is_string($end)) {
                 $end = new \DateTime($end);
             } else {
-                throw new \Exception('Query parameter "end" should be a string');
+                throw new \UnexpectedValueException('Query parameter "end" should be a string');
             }
 
             $filters = $request->get('filters', '{}');
@@ -45,9 +45,9 @@ class CalendarController extends AbstractController
             };
 
             if (!\is_array($filters)) {
-                throw new \Exception('Query parameter "filters" is not valid');
+                throw new \UnexpectedValueException('Query parameter "filters" is not valid');
             }
-        } catch (\Exception $e) {
+        } catch (\UnexpectedValueException $e) {
             throw new BadRequestHttpException($e->getMessage(), $e);
         }
 
