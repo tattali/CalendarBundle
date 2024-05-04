@@ -18,19 +18,22 @@ class CalendarController extends AbstractController
     public function __construct(
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly SerializerInterface $serializer,
-    ) {}
+    ) {
+    }
 
     public function load(Request $request): JsonResponse
     {
         try {
-            if (\is_string($request->get('start'))) {
-                $start = new \DateTime($request->get('start'));
+            $start = $request->get('start');
+            if ($start && \is_string($start)) {
+                $start = new \DateTime($start);
             } else {
                 throw new \Exception('Query parameter "start" should be a string');
             }
 
-            if (\is_string($request->get('end'))) {
-                $end = new \DateTime($request->get('end'));
+            $end = $request->get('end');
+            if ($end && \is_string($end)) {
+                $end = new \DateTime($end);
             } else {
                 throw new \Exception('Query parameter "end" should be a string');
             }
