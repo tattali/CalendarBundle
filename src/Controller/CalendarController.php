@@ -18,8 +18,7 @@ class CalendarController extends AbstractController
     public function __construct(
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly SerializerInterface $serializer,
-    ) {
-    }
+    ) {}
 
     public function load(Request $request): JsonResponse
     {

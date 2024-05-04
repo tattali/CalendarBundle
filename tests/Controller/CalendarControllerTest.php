@@ -42,7 +42,7 @@ final class CalendarControllerTest extends TestCase
     public function testItProvidesAnEventsFeedForACalendar(): void
     {
         $this->request->method('get')
-            ->willReturnCallback(static fn (string $key) => match ($key) {
+            ->willReturnCallback(static fn(string $key) => match ($key) {
                 'start' => '2016-03-01',
                 'end' => '2016-03-19',
                 'filters' => '{}',
@@ -89,7 +89,7 @@ final class CalendarControllerTest extends TestCase
     public function testItNotFindAnyEvents(): void
     {
         $this->request->method('get')
-            ->willReturnCallback(static fn (string $key) => match ($key) {
+            ->willReturnCallback(static fn(string $key) => match ($key) {
                 'start' => '2016-03-01',
                 'end' => '2016-03-19',
                 'filters' => '{}',
@@ -126,7 +126,7 @@ final class CalendarControllerTest extends TestCase
         $this->expectException(BadRequestHttpException::class);
 
         $this->request->method('get')
-            ->willReturnCallback(static fn (string $key) => match ($key) {
+            ->willReturnCallback(static fn(string $key) => match ($key) {
                 'start' => '',
                 'end' => '',
                 default => throw new \LogicException(),
@@ -141,7 +141,7 @@ final class CalendarControllerTest extends TestCase
         $this->expectException(BadRequestHttpException::class);
 
         $this->request->method('get')
-            ->willReturnCallback(static fn (string $key) => match ($key) {
+            ->willReturnCallback(static fn(string $key) => match ($key) {
                 'start' => '2016-03-01',
                 'end' => '',
                 default => throw new \LogicException(),
