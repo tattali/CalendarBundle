@@ -63,7 +63,6 @@ See the [doctrine subscriber example](src/Resources/doc/doctrine-crud.md#full-su
 
 namespace App\EventSubscriber;
 
-use CalendarBundle\CalendarEvents;
 use CalendarBundle\Entity\Event;
 use CalendarBundle\Event\SetDataEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -77,22 +76,22 @@ class CalendarSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function onCalendarSetData(SetDataEvent $event)
+    public function onCalendarSetData(SetDataEvent $setDataEvent)
     {
-        $start = $event->getStart();
-        $end = $event->getEnd();
-        $filters = $event->getFilters();
+        $start = $setDataEvent->getStart();
+        $end = $setDataEvent->getEnd();
+        $filters = $setDataEvent->getFilters();
 
         // You may want to make a custom query from your database to fill the calendar
 
-        $event->addEvent(new Event(
+        $setDataEvent->addEvent(new Event(
             'Event 1',
             new \DateTime('Tuesday this week'),
             new \DateTime('Wednesdays this week')
         ));
 
         // If the end date is null or not defined, it creates a all day event
-        $event->addEvent(new Event(
+        $setDataEvent->addEvent(new Event(
             'All day event',
             new \DateTime('Friday this week')
         ));
@@ -124,9 +123,9 @@ You will probably want to customize the Calendar javascript to fit the needs of 
 To do this, you can copy the following settings and modify them by consulting the [fullcalendar.js documentation](https://fullcalendar.io/docs).
 ```js
 document.addEventListener('DOMContentLoaded', () => {
-    var calendarEl = document.getElementById('calendar-holder');
+    const calendarEl = document.getElementById('calendar-holder');
 
-    var calendar = new FullCalendar.Calendar(calendarEl, {
+    const calendar = new FullCalendar.Calendar(calendarEl, {
         defaultView: 'dayGridMonth',
         editable: true,
         eventSources: [
@@ -148,6 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         timeZone: 'UTC',
     });
+
     calendar.render();
 });
 ```
