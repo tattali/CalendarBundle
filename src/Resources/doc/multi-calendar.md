@@ -30,8 +30,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class CalendarSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private BookingRepository $bookingRepository,
-        private UrlGeneratorInterface $router
+        private readonly BookingRepository $bookingRepository,
+        private readonly UrlGeneratorInterface $router
     ) {}
 
     public static function getSubscribedEvents()
@@ -41,19 +41,19 @@ class CalendarSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function onCalendarSetData(SetDataEvent $event): void
+    public function onCalendarSetData(SetDataEvent $event)
     {
-        $start = $event->getStart();
-        $end = $event->getEnd();
-        $filters = $event->getFilters();
+        $start = $setDataEvent->getStart();
+        $end = $setDataEvent->getEnd();
+        $filters = $setDataEvent->getFilters();
 
         match ($filters['calendar-id']) {
-            'booking-calendar' => $this->fillCalendarWithBookings($event, $start, $end, $filters),
-            'other-calendar' => $this->fillCalendarWithOthers($event, $start, $end, $filters),
+            'booking-calendar' => $this->fillCalendarWithBookings($setDataEvent, $start, $end, $filters),
+            'other-calendar' => $this->fillCalendarWithOthers($setDataEvent, $start, $end, $filters),
         }
     }
 
-    public function fillCalendarWithBookings(SetDataEvent $event, \DateTime $start, \DateTime $end, array $filters)
+    public function fillCalendarWithBookings(SetDataEvent $setDataEvent, \DateTime $start, \DateTime $end, array $filters)
     {
         // Modify the query to fit to your entity and needs
         // Change booking.beginAt by your start date property
@@ -79,7 +79,6 @@ class CalendarSubscriber implements EventSubscriberInterface
              *
              * For more information see: https://fullcalendar.io/docs/event-object
              */
-
             $bookingEvent->setOptions([
                 'backgroundColor' => 'red',
                 'borderColor' => 'red',
@@ -92,7 +91,7 @@ class CalendarSubscriber implements EventSubscriberInterface
             );
 
             // finally, add the event to the SetDataEvent to fill the calendar
-            $event->addEvent($bookingEvent);
+            $setDataEvent->addEvent($bookingEvent);
         }
     }
 }

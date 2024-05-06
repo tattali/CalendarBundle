@@ -18,20 +18,20 @@ Your calendar template should look like that
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <a href="{{ path('app_booking_new') }}">Create new booking</a>
+  <a href="{{ path('app_booking_new') }}">Create new booking</a>
 
-    <div
-        id="calendar-holder"
-        data-events-url="{{ path('fc_load_events') }}"
-    ></div>
+  <div
+    id="calendar-holder"
+    data-events-url="{{ path('fc_load_events') }}"
+  ></div>
 {% endblock %}
 
 {% block stylesheets %}
-    {{ encore_entry_link_tags('calendar') }}
+  {{ encore_entry_link_tags('calendar') }}
 {% endblock %}
 
 {% block javascripts %}
-    {{ encore_entry_script_tags('calendar') }}
+  {{ encore_entry_script_tags('calendar') }}
 {% endblock %}
 ```
 
@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const { eventsUrl } = calendarEl.dataset;
 
   const calendar = new Calendar(calendarEl, {
+    initialView: 'dayGridMonth',
     editable: true,
     eventSources: [
       {
@@ -78,12 +79,10 @@ document.addEventListener('DOMContentLoaded', () => {
     headerToolbar: {
       left: 'prev,next today',
       center: 'title',
-      right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+      right: 'dayGridMonth,timeGridWeek,timeGridDay',
     },
-    initialView: 'dayGridMonth',
-    navLinks: true, // can click day/week names to navigate views
-    plugins: [ interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin ],
     timeZone: 'UTC',
+    plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin],
   });
 
   calendar.render();

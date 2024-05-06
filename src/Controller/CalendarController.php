@@ -55,7 +55,7 @@ class CalendarController extends AbstractController
 
         $content = $this->serializer->serialize($setDataEvent->getEvents());
 
-        return new JsonResponse(
+        return JsonResponse::fromJsonString(
             $content,
             empty($content) ? Response::HTTP_NO_CONTENT : Response::HTTP_OK,
         );
