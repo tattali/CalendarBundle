@@ -18,20 +18,20 @@ Your calendar template should look like that
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <a href="{{ path('app_booking_new') }}">Create new booking</a>
+  <a href="{{ path('app_booking_new') }}">Create new booking</a>
 
-    <div
-        id="calendar-holder"
-        data-events-url="{{ path('fc_load_events') }}"
-    ></div>
+  <div
+    id="calendar-holder"
+    data-events-url="{{ path('fc_load_events') }}"
+  ></div>
 {% endblock %}
 
 {% block stylesheets %}
-    {{ encore_entry_link_tags('calendar') }}
+  {{ encore_entry_link_tags('calendar') }}
 {% endblock %}
 
 {% block javascripts %}
-    {{ encore_entry_script_tags('calendar') }}
+  {{ encore_entry_script_tags('calendar') }}
 {% endblock %}
 ```
 
