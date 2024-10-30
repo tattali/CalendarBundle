@@ -236,30 +236,37 @@ Full subscriber with `Booking` entity. Modify it to fit your needs.
 namespace App\EventSubscriber;
 
 use App\Repository\BookingRepository;
+use CalendarBundle\CalendarEvents;
 use CalendarBundle\Entity\Event;
-use CalendarBundle\Event\SetDataEvent;
+use CalendarBundle\Event\CalendarEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CalendarSubscriber implements EventSubscriberInterface
 {
+    private $bookingRepository;
+    private $router;
+
     public function __construct(
-        private readonly BookingRepository $bookingRepository,
-        private readonly UrlGeneratorInterface $router
-    ) {}
+        BookingRepository $bookingRepository,
+        UrlGeneratorInterface $router
+    ) {
+        $this->bookingRepository = $bookingRepository;
+        $this->router = $router;
+    }
 
     public static function getSubscribedEvents()
     {
         return [
-            SetDataEvent::class => 'onCalendarSetData',
+            CalendarEvents::SET_DATA => 'onCalendarSetData',
         ];
     }
 
-    public function onCalendarSetData(SetDataEvent $setDataEvent)
+    public function onCalendarSetData(CalendarEvent $calendar)
     {
-        $start = $setDataEvent->getStart();
-        $end = $setDataEvent->getEnd();
-        $filters = $setDataEvent->getFilters();
+        $start = $calendar->getStart();
+        $end = $calendar->getEnd();
+        $filters = $calendar->getFilters();
 
         // Modify the query to fit to your entity and needs
         // Change booking.beginAt by your start date property
@@ -284,7 +291,9 @@ class CalendarSubscriber implements EventSubscriberInterface
              * Add custom options to events
              *
              * For more information see: https://fullcalendar.io/docs/event-object
+             * and: https://github.com/fullcalendar/fullcalendar/blob/master/src/core/options.ts
              */
+
             $bookingEvent->setOptions([
                 'backgroundColor' => 'red',
                 'borderColor' => 'red',
@@ -297,7 +306,7 @@ class CalendarSubscriber implements EventSubscriberInterface
             );
 
             // finally, add the event to the CalendarEvent to fill the calendar
-            $setDataEvent->addEvent($bookingEvent);
+            $calendar->addEvent($bookingEvent);
         }
     }
 }
