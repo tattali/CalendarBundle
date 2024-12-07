@@ -41,7 +41,7 @@ class CalendarSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function onCalendarSetData(SetDataEvent $event)
+    public function onCalendarSetData(SetDataEvent $setDataEvent)
     {
         $start = $setDataEvent->getStart();
         $end = $setDataEvent->getEnd();
