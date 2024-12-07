@@ -17,20 +17,22 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 final class CalendarControllerTest extends TestCase
 {
-    private Event&MockObject $event;
-    private EventDispatcherInterface&MockObject $eventDispatcher;
-    private SerializerInterface&MockObject $serializer;
-    private SetDataEvent&MockObject $calendarEvent;
-    private Request&MockObject $request;
+    private MockObject&Request $request;
+    private MockObject&SetDataEvent $calendarEvent;
+    private MockObject&Event $event;
+
+    private MockObject&EventDispatcherInterface $eventDispatcher;
+    private MockObject&SerializerInterface $serializer;
 
     private CalendarController $controller;
 
     protected function setUp(): void
     {
+        $this->request = $this->createMock(Request::class);
         $this->calendarEvent = $this->createMock(SetDataEvent::class);
         $this->event = $this->createMock(Event::class);
+
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
-        $this->request = $this->createMock(Request::class);
         $this->serializer = $this->createMock(SerializerInterface::class);
 
         $this->controller = new CalendarController(
@@ -56,7 +58,7 @@ final class CalendarControllerTest extends TestCase
 
         $this->eventDispatcher->method('dispatch')
             ->with(self::isInstanceOf(SetDataEvent::class))
-            ->willReturnReference($this->calendarEvent)
+            ->willReturn($this->calendarEvent)
         ;
 
         $data = json_encode([
@@ -103,7 +105,7 @@ final class CalendarControllerTest extends TestCase
 
         $this->eventDispatcher->method('dispatch')
             ->with(self::isInstanceOf(SetDataEvent::class))
-            ->willReturnReference($this->calendarEvent)
+            ->willReturn($this->calendarEvent)
         ;
 
         $data = '';
