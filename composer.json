@@ -25,12 +25,12 @@
         "symfony/framework-bundle": "^7.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^11.0",
+        "phpunit/phpunit": "^11.2",
         "symfony/dotenv": "^7.0",
         "symfony/phpunit-bridge": "^7.0",
         "symfony/yaml": "^7.0",
-        "friendsofphp/php-cs-fixer": "^3.54",
-        "phpstan/phpstan": "^1.10"
+        "friendsofphp/php-cs-fixer": "^3.65",
+        "phpstan/phpstan": "^2.0"
     },
     "suggest": {
         "symfony/orm-pack": "To support Doctrine ORM and Migration.",
