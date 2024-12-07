@@ -1,7 +1,7 @@
 {
     "name": "tattali/calendar-bundle",
     "type": "symfony-bundle",
-    "description": "Provides event calendar for your Symfony 5+ project. Compatible with API like Google Calendar.",
+    "description": "Provides event calendar for your Symfony 7+ project. Compatible with API like Google Calendar.",
     "keywords": [
         "fullcalendar",
         "calendar",
