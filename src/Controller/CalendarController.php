@@ -6,14 +6,13 @@ namespace CalendarBundle\Controller;
 
 use CalendarBundle\Event\SetDataEvent;
 use CalendarBundle\Serializer\SerializerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class CalendarController extends AbstractController
+class CalendarController
 {
     public function __construct(
         private readonly EventDispatcherInterface $eventDispatcher,
