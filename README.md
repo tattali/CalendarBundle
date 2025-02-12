@@ -64,7 +64,7 @@ See the [doctrine subscriber example](src/Resources/doc/doctrine-crud.md#full-su
 namespace App\EventSubscriber;
 
 use CalendarBundle\Entity\Event;
-use CalendarBundle\Event\SetDataEvent;
+use CalendarBundle\Event\CalendarEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class CalendarSubscriber implements EventSubscriberInterface
@@ -72,11 +72,11 @@ class CalendarSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            SetDataEvent::class => 'onCalendarSetData',
+            CalendarEvent::class => 'onCalendarSetData',
         ];
     }
 
-    public function onCalendarSetData(SetDataEvent $setDataEvent)
+    public function onCalendarSetData(CalendarEvent $setDataEvent)
     {
         $start = $setDataEvent->getStart();
         $end = $setDataEvent->getEnd();
