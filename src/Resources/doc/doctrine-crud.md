@@ -147,7 +147,7 @@ And also the according `templates` and `form` (You may need to install additiona
 php bin/console make:crud Booking
 ```
 
-Edit the `BookingController` by adding a `calendar()` action to display the calendar
+Edit the `BookingController` by adding a `calendar()` action to display the calendar (must be placed before `show()` to be resolved correctly)
 ```php
 // src/Controller/BookingController.php
 <?php
