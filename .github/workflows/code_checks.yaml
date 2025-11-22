@@ -18,7 +18,7 @@ jobs:
         stability: [prefer-stable]
         minimum-stability: [stable]
         symfony-version: [7.0.*]
-        is-current: [true]
+        is-current: [false]
         include:
           - php: '8.3'
             symfony-version: 7.0.*
@@ -30,6 +30,7 @@ jobs:
             symfony-version: 7.4.*
             stability: prefer-stable
             minimum-stability: dev
+            is-current: true
 
     name: PHP ${{ matrix.php }} - ${{ matrix.symfony-version }} - ${{ matrix.stability }}
     steps:
