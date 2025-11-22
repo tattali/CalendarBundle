@@ -22,8 +22,8 @@ class CalendarController
     public function load(Request $request): JsonResponse
     {
         try {
-            $start = $request->query->get('start');
-            if ($start && \is_string($start)) {
+            $start = $request->query->getString('start');
+            if ($start) {
                 try {
                     $start = new \DateTime($start);
                 } catch (\DateMalformedStringException $e) {
@@ -33,8 +33,8 @@ class CalendarController
                 throw new \UnexpectedValueException('Query parameter "start" should be a string');
             }
 
-            $end = $request->query->get('end');
-            if ($end && \is_string($end)) {
+            $end = $request->query->getString('end');
+            if ($end) {
                 try {
                     $end = new \DateTime($end);
                 } catch (\DateMalformedStringException $e) {
@@ -46,6 +46,9 @@ class CalendarController
 
             try {
                 $filters = $request->query->getString('filters', '{}');
+                /**
+                 * @var mixed[]
+                 */
                 $filters = json_decode($filters, true, flags: \JSON_THROW_ON_ERROR);
             } catch (\JsonException $e) {
                 throw new \UnexpectedValueException('Query parameter "filters" is not a valid JSON', previous: $e);
