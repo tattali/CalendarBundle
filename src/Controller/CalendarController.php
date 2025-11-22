@@ -24,27 +24,31 @@ class CalendarController
         try {
             $start = $request->query->get('start');
             if ($start && \is_string($start)) {
-                $start = new \DateTime($start);
+                try {
+                    $start = new \DateTime($start);
+                } catch (\DateMalformedStringException $e) {
+                    throw new \UnexpectedValueException('Query parameter "start" is not a valid date', previous: $e);
+                }
             } else {
                 throw new \UnexpectedValueException('Query parameter "start" should be a string');
             }
 
             $end = $request->query->get('end');
             if ($end && \is_string($end)) {
-                $end = new \DateTime($end);
+                try {
+                    $end = new \DateTime($end);
+                } catch (\DateMalformedStringException $e) {
+                    throw new \UnexpectedValueException('Query parameter "end" is not a valid date', previous: $e);
+                }
             } else {
                 throw new \UnexpectedValueException('Query parameter "end" should be a string');
             }
 
-            $filters = $request->query->get('filters', '{}');
-            $filters = match (true) {
-                \is_array($filters) => $filters,
-                \is_string($filters) => json_decode($filters, true),
-                default => false,
-            };
-
-            if (!\is_array($filters)) {
-                throw new \UnexpectedValueException('Query parameter "filters" is not valid');
+            try {
+                $filters = $request->query->getString('filters', '{}');
+                $filters = json_decode($filters, true, flags: \JSON_THROW_ON_ERROR);
+            } catch (\JsonException $e) {
+                throw new \UnexpectedValueException('Query parameter "filters" is not a valid JSON', previous: $e);
             }
         } catch (\UnexpectedValueException $e) {
             throw new BadRequestHttpException($e->getMessage(), $e);
