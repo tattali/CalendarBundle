@@ -11,8 +11,8 @@ return $config
         '@Symfony:risky' => true,
 
         '@PSR1' => true,
-        '@PER-CS2.0' => true,
-        '@PER-CS2.0:risky' => true,
+        '@PER-CS2x0' => true,
+        '@PER-CS2x0:risky' => true,
 
         'php_unit_internal_class' => false,
         'php_unit_test_class_requires_covers' => false,
