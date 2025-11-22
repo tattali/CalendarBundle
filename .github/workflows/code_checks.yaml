@@ -49,7 +49,7 @@ jobs:
           composer global config --no-plugins allow-plugins.symfony/flex true
           composer global require --no-progress --no-scripts --no-plugins symfony/flex
           composer config minimum-stability ${{ matrix.minimum-stability }}
-          composer update --no-interaction --prefer-dist
+          composer update --no-interaction --prefer-dist --no-security-blocking
 
       - name: PHP-CS-Fixer
         continue-on-error: ${{ !matrix.is-current }}
