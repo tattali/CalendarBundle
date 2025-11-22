@@ -14,11 +14,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['8.2']
+        php: [8.2]
         stability: [prefer-stable]
         minimum-stability: [stable]
         symfony-version: [7.0.*]
-        is-current: [true]
+        is-current: [false]
         include:
           - php: '8.3'
             symfony-version: 7.0.*
@@ -26,6 +26,11 @@ jobs:
           - php: '8.4'
             symfony-version: 7.0.*
             stability: prefer-stable
+          - php: '8.4'
+            symfony-version: 7.4.*
+            stability: prefer-stable
+            minimum-stability: dev
+            is-current: true
 
     name: PHP ${{ matrix.php }} - ${{ matrix.symfony-version }} - ${{ matrix.stability }}
     steps:
@@ -49,7 +54,7 @@ jobs:
           composer global config --no-plugins allow-plugins.symfony/flex true
           composer global require --no-progress --no-scripts --no-plugins symfony/flex
           composer config minimum-stability ${{ matrix.minimum-stability }}
-          composer update --no-interaction --prefer-dist
+          composer update --no-interaction --prefer-dist --no-security-blocking
 
       - name: PHP-CS-Fixer
         continue-on-error: ${{ !matrix.is-current }}
@@ -68,4 +73,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        uses: sonarsource/sonarcloud-github-action@v2
+        uses: SonarSource/sonarqube-scan-action@v6
