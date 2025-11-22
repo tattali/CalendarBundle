@@ -22,21 +22,21 @@ class CalendarController
     public function load(Request $request): JsonResponse
     {
         try {
-            $start = $request->get('start');
+            $start = $request->query->get('start');
             if ($start && \is_string($start)) {
                 $start = new \DateTime($start);
             } else {
                 throw new \UnexpectedValueException('Query parameter "start" should be a string');
             }
 
-            $end = $request->get('end');
+            $end = $request->query->get('end');
             if ($end && \is_string($end)) {
                 $end = new \DateTime($end);
             } else {
                 throw new \UnexpectedValueException('Query parameter "end" should be a string');
             }
 
-            $filters = $request->get('filters', '{}');
+            $filters = $request->query->get('filters', '{}');
             $filters = match (true) {
                 \is_array($filters) => $filters,
                 \is_string($filters) => json_decode($filters, true),
