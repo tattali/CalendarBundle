@@ -119,7 +119,6 @@ final class CalendarControllerTest extends TestCase
     {
         $this->expectException(BadRequestHttpException::class);
 
-
         $request = Request::create('/fc-load-events', parameters: [
             'start' => '',
             'end' => '',
@@ -135,6 +134,43 @@ final class CalendarControllerTest extends TestCase
         $request = Request::create('/fc-load-events', parameters: [
             'start' => '2016-03-01',
             'end' => '',
+        ]);
+
+        $this->controller->load($request);
+    }
+
+    public function testItShouldThrowErrorOnMalformedDateStartParam(): void
+    {
+        $this->expectException(BadRequestHttpException::class);
+
+        $request = Request::create('/fc-load-events', parameters: [
+            'start' => '2016-03-42',
+            'end' => '',
+        ]);
+
+        $this->controller->load($request);
+    }
+
+    public function testItShouldThrowErrorOnMalformedDateEndParam(): void
+    {
+        $this->expectException(BadRequestHttpException::class);
+
+        $request = Request::create('/fc-load-events', parameters: [
+            'start' => '2016-03-01',
+            'end' => '2016-42-19',
+        ]);
+
+        $this->controller->load($request);
+    }
+
+    public function testItShouldThrowErrorOnInvalidJsonFilterParam(): void
+    {
+        $this->expectException(BadRequestHttpException::class);
+
+        $request = Request::create('/fc-load-events', parameters: [
+            'start' => '2016-03-01',
+            'end' => '2016-03-19',
+            'filters' => "{'Hello'}",
         ]);
 
         $this->controller->load($request);
