@@ -30,12 +30,7 @@ indent_size = 4
 [phpunit.xml]
 indent_size = 2
 
-[*.yaml]
-indent_size = 4
-trim_trailing_whitespace = false
-
-[*.yml]
-indent_size = 4
+[{*.yaml,*.yml}]
 trim_trailing_whitespace = false
 
 [.gitmodules]
