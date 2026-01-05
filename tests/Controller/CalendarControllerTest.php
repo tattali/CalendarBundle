@@ -17,7 +17,6 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 final class CalendarControllerTest extends TestCase
 {
-    private MockObject&Request $request;
     private MockObject&SetDataEvent $calendarEvent;
     private MockObject&Event $event;
 
@@ -28,7 +27,6 @@ final class CalendarControllerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->request = $this->createMock(Request::class);
         $this->calendarEvent = $this->createMock(SetDataEvent::class);
         $this->event = $this->createMock(Event::class);
 
@@ -43,14 +41,11 @@ final class CalendarControllerTest extends TestCase
 
     public function testItProvidesAnEventsFeedForACalendar(): void
     {
-        $this->request->method('get')
-            ->willReturnCallback(static fn(string $key) => match ($key) {
-                'start' => '2016-03-01',
-                'end' => '2016-03-19',
-                'filters' => '{}',
-                default => throw new \LogicException(),
-            })
-        ;
+        $request = Request::create('/fc-load-events', parameters: [
+            'start' => '2016-03-01',
+            'end' => '2016-03-19',
+            'filters' => '{}',
+        ]);
 
         $this->calendarEvent->method('getEvents')
             ->willReturn([$this->event])
@@ -80,7 +75,7 @@ final class CalendarControllerTest extends TestCase
             ->willReturn($data)
         ;
 
-        $response = $this->controller->load($this->request);
+        $response = $this->controller->load($request);
 
         self::assertInstanceOf(JsonResponse::class, $response);
 
@@ -90,14 +85,11 @@ final class CalendarControllerTest extends TestCase
 
     public function testItNotFindAnyEvents(): void
     {
-        $this->request->method('get')
-            ->willReturnCallback(static fn(string $key) => match ($key) {
-                'start' => '2016-03-01',
-                'end' => '2016-03-19',
-                'filters' => '{}',
-                default => throw new \LogicException(),
-            })
-        ;
+        $request = Request::create('/fc-load-events', parameters: [
+            'start' => '2016-03-01',
+            'end' => '2016-03-19',
+            'filters' => '{}',
+        ]);
 
         $this->calendarEvent->method('getEvents')
             ->willReturn([$this->event])
@@ -115,7 +107,7 @@ final class CalendarControllerTest extends TestCase
             ->willReturn($data)
         ;
 
-        $response = $this->controller->load($this->request);
+        $response = $this->controller->load($request);
 
         self::assertInstanceOf(JsonResponse::class, $response);
 
@@ -127,29 +119,60 @@ final class CalendarControllerTest extends TestCase
     {
         $this->expectException(BadRequestHttpException::class);
 
-        $this->request->method('get')
-            ->willReturnCallback(static fn(string $key) => match ($key) {
-                'start' => '',
-                'end' => '',
-                default => throw new \LogicException(),
-            })
-        ;
+        $request = Request::create('/fc-load-events', parameters: [
+            'start' => '',
+            'end' => '',
+        ]);
 
-        $this->controller->load($this->request);
+        $this->controller->load($request);
     }
 
     public function testItShouldThrowErrorOnEndParam(): void
     {
         $this->expectException(BadRequestHttpException::class);
 
-        $this->request->method('get')
-            ->willReturnCallback(static fn(string $key) => match ($key) {
-                'start' => '2016-03-01',
-                'end' => '',
-                default => throw new \LogicException(),
-            })
-        ;
+        $request = Request::create('/fc-load-events', parameters: [
+            'start' => '2016-03-01',
+            'end' => '',
+        ]);
 
-        $this->controller->load($this->request);
+        $this->controller->load($request);
+    }
+
+    public function testItShouldThrowErrorOnMalformedDateStartParam(): void
+    {
+        $this->expectException(BadRequestHttpException::class);
+
+        $request = Request::create('/fc-load-events', parameters: [
+            'start' => '2016-03-42',
+            'end' => '',
+        ]);
+
+        $this->controller->load($request);
+    }
+
+    public function testItShouldThrowErrorOnMalformedDateEndParam(): void
+    {
+        $this->expectException(BadRequestHttpException::class);
+
+        $request = Request::create('/fc-load-events', parameters: [
+            'start' => '2016-03-01',
+            'end' => '2016-42-19',
+        ]);
+
+        $this->controller->load($request);
+    }
+
+    public function testItShouldThrowErrorOnInvalidJsonFilterParam(): void
+    {
+        $this->expectException(BadRequestHttpException::class);
+
+        $request = Request::create('/fc-load-events', parameters: [
+            'start' => '2016-03-01',
+            'end' => '2016-03-19',
+            'filters' => "{'Hello'}",
+        ]);
+
+        $this->controller->load($request);
     }
 }

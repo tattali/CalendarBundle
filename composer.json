@@ -18,19 +18,19 @@
         }
     ],
     "require": {
-        "php": ">=8.2",
+        "php": ">=8.4",
         "ext-json": "*",
-        "symfony/dependency-injection": "^7.0",
-        "symfony/event-dispatcher": "^7.0",
-        "symfony/framework-bundle": "^7.0"
+        "symfony/dependency-injection": "^8.0",
+        "symfony/event-dispatcher": "^8.0",
+        "symfony/framework-bundle": "^8.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^11.2",
-        "symfony/dotenv": "^7.0",
-        "symfony/phpunit-bridge": "^7.0",
-        "symfony/yaml": "^7.0",
-        "friendsofphp/php-cs-fixer": "^3.65",
-        "phpstan/phpstan": "^2.0"
+        "phpunit/phpunit": "^12.4",
+        "symfony/dotenv": "^8.0",
+        "symfony/phpunit-bridge": "^8.0",
+        "symfony/yaml": "^8.0",
+        "friendsofphp/php-cs-fixer": "^3.90",
+        "phpstan/phpstan": "^2.1"
     },
     "suggest": {
         "symfony/orm-pack": "To support Doctrine ORM and Migration.",
