@@ -7,6 +7,7 @@ namespace CalendarBundle\Tests\Controller;
 use CalendarBundle\Controller\CalendarController;
 use CalendarBundle\Entity\Event;
 use CalendarBundle\Event\SetDataEvent;
+use CalendarBundle\Request\RequestParser;
 use CalendarBundle\Serializer\SerializerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -22,6 +23,7 @@ final class CalendarControllerTest extends TestCase
 
     private MockObject&EventDispatcherInterface $eventDispatcher;
     private MockObject&SerializerInterface $serializer;
+    private RequestParser $requestParser;
 
     private CalendarController $controller;
 
@@ -32,10 +34,12 @@ final class CalendarControllerTest extends TestCase
 
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->serializer = $this->createMock(SerializerInterface::class);
+        $this->requestParser = new RequestParser();
 
         $this->controller = new CalendarController(
             $this->eventDispatcher,
             $this->serializer,
+            $this->requestParser,
         );
     }
 

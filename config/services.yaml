@@ -8,6 +8,12 @@ services:
     calendar.serializer:
         alias: CalendarBundle\Serializer\Serializer
 
+    CalendarBundle\Request\RequestParser:
+        class: CalendarBundle\Request\RequestParser
+
+    CalendarBundle\Request\RequestParserInterface:
+        alias: CalendarBundle\Request\RequestParser
+
     CalendarBundle\Controller\CalendarController:
         class: CalendarBundle\Controller\CalendarController
         public: true
@@ -15,6 +21,7 @@ services:
         arguments:
             $eventDispatcher: '@event_dispatcher'
             $serializer: '@CalendarBundle\Serializer\Serializer'
+            $requestParser: '@CalendarBundle\Request\RequestParser'
         tags:
             - controller.service_arguments
 

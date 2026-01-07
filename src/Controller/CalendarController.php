@@ -6,8 +6,7 @@ namespace CalendarBundle\Controller;
 
 use CalendarBundle\Event\SetDataEvent;
 use CalendarBundle\Exception\CalendarExceptionInterface;
-use CalendarBundle\Exception\InvalidDateException;
-use CalendarBundle\Exception\InvalidJsonException;
+use CalendarBundle\Request\RequestParserInterface;
 use CalendarBundle\Serializer\SerializerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,47 +19,20 @@ class CalendarController
     public function __construct(
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly SerializerInterface $serializer,
+        private readonly RequestParserInterface $requestParser,
     ) {}
 
     public function load(Request $request): JsonResponse
     {
         try {
-            $start = $request->query->getString('start');
-            if ($start) {
-                try {
-                    $start = new \DateTime($start);
-                } catch (\DateMalformedStringException $e) {
-                    throw InvalidDateException::forParameter('start', $e);
-                }
-            } else {
-                throw InvalidDateException::missingParameter('start');
-            }
-
-            $end = $request->query->getString('end');
-            if ($end) {
-                try {
-                    $end = new \DateTime($end);
-                } catch (\DateMalformedStringException $e) {
-                    throw InvalidDateException::forParameter('end', $e);
-                }
-            } else {
-                throw InvalidDateException::missingParameter('end');
-            }
-
-            try {
-                $filters = $request->query->getString('filters', '{}');
-                /**
-                 * @var mixed[]
-                 */
-                $filters = json_decode($filters, true, flags: \JSON_THROW_ON_ERROR);
-            } catch (\JsonException $e) {
-                throw InvalidJsonException::forParameter('filters', $e);
-            }
+            $params = $this->requestParser->parse($request);
         } catch (CalendarExceptionInterface $e) {
             throw new BadRequestHttpException($e->getMessage(), $e);
         }
 
-        $setDataEvent = $this->eventDispatcher->dispatch(new SetDataEvent($start, $end, $filters));
+        $setDataEvent = $this->eventDispatcher->dispatch(
+            new SetDataEvent($params->start, $params->end, $params->filters),
+        );
 
         $content = $this->serializer->serialize($setDataEvent->getEvents());
 
