@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace CalendarBundle\Controller;
 
 use CalendarBundle\Event\SetDataEvent;
+use CalendarBundle\Exception\CalendarExceptionInterface;
+use CalendarBundle\Exception\InvalidDateException;
+use CalendarBundle\Exception\InvalidJsonException;
 use CalendarBundle\Serializer\SerializerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -27,10 +30,10 @@ class CalendarController
                 try {
                     $start = new \DateTime($start);
                 } catch (\DateMalformedStringException $e) {
-                    throw new \UnexpectedValueException('Query parameter "start" is not a valid date', previous: $e);
+                    throw InvalidDateException::forParameter('start', $e);
                 }
             } else {
-                throw new \UnexpectedValueException('Query parameter "start" should be a string');
+                throw InvalidDateException::missingParameter('start');
             }
 
             $end = $request->query->getString('end');
@@ -38,10 +41,10 @@ class CalendarController
                 try {
                     $end = new \DateTime($end);
                 } catch (\DateMalformedStringException $e) {
-                    throw new \UnexpectedValueException('Query parameter "end" is not a valid date', previous: $e);
+                    throw InvalidDateException::forParameter('end', $e);
                 }
             } else {
-                throw new \UnexpectedValueException('Query parameter "end" should be a string');
+                throw InvalidDateException::missingParameter('end');
             }
 
             try {
@@ -51,9 +54,9 @@ class CalendarController
                  */
                 $filters = json_decode($filters, true, flags: \JSON_THROW_ON_ERROR);
             } catch (\JsonException $e) {
-                throw new \UnexpectedValueException('Query parameter "filters" is not a valid JSON', previous: $e);
+                throw InvalidJsonException::forParameter('filters', $e);
             }
-        } catch (\UnexpectedValueException $e) {
+        } catch (CalendarExceptionInterface $e) {
             throw new BadRequestHttpException($e->getMessage(), $e);
         }
 
