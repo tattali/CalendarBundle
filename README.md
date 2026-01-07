@@ -6,7 +6,7 @@ CalendarBundle - FullCalendar.js integration
 [![Packagist Downloads](https://img.shields.io/packagist/dm/tattali/calendar-bundle)](https://packagist.org/packages/tattali/calendar-bundle)
 [![Packagist Version](https://img.shields.io/packagist/v/tattali/calendar-bundle)](https://packagist.org/packages/tattali/calendar-bundle)
 
-This bundle allow you to integrate [FullCalendar.js](https://fullcalendar.io/) library in your Symfony 5.4 to 7 project.
+This bundle allow you to integrate [FullCalendar.js](https://fullcalendar.io/) library in your Symfony 5.4 to 8 project.
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/10502887/56835704-47687080-6875-11e9-9102-0533d2bbbf18.png" alt="Calendar image">
@@ -57,7 +57,7 @@ services:
 
 Then, create the subscriber class to fill the calendar
 
-See the [doctrine subscriber example](src/Resources/doc/doctrine-crud.md#full-subscriber)
+See the [doctrine subscriber example](docs/doctrine-crud.md#full-subscriber)
 
 ```php
 // src/EventSubscriber/CalendarSubscriber.php

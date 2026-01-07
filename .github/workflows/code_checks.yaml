@@ -60,7 +60,7 @@ jobs:
 
       - name: Execute tests
         env:
-          SYMFONY_DEPRECATIONS_HELPER: weak
+          SYMFONY_DEPRECATIONS_HELPER: max[direct]=0
         run: vendor/bin/phpunit
 
       - name: SonarCloud Scan
