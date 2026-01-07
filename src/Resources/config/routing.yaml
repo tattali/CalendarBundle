@@ -1,4 +1,0 @@
-fc_load_events:
-    path: /fc-load-events
-    defaults:
-        _controller: CalendarBundle\Controller\CalendarController::load

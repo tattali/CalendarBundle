@@ -1,0 +1,23 @@
+services:
+    CalendarBundle\Serializer\Serializer:
+        class: CalendarBundle\Serializer\Serializer
+
+    CalendarBundle\Serializer\SerializerInterface:
+        alias: CalendarBundle\Serializer\Serializer
+
+    calendar.serializer:
+        alias: CalendarBundle\Serializer\Serializer
+
+    CalendarBundle\Controller\CalendarController:
+        class: CalendarBundle\Controller\CalendarController
+        public: true
+        autowire: true
+        arguments:
+            $eventDispatcher: '@event_dispatcher'
+            $serializer: '@CalendarBundle\Serializer\Serializer'
+        tags:
+            - controller.service_arguments
+
+    calendar.controller:
+        alias: CalendarBundle\Controller\CalendarController
+        public: true
