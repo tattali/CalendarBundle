@@ -116,7 +116,7 @@ final class EventTest extends TestCase
 
         self::assertTrue($event->isAllDay());
         self::assertSame($originalTime, $date->format('H:i:s'), 'Original DateTime should not be mutated');
-        self::assertSame('00:00:00', $event->getStart()?->format('H:i:s'), 'Event start time should be zeroed');
+        self::assertSame('00:00:00', $event->getStart()->format('H:i:s'), 'Event start time should be zeroed');
     }
 
     public function testSetEndNullResetsAllDayToTrue(): void
@@ -143,16 +143,12 @@ final class EventTest extends TestCase
         );
 
         self::assertFalse($event->isAllDay());
-        $start = $event->getStart();
-        self::assertNotNull($start);
-        self::assertSame('14:30:00', $start->format('H:i:s'));
+        self::assertSame('14:30:00', $event->getStart()->format('H:i:s'));
 
         $event->setAllDay(true);
 
         self::assertTrue($event->isAllDay());
-        $start = $event->getStart();
-        self::assertNotNull($start);
-        self::assertSame('00:00:00', $start->format('H:i:s'));
+        self::assertSame('00:00:00', $event->getStart()->format('H:i:s'));
     }
 
     public function testFluentInterface(): void
