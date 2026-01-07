@@ -16,6 +16,7 @@ return $config
 
         'php_unit_internal_class' => false,
         'php_unit_test_class_requires_covers' => false,
+        'method_chaining_indentation' => false,
     ])
     ->setFinder(
         PhpCsFixer\Finder::create()

@@ -159,7 +159,8 @@ final class EventTest extends TestCase
             ->setTitle('Updated')
             ->setResourceId('resource-1')
             ->addOption('color', 'blue')
-            ->addOption('url', 'https://example.com');
+            ->addOption('url', 'https://example.com')
+        ;
 
         self::assertSame($event, $result);
         self::assertSame('Updated', $event->getTitle());

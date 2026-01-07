@@ -54,8 +54,8 @@ class RequestParser implements RequestParserInterface
         $value = $request->query->getString('filters', '{}');
 
         try {
-            /** @var mixed[] $filters */
             $filters = json_decode($value, associative: true, depth: $this->jsonMaxDepth, flags: \JSON_THROW_ON_ERROR);
+            \assert(\is_array($filters));
 
             return $filters;
         } catch (\JsonException $e) {
