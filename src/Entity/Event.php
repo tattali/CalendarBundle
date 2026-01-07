@@ -87,7 +87,7 @@ class Event
 
     public function getOption(int|string $name)
     {
-        return $this->options[$name];
+        return $this->options[$name] ?? null;
     }
 
     public function addOption(int|string $name, $value): void
