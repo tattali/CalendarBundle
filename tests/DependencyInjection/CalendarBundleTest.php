@@ -74,7 +74,10 @@ final class CalendarBundleTest extends TestCase
 
         $configurator = new ContainerConfigurator($container, $loader, $instanceOf, $bundlePath, 'calendar_test');
 
-        $bundle->loadExtension([], $configurator, $container);
+        $bundle->loadExtension([
+            'cache_max_age' => 300,
+            'json_max_depth' => 4,
+        ], $configurator, $container);
 
         self::assertTrue($container->hasDefinition(Serializer::class));
         self::assertTrue($container->hasDefinition(CalendarController::class));

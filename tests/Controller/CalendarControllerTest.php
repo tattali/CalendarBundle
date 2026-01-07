@@ -40,6 +40,7 @@ final class CalendarControllerTest extends TestCase
             $this->eventDispatcher,
             $this->serializer,
             $this->requestParser,
+            cacheMaxAge: 300,
         );
     }
 
@@ -109,6 +110,32 @@ final class CalendarControllerTest extends TestCase
         $response = $this->controller->load($request);
 
         self::assertSame(JsonResponse::HTTP_NOT_MODIFIED, $response->getStatusCode());
+    }
+
+    public function testCacheDisabledWhenMaxAgeIsZero(): void
+    {
+        $controller = new CalendarController(
+            $this->eventDispatcher,
+            $this->serializer,
+            $this->requestParser,
+            cacheMaxAge: 0,
+        );
+
+        $request = Request::create('/fc-load-events', parameters: [
+            'start' => '2016-03-01',
+            'end' => '2016-03-19',
+        ]);
+
+        $data = '[{"title":"Event"}]';
+        $this->calendarEvent->method('getEvents')->willReturn([$this->event]);
+        $this->eventDispatcher->method('dispatch')->willReturn($this->calendarEvent);
+        $this->serializer->method('serialize')->willReturn($data);
+
+        $response = $controller->load($request);
+
+        self::assertSame(JsonResponse::HTTP_OK, $response->getStatusCode());
+        self::assertFalse($response->headers->has('ETag'));
+        self::assertStringNotContainsString('public', (string) $response->headers->get('Cache-Control'));
     }
 
     public function testItNotFindAnyEvents(): void
