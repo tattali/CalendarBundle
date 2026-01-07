@@ -61,4 +61,9 @@ class SetDataEvent
     {
         return $this->events;
     }
+
+    public function getEventCount(): int
+    {
+        return \count($this->events);
+    }
 }
