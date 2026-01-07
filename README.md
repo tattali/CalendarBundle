@@ -17,47 +17,22 @@ Documentation
 
 The source of the documentation is stored in the `docs/` folder in this bundle
 
-- [Link the calendar to a CRUD and allow create, update, delete & show events](docs/doctrine-crud.md)
-- [Webpack Encore and fullcalendar.js](docs/es6-encore.md)
-- [Multi calendar](docs/multi-calendar.md)
-- [Migrating to v8.1](docs/upgrade-to-81.md)
-
 ### Installation
-
-1. [Download CalendarBundle using composer](#1-download-calendarbundle-using-composer)
-2. [Create the subscriber](#2-create-the-subscriber)
-3. [Add styles and scripts in your template](#3-add-styles-and-scripts-in-your-template)
-4. [Security Configuration](#4-security-configuration)
-
-#### 1. Download CalendarBundle using composer
 
 ```sh
 composer require tattali/calendar-bundle
 ```
-The recipe will import the routes for you
 
-Check the existence of the file `config/routes/calendar.yaml` or create it
+Import the routes:
 ```yaml
 # config/routes/calendar.yaml
 calendar:
     resource: '@CalendarBundle/config/routing.yaml'
 ```
 
-#### 2. Create the subscriber
-You need to create a subscriber class to load your data into the calendar.
+### Quick Start
 
-This subscriber must be registered **only if autoconfigure is false**.
-```yaml
-# config/services.yaml
-services:
-    # ...
-
-    App\EventSubscriber\CalendarSubscriber:
-```
-
-Then, create the subscriber class to fill the calendar
-
-See the [doctrine subscriber example](docs/doctrine-crud.md#full-subscriber)
+Create a subscriber to populate calendar data:
 
 ```php
 // src/EventSubscriber/CalendarSubscriber.php
@@ -71,14 +46,14 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class CalendarSubscriber implements EventSubscriberInterface
 {
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             SetDataEvent::class => 'onCalendarSetData',
         ];
     }
 
-    public function onCalendarSetData(SetDataEvent $setDataEvent)
+    public function onCalendarSetData(SetDataEvent $setDataEvent): void
     {
         $start = $setDataEvent->getStart();
         $end = $setDataEvent->getEnd();
@@ -87,9 +62,9 @@ class CalendarSubscriber implements EventSubscriberInterface
         // You may want to make a custom query from your database to fill the calendar
 
         $setDataEvent->addEvent(new Event(
-            'Event 1',
+            'Event title',
             new \DateTime('Tuesday this week'),
-            new \DateTime('Wednesdays this week')
+            new \DateTime('Wednesday this week')
         ));
 
         // If the end date is null or not defined, it creates a all day event
@@ -101,131 +76,46 @@ class CalendarSubscriber implements EventSubscriberInterface
 }
 ```
 
-#### 3. Add styles and scripts in your template
-
-Include the html template were you want to display the calendar:
-
+Add the calendar to your template:
 ```twig
 {% block body %}
     <div id="calendar-holder"></div>
 {% endblock %}
-```
 
-Add styles and js. Click [here](https://fullcalendar.io/download) to see other css and js download methods, you can also found the [plugins list](https://fullcalendar.io/docs/plugin-index)
-
-```twig
 {% block javascripts %}
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            new FullCalendar.Calendar(document.getElementById('calendar-holder'), {
+                initialView: 'dayGridMonth',
+                eventSources: [{
+                    url: '/fc-load-events',
+                    method: 'POST',
+                    extraParams: { filters: JSON.stringify({}) }
+                }]
+            }).render();
+        });
+    </script>
 {% endblock %}
 ```
 
-#### 4. Security Configuration
+### Documentation
 
-If your application uses Symfony's security firewall, ensure the `/fc-load-events` route is accessible. Add it to your `access_control` configuration:
+- [Configuration](docs/configuration.md) - Caching, JSON depth limit, routing
+- [Doctrine CRUD](docs/doctrine-crud.md) - Create, update, delete events with Doctrine
+- [Webpack Encore](docs/es6-encore.md) - ES6 module setup
+- [Multi-calendar](docs/multi-calendar.md) - Multiple calendars on one page
+- [Security](docs/configuration.md#security) - Securing the endpoint
 
-```yaml
-# config/packages/security.yaml
-security:
-    access_control:
-        - { path: ^/fc-load-events, roles: PUBLIC_ACCESS }
-        # Or restrict to authenticated users:
-        # - { path: ^/fc-load-events, roles: ROLE_USER }
-```
+#### Upgrade Guides
 
-You can also define your own route pointing directly to the bundle's controller by replacing `config/routes/calendar.yaml`:
+- [Migrating to v8.2](docs/upgrade-to-82.md)
+- [Migrating to v8.1](docs/upgrade-to-81.md)
 
-```yaml
-# config/routes/calendar.yaml
-fc_load_events:
-    path: /fc-load-events
-    controller: CalendarBundle\Controller\CalendarController::load
-```
+### Troubleshooting
 
-```yaml
-# config/packages/security.yaml
-security:
-    access_control:
-        - { path: ^/fc-load-events, roles: ROLE_USER }
-```
+Debug AJAX requests using browser Network monitor (`Ctrl+Shift+E` Firefox, `Ctrl+Shift+I` Chrome).
 
-Alternatively, you can create your own controller that wraps the bundle's controller and add security attributes:
+### License
 
-```php
-// src/Controller/CalendarController.php
-namespace App\Controller;
-
-use CalendarBundle\Controller\CalendarController as BaseCalendarController;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
-
-class CalendarController
-{
-    public function __construct(
-        private BaseCalendarController $calendarController,
-    ) {}
-
-    #[Route('/fc-load-events', name: 'fc_load_events', methods: ['POST'])]
-    #[IsGranted('ROLE_USER')]
-    public function load(Request $request): JsonResponse
-    {
-        return $this->calendarController->load($request);
-    }
-}
-```
-
-Then disable the bundle's route by removing or commenting out `config/routes/calendar.yaml`.
-
-### Basic functionalities
-
-You will probably want to customize the Calendar javascript to fit the needs of your application.
-To do this, you can copy the following settings and modify them by consulting the [fullcalendar.js documentation](https://fullcalendar.io/docs).
-```js
-document.addEventListener('DOMContentLoaded', () => {
-    const calendarEl = document.getElementById('calendar-holder');
-
-    const calendar = new FullCalendar.Calendar(calendarEl, {
-        defaultView: 'dayGridMonth',
-        editable: true,
-        eventSources: [
-            {
-                url: '/fc-load-events',
-                method: 'POST',
-                extraParams: {
-                    filters: JSON.stringify({})
-                },
-                failure: () => {
-                    // alert('There was an error while fetching FullCalendar!');
-                },
-            },
-        ],
-        headerToolbar: {
-            start: 'prev,next today',
-            center: 'title',
-            end: 'dayGridMonth,timeGridWeek,timeGridDay'
-        },
-        timeZone: 'UTC',
-    });
-
-    calendar.render();
-});
-```
-
-You can use [Plugins](https://fullcalendar.io/docs/plugin-index) to reduce loadtime.
-
-## Troubleshoot AJAX requests
-
-* To debug AJAX requests, show the Network monitor, then reload the page. Finally click on `fc-load-events` and select the `Response` or `Preview` tab
-    - Firefox: `Ctrl + Shift + E` ( `Command + Option + E` on Mac )
-    - Chrome: `Ctrl + Shift + I` ( `Command + Option + I` on Mac )
-
-Contribute and feedback
------------------------
-
-Any feedback and contribution will be very appreciated.
-
-License
--------
-
-This bundle is under the MIT license. See the complete [license](LICENSE) in the bundle
+MIT - See [LICENSE](LICENSE)
