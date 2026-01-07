@@ -56,7 +56,7 @@ jobs:
 
       - name: PHPStan
         continue-on-error: ${{ !matrix.is-current }}
-        run: vendor/bin/phpstan analyse src tests --level 9
+        run: vendor/bin/phpstan analyse
 
       - name: Execute tests
         env:
