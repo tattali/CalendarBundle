@@ -118,4 +118,36 @@ final class EventTest extends TestCase
         self::assertSame($originalTime, $date->format('H:i:s'), 'Original DateTime should not be mutated');
         self::assertSame('00:00:00', $event->getStart()?->format('H:i:s'), 'Event start time should be zeroed');
     }
+
+    public function testSetEndNullResetsAllDayToTrue(): void
+    {
+        $event = new Event(
+            'Meeting',
+            new \DateTime('2024-01-15 14:00:00'),
+            new \DateTime('2024-01-15 15:00:00'),
+        );
+
+        self::assertFalse($event->isAllDay());
+
+        $event->setEnd(null);
+
+        self::assertTrue($event->isAllDay());
+    }
+
+    public function testSetAllDayTrueNormalizesStartTime(): void
+    {
+        $event = new Event(
+            'Meeting',
+            new \DateTime('2024-01-15 14:30:00'),
+            new \DateTime('2024-01-15 15:30:00'),
+        );
+
+        self::assertFalse($event->isAllDay());
+        self::assertSame('14:30:00', $event->getStart()?->format('H:i:s'));
+
+        $event->setAllDay(true);
+
+        self::assertTrue($event->isAllDay());
+        self::assertSame('00:00:00', $event->getStart()?->format('H:i:s'));
+    }
 }

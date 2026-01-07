@@ -53,9 +53,7 @@ class Event
 
     public function setEnd(?\DateTime $end): void
     {
-        if ($end) {
-            $this->allDay = false;
-        }
+        $this->allDay = null === $end;
         $this->end = $end;
     }
 
@@ -67,6 +65,10 @@ class Event
     public function setAllDay(bool $allDay): void
     {
         $this->allDay = $allDay;
+        if ($allDay) {
+            $this->start = clone $this->start;
+            $this->start->setTime(0, 0, 0, 0);
+        }
     }
 
     public function getResourceId(): ?string
