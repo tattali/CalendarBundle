@@ -106,4 +106,16 @@ final class EventTest extends TestCase
         $this->entity->setResourceId($newValue);
         self::assertSame($newValue, $this->entity->getResourceId());
     }
+
+    public function testSetStartDoesNotMutateOriginalDateTimeForAllDayEvent(): void
+    {
+        $originalTime = '14:30:00';
+        $date = new \DateTime('2024-01-15 ' . $originalTime);
+
+        $event = new Event('All day event', $date);
+
+        self::assertTrue($event->isAllDay());
+        self::assertSame($originalTime, $date->format('H:i:s'), 'Original DateTime should not be mutated');
+        self::assertSame('00:00:00', $event->getStart()?->format('H:i:s'), 'Event start time should be zeroed');
+    }
 }

@@ -40,6 +40,7 @@ class Event
     public function setStart(\DateTime $start): void
     {
         if ($this->allDay) {
+            $start = clone $start;
             $start->setTime(0, 0, 0, 0);
         }
         $this->start = $start;
