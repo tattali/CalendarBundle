@@ -22,7 +22,7 @@ class Event
         $this->setStart($start);
     }
 
-    public function getTitle(): ?string
+    public function getTitle(): string
     {
         return $this->title;
     }
@@ -34,7 +34,7 @@ class Event
         return $this;
     }
 
-    public function getStart(): ?\DateTime
+    public function getStart(): \DateTime
     {
         return $this->start;
     }
@@ -139,19 +139,19 @@ class Event
     public function toArray(): array
     {
         $event = [
-            'title' => $this->getTitle(),
-            'start' => $this->getStart()?->format(\DateTime::ATOM),
-            'allDay' => $this->isAllDay(),
+            'title' => $this->title,
+            'start' => $this->start->format(\DateTime::ATOM),
+            'allDay' => $this->allDay,
         ];
 
-        if ($this->getEnd()) {
-            $event['end'] = $this->getEnd()->format(\DateTime::ATOM);
+        if (null !== $this->end) {
+            $event['end'] = $this->end->format(\DateTime::ATOM);
         }
 
-        if ($this->getResourceId()) {
-            $event['resourceId'] = $this->getResourceId();
+        if (null !== $this->resourceId) {
+            $event['resourceId'] = $this->resourceId;
         }
 
-        return [...$event, ...$this->getOptions()];
+        return $event + $this->options;
     }
 }
