@@ -27,9 +27,11 @@ class Event
         return $this->title;
     }
 
-    public function setTitle(string $title): void
+    public function setTitle(string $title): self
     {
         $this->title = $title;
+
+        return $this;
     }
 
     public function getStart(): ?\DateTime
@@ -37,13 +39,15 @@ class Event
         return $this->start;
     }
 
-    public function setStart(\DateTime $start): void
+    public function setStart(\DateTime $start): self
     {
         if ($this->allDay) {
             $start = clone $start;
             $start->setTime(0, 0, 0, 0);
         }
         $this->start = $start;
+
+        return $this;
     }
 
     public function getEnd(): ?\DateTime
@@ -51,10 +55,12 @@ class Event
         return $this->end;
     }
 
-    public function setEnd(?\DateTime $end): void
+    public function setEnd(?\DateTime $end): self
     {
         $this->allDay = null === $end;
         $this->end = $end;
+
+        return $this;
     }
 
     public function isAllDay(): bool
@@ -62,13 +68,15 @@ class Event
         return $this->allDay;
     }
 
-    public function setAllDay(bool $allDay): void
+    public function setAllDay(bool $allDay): self
     {
         $this->allDay = $allDay;
         if ($allDay) {
             $this->start = clone $this->start;
             $this->start->setTime(0, 0, 0, 0);
         }
+
+        return $this;
     }
 
     public function getResourceId(): ?string
@@ -76,9 +84,11 @@ class Event
         return $this->resourceId;
     }
 
-    public function setResourceId(?string $resourceId): void
+    public function setResourceId(?string $resourceId): self
     {
         $this->resourceId = $resourceId;
+
+        return $this;
     }
 
     /**
@@ -92,9 +102,11 @@ class Event
     /**
      * @param mixed[] $options
      */
-    public function setOptions(array $options): void
+    public function setOptions(array $options): self
     {
         $this->options = $options;
+
+        return $this;
     }
 
     public function getOption(string $name): mixed
@@ -102,9 +114,11 @@ class Event
         return $this->options[$name] ?? null;
     }
 
-    public function addOption(string $name, mixed $value): void
+    public function addOption(string $name, mixed $value): self
     {
         $this->options[$name] = $value;
+
+        return $this;
     }
 
     public function removeOption(string $name): mixed

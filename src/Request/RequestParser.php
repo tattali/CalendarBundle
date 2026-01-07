@@ -42,8 +42,10 @@ class RequestParser implements RequestParserInterface
         $value = $request->query->getString('filters', '{}');
 
         try {
-            /* @var mixed[] */
-            return json_decode($value, true, flags: \JSON_THROW_ON_ERROR);
+            /** @var mixed[] $filters */
+            $filters = json_decode($value, true, flags: \JSON_THROW_ON_ERROR);
+
+            return $filters;
         } catch (\JsonException $e) {
             throw InvalidJsonException::forParameter('filters', $e);
         }

@@ -143,11 +143,32 @@ final class EventTest extends TestCase
         );
 
         self::assertFalse($event->isAllDay());
-        self::assertSame('14:30:00', $event->getStart()?->format('H:i:s'));
+        $start = $event->getStart();
+        self::assertNotNull($start);
+        self::assertSame('14:30:00', $start->format('H:i:s'));
 
         $event->setAllDay(true);
 
         self::assertTrue($event->isAllDay());
-        self::assertSame('00:00:00', $event->getStart()?->format('H:i:s'));
+        $start = $event->getStart();
+        self::assertNotNull($start);
+        self::assertSame('00:00:00', $start->format('H:i:s'));
+    }
+
+    public function testFluentInterface(): void
+    {
+        $event = new Event('Initial', new \DateTime('2024-01-01'));
+
+        $result = $event
+            ->setTitle('Updated')
+            ->setResourceId('resource-1')
+            ->addOption('color', 'blue')
+            ->addOption('url', 'https://example.com');
+
+        self::assertSame($event, $result);
+        self::assertSame('Updated', $event->getTitle());
+        self::assertSame('resource-1', $event->getResourceId());
+        self::assertSame('blue', $event->getOption('color'));
+        self::assertSame('https://example.com', $event->getOption('url'));
     }
 }
