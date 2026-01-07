@@ -22,6 +22,8 @@ class CalendarController
         private readonly RequestParserInterface $requestParser,
     ) {}
 
+    private const DEFAULT_MAX_AGE = 300; // 5 minutes
+
     public function load(Request $request): JsonResponse
     {
         try {
@@ -36,9 +38,25 @@ class CalendarController
 
         $content = $this->serializer->serialize($setDataEvent->getEvents());
 
-        return JsonResponse::fromJsonString(
-            $content,
-            empty($content) ? Response::HTTP_NO_CONTENT : Response::HTTP_OK,
-        );
+        if ('' === $content) {
+            $response = new JsonResponse();
+            $response->setStatusCode(Response::HTTP_NO_CONTENT);
+            $response->setContent('');
+
+            return $response;
+        }
+
+        $etag = hash('xxh3', $content);
+        $response = JsonResponse::fromJsonString($content);
+
+        $response->setETag($etag);
+        $response->setPublic();
+        $response->setMaxAge(self::DEFAULT_MAX_AGE);
+
+        if ($response->isNotModified($request)) {
+            return $response;
+        }
+
+        return $response;
     }
 }

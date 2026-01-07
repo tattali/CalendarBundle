@@ -82,9 +82,33 @@ final class CalendarControllerTest extends TestCase
         $response = $this->controller->load($request);
 
         self::assertInstanceOf(JsonResponse::class, $response);
-
         self::assertSame($data, $response->getContent());
         self::assertSame(JsonResponse::HTTP_OK, $response->getStatusCode());
+
+        // Verify cache headers
+        self::assertTrue($response->headers->has('ETag'));
+        self::assertStringContainsString('public', (string) $response->headers->get('Cache-Control'));
+        self::assertStringContainsString('max-age=300', (string) $response->headers->get('Cache-Control'));
+    }
+
+    public function testItReturns304WhenEtagMatches(): void
+    {
+        $data = '[{"title":"Event","start":"2016-03-01T12:00:00Z","allDay":true}]';
+        $etag = hash('xxh3', $data);
+
+        $request = Request::create('/fc-load-events', parameters: [
+            'start' => '2016-03-01',
+            'end' => '2016-03-19',
+        ]);
+        $request->headers->set('If-None-Match', '"' . $etag . '"');
+
+        $this->calendarEvent->method('getEvents')->willReturn([$this->event]);
+        $this->eventDispatcher->method('dispatch')->willReturn($this->calendarEvent);
+        $this->serializer->method('serialize')->willReturn($data);
+
+        $response = $this->controller->load($request);
+
+        self::assertSame(JsonResponse::HTTP_NOT_MODIFIED, $response->getStatusCode());
     }
 
     public function testItNotFindAnyEvents(): void
