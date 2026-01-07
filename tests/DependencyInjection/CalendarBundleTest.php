@@ -9,9 +9,16 @@ use CalendarBundle\Controller\CalendarController;
 use CalendarBundle\Serializer\Serializer;
 use CalendarBundle\Serializer\SerializerInterface;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Config\Definition\ArrayNode;
+use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
+use Symfony\Component\Config\Definition\Loader\DefinitionFileLoader;
+use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Config\Loader\LoaderResolver;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
@@ -57,6 +64,57 @@ final class CalendarBundleTest extends TestCase
         self::assertInstanceOf(AbstractBundle::class, $bundle);
     }
 
+    public function testBundleConfigureDefinesOptions(): void
+    {
+        $bundle = new CalendarBundle();
+        $treeBuilder = new TreeBuilder('calendar');
+        $loader = $this->createMock(DefinitionFileLoader::class);
+
+        $configurator = new DefinitionConfigurator($treeBuilder, $loader, '', __FILE__);
+        $bundle->configure($configurator);
+
+        $tree = $treeBuilder->buildTree();
+        self::assertTrue($tree instanceof ArrayNode);
+        $children = $tree->getChildren();
+
+        self::assertArrayHasKey('cache_max_age', $children);
+        self::assertArrayHasKey('json_max_depth', $children);
+    }
+
+    public function testBundleConfigureDefaultValues(): void
+    {
+        $bundle = new CalendarBundle();
+        $treeBuilder = new TreeBuilder('calendar');
+        $loader = $this->createMock(DefinitionFileLoader::class);
+
+        $configurator = new DefinitionConfigurator($treeBuilder, $loader, '', __FILE__);
+        $bundle->configure($configurator);
+
+        $tree = $treeBuilder->buildTree();
+        $config = (new Processor())->process($tree, []);
+
+        self::assertSame(300, $config['cache_max_age']);
+        self::assertSame(4, $config['json_max_depth']);
+    }
+
+    public function testBundleConfigureValidatesMinValues(): void
+    {
+        $bundle = new CalendarBundle();
+        $treeBuilder = new TreeBuilder('calendar');
+        $loader = $this->createMock(DefinitionFileLoader::class);
+
+        $configurator = new DefinitionConfigurator($treeBuilder, $loader, '', __FILE__);
+        $bundle->configure($configurator);
+
+        $tree = $treeBuilder->buildTree();
+        $config = (new Processor())->process($tree, [
+            ['cache_max_age' => 0, 'json_max_depth' => 1],
+        ]);
+
+        self::assertSame(0, $config['cache_max_age']);
+        self::assertSame(1, $config['json_max_depth']);
+    }
+
     public function testBundleLoadExtension(): void
     {
         $bundle = new CalendarBundle();
@@ -64,11 +122,11 @@ final class CalendarBundleTest extends TestCase
         $bundlePath = \dirname(__DIR__, 2) . '/src';
 
         $locator = new FileLocator($bundlePath);
-        $resolver = new \Symfony\Component\Config\Loader\LoaderResolver([
+        $resolver = new LoaderResolver([
             new YamlFileLoader($container, $locator),
-            new \Symfony\Component\DependencyInjection\Loader\PhpFileLoader($container, $locator),
+            new PhpFileLoader($container, $locator),
         ]);
-        $loader = new \Symfony\Component\DependencyInjection\Loader\PhpFileLoader($container, $locator);
+        $loader = new PhpFileLoader($container, $locator);
         $loader->setResolver($resolver);
         $instanceOf = [];
 

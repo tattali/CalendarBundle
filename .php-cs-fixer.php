@@ -17,6 +17,11 @@ return $config
         'php_unit_internal_class' => false,
         'php_unit_test_class_requires_covers' => false,
         'method_chaining_indentation' => false,
+        'global_namespace_import' => [
+            'import_classes' => false,
+            'import_constants' => false,
+            'import_functions' => false,
+        ],
     ])
     ->setFinder(
         PhpCsFixer\Finder::create()

@@ -13,10 +13,7 @@ class CalendarBundle extends AbstractBundle
 {
     public function configure(DefinitionConfigurator $definition): void
     {
-        $rootNode = $definition->rootNode();
-        \assert($rootNode instanceof \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition);
-
-        $rootNode
+        $definition->rootNode()
             ->children()
                 ->integerNode('cache_max_age')
                     ->defaultValue(300)
