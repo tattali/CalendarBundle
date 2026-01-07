@@ -15,17 +15,19 @@ This bundle allow you to integrate [FullCalendar.js](https://fullcalendar.io/) l
 Documentation
 -------------
 
-The source of the documentation is stored in the `src/Resources/doc/` folder in this bundle
+The source of the documentation is stored in the `docs/` folder in this bundle
 
-- [Link the calendar to a CRUD and allow create, update, delete & show events](src/Resources/doc/doctrine-crud.md)
-- [Webpack Encore and fullcalendar.js](src/Resources/doc/es6-encore.md)
-- [Multi calendar](src/Resources/doc/multi-calendar.md)
+- [Link the calendar to a CRUD and allow create, update, delete & show events](docs/doctrine-crud.md)
+- [Webpack Encore and fullcalendar.js](docs/es6-encore.md)
+- [Multi calendar](docs/multi-calendar.md)
+- [Migrating to v8.1](docs/upgrade-to-81.md)
 
 ### Installation
 
 1. [Download CalendarBundle using composer](#1-download-calendarbundle-using-composer)
 2. [Create the subscriber](#2-create-the-subscriber)
 3. [Add styles and scripts in your template](#3-add-styles-and-scripts-in-your-template)
+4. [Security Configuration](#4-security-configuration)
 
 #### 1. Download CalendarBundle using composer
 
@@ -38,7 +40,7 @@ Check the existence of the file `config/routes/calendar.yaml` or create it
 ```yaml
 # config/routes/calendar.yaml
 calendar:
-    resource: '@CalendarBundle/Resources/config/routing.yaml'
+    resource: '@CalendarBundle/config/routing.yaml'
 ```
 
 #### 2. Create the subscriber
@@ -116,6 +118,64 @@ Add styles and js. Click [here](https://fullcalendar.io/download) to see other c
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
 {% endblock %}
 ```
+
+#### 4. Security Configuration
+
+If your application uses Symfony's security firewall, ensure the `/fc-load-events` route is accessible. Add it to your `access_control` configuration:
+
+```yaml
+# config/packages/security.yaml
+security:
+    access_control:
+        - { path: ^/fc-load-events, roles: PUBLIC_ACCESS }
+        # Or restrict to authenticated users:
+        # - { path: ^/fc-load-events, roles: ROLE_USER }
+```
+
+You can also define your own route pointing directly to the bundle's controller by replacing `config/routes/calendar.yaml`:
+
+```yaml
+# config/routes/calendar.yaml
+fc_load_events:
+    path: /fc-load-events
+    controller: CalendarBundle\Controller\CalendarController::load
+```
+
+```yaml
+# config/packages/security.yaml
+security:
+    access_control:
+        - { path: ^/fc-load-events, roles: ROLE_USER }
+```
+
+Alternatively, you can create your own controller that wraps the bundle's controller and add security attributes:
+
+```php
+// src/Controller/CalendarController.php
+namespace App\Controller;
+
+use CalendarBundle\Controller\CalendarController as BaseCalendarController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+
+class CalendarController
+{
+    public function __construct(
+        private BaseCalendarController $calendarController,
+    ) {}
+
+    #[Route('/fc-load-events', name: 'fc_load_events', methods: ['POST'])]
+    #[IsGranted('ROLE_USER')]
+    public function load(Request $request): JsonResponse
+    {
+        return $this->calendarController->load($request);
+    }
+}
+```
+
+Then disable the bundle's route by removing or commenting out `config/routes/calendar.yaml`.
 
 ### Basic functionalities
 
