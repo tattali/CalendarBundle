@@ -111,4 +111,31 @@ final class RequestParserTest extends TestCase
 
         $this->parser->parse($request);
     }
+
+    public function testParseNestedFiltersWithinDepthLimit(): void
+    {
+        $request = Request::create('/fc-load-events', parameters: [
+            'start' => '2024-01-01',
+            'end' => '2024-01-31',
+            'filters' => '{"level1":{"level2":{"level3":"value"}}}',
+        ]);
+
+        $params = $this->parser->parse($request);
+
+        self::assertSame(['level1' => ['level2' => ['level3' => 'value']]], $params->filters);
+    }
+
+    public function testParseDeeplyNestedFiltersThrowsException(): void
+    {
+        $this->expectException(InvalidJsonException::class);
+
+        // Depth 5 exceeds MAX_JSON_DEPTH of 4
+        $request = Request::create('/fc-load-events', parameters: [
+            'start' => '2024-01-01',
+            'end' => '2024-01-31',
+            'filters' => '{"l1":{"l2":{"l3":{"l4":{"l5":"too deep"}}}}}',
+        ]);
+
+        $this->parser->parse($request);
+    }
 }

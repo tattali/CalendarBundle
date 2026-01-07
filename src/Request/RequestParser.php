@@ -10,6 +10,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class RequestParser implements RequestParserInterface
 {
+    private const MAX_JSON_DEPTH = 4;
+
     public function parse(Request $request): QueryParameters
     {
         return new QueryParameters(
@@ -43,7 +45,7 @@ class RequestParser implements RequestParserInterface
 
         try {
             /** @var mixed[] $filters */
-            $filters = json_decode($value, true, flags: \JSON_THROW_ON_ERROR);
+            $filters = json_decode($value, associative: true, depth: self::MAX_JSON_DEPTH, flags: \JSON_THROW_ON_ERROR);
 
             return $filters;
         } catch (\JsonException $e) {
