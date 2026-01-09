@@ -33,7 +33,7 @@ class RequestParser implements RequestParserInterface
 
     private function parseDate(Request $request, string $parameter): \DateTime
     {
-        $value = $request->query->getString($parameter);
+        $value = $request->request->getString($parameter);
 
         if ('' === $value) {
             throw InvalidDateException::missingParameter($parameter);
@@ -51,7 +51,7 @@ class RequestParser implements RequestParserInterface
      */
     private function parseFilters(Request $request): array
     {
-        $value = $request->query->getString('filters', '{}');
+        $value = $request->request->getString('filters', '{}');
 
         try {
             $filters = json_decode($value, associative: true, depth: $this->jsonMaxDepth, flags: \JSON_THROW_ON_ERROR);
