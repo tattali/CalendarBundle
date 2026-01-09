@@ -22,7 +22,7 @@ final class RequestParserTest extends TestCase
 
     public function testParseValidRequest(): void
     {
-        $request = Request::create('/fc-load-events', parameters: [
+        $request = Request::create('/fc-load-events', method: 'POST', parameters: [
             'start' => '2024-01-01',
             'end' => '2024-01-31',
             'filters' => '{"category":"meeting"}',
@@ -38,7 +38,7 @@ final class RequestParserTest extends TestCase
 
     public function testParseDefaultFilters(): void
     {
-        $request = Request::create('/fc-load-events', parameters: [
+        $request = Request::create('/fc-load-events', method: 'POST', parameters: [
             'start' => '2024-01-01',
             'end' => '2024-01-31',
         ]);
@@ -53,7 +53,7 @@ final class RequestParserTest extends TestCase
         $this->expectException(InvalidDateException::class);
         $this->expectExceptionMessage('Query parameter "start" is required');
 
-        $request = Request::create('/fc-load-events', parameters: [
+        $request = Request::create('/fc-load-events', method: 'POST', parameters: [
             'end' => '2024-01-31',
         ]);
 
@@ -65,7 +65,7 @@ final class RequestParserTest extends TestCase
         $this->expectException(InvalidDateException::class);
         $this->expectExceptionMessage('Query parameter "end" is required');
 
-        $request = Request::create('/fc-load-events', parameters: [
+        $request = Request::create('/fc-load-events', method: 'POST', parameters: [
             'start' => '2024-01-01',
         ]);
 
@@ -77,7 +77,7 @@ final class RequestParserTest extends TestCase
         $this->expectException(InvalidDateException::class);
         $this->expectExceptionMessage('Query parameter "start" is not a valid date');
 
-        $request = Request::create('/fc-load-events', parameters: [
+        $request = Request::create('/fc-load-events', method: 'POST', parameters: [
             'start' => 'not-a-date',
             'end' => '2024-01-31',
         ]);
@@ -90,7 +90,7 @@ final class RequestParserTest extends TestCase
         $this->expectException(InvalidDateException::class);
         $this->expectExceptionMessage('Query parameter "end" is not a valid date');
 
-        $request = Request::create('/fc-load-events', parameters: [
+        $request = Request::create('/fc-load-events', method: 'POST', parameters: [
             'start' => '2024-01-01',
             'end' => 'invalid',
         ]);
@@ -103,7 +103,7 @@ final class RequestParserTest extends TestCase
         $this->expectException(InvalidJsonException::class);
         $this->expectExceptionMessage('Query parameter "filters" is not valid JSON');
 
-        $request = Request::create('/fc-load-events', parameters: [
+        $request = Request::create('/fc-load-events', method: 'POST', parameters: [
             'start' => '2024-01-01',
             'end' => '2024-01-31',
             'filters' => '{invalid}',
@@ -114,7 +114,7 @@ final class RequestParserTest extends TestCase
 
     public function testParseNestedFiltersWithinDepthLimit(): void
     {
-        $request = Request::create('/fc-load-events', parameters: [
+        $request = Request::create('/fc-load-events', method: 'POST', parameters: [
             'start' => '2024-01-01',
             'end' => '2024-01-31',
             'filters' => '{"level1":{"level2":{"level3":"value"}}}',
@@ -130,7 +130,7 @@ final class RequestParserTest extends TestCase
         $this->expectException(InvalidJsonException::class);
 
         // Depth 5 exceeds MAX_JSON_DEPTH of 4
-        $request = Request::create('/fc-load-events', parameters: [
+        $request = Request::create('/fc-load-events', method: 'POST', parameters: [
             'start' => '2024-01-01',
             'end' => '2024-01-31',
             'filters' => '{"l1":{"l2":{"l3":{"l4":{"l5":"too deep"}}}}}',

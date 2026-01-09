@@ -51,10 +51,6 @@ class CalendarController
             $response->setETag(hash('xxh3', $content));
             $response->setPublic();
             $response->setMaxAge($this->cacheMaxAge);
-
-            if ($response->isNotModified($request)) {
-                return $response;
-            }
         }
 
         return $response;

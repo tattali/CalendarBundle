@@ -46,7 +46,7 @@ final class CalendarControllerTest extends TestCase
 
     public function testItProvidesAnEventsFeedForACalendar(): void
     {
-        $request = Request::create('/fc-load-events', parameters: [
+        $request = Request::create('/fc-load-events', method: 'POST', parameters: [
             'start' => '2016-03-01',
             'end' => '2016-03-19',
             'filters' => '{}',
@@ -92,16 +92,14 @@ final class CalendarControllerTest extends TestCase
         self::assertStringContainsString('max-age=300', (string) $response->headers->get('Cache-Control'));
     }
 
-    public function testItReturns304WhenEtagMatches(): void
+    public function testItSetsEtagAndCacheHeadersForPostRequest(): void
     {
         $data = '[{"title":"Event","start":"2016-03-01T12:00:00Z","allDay":true}]';
-        $etag = hash('xxh3', $data);
 
-        $request = Request::create('/fc-load-events', parameters: [
+        $request = Request::create('/fc-load-events', method: 'POST', parameters: [
             'start' => '2016-03-01',
             'end' => '2016-03-19',
         ]);
-        $request->headers->set('If-None-Match', '"' . $etag . '"');
 
         $this->calendarEvent->method('getEvents')->willReturn([$this->event]);
         $this->eventDispatcher->method('dispatch')->willReturn($this->calendarEvent);
@@ -109,7 +107,12 @@ final class CalendarControllerTest extends TestCase
 
         $response = $this->controller->load($request);
 
-        self::assertSame(JsonResponse::HTTP_NOT_MODIFIED, $response->getStatusCode());
+        // POST requests always return 200 (HTTP spec doesn't support 304 for POST)
+        self::assertSame(JsonResponse::HTTP_OK, $response->getStatusCode());
+        // But cache headers are still set for informational purposes
+        self::assertTrue($response->headers->has('ETag'));
+        self::assertStringContainsString('public', (string) $response->headers->get('Cache-Control'));
+        self::assertStringContainsString('max-age=300', (string) $response->headers->get('Cache-Control'));
     }
 
     public function testCacheDisabledWhenMaxAgeIsZero(): void
@@ -121,7 +124,7 @@ final class CalendarControllerTest extends TestCase
             cacheMaxAge: 0,
         );
 
-        $request = Request::create('/fc-load-events', parameters: [
+        $request = Request::create('/fc-load-events', method: 'POST', parameters: [
             'start' => '2016-03-01',
             'end' => '2016-03-19',
         ]);
@@ -140,7 +143,7 @@ final class CalendarControllerTest extends TestCase
 
     public function testItNotFindAnyEvents(): void
     {
-        $request = Request::create('/fc-load-events', parameters: [
+        $request = Request::create('/fc-load-events', method: 'POST', parameters: [
             'start' => '2016-03-01',
             'end' => '2016-03-19',
             'filters' => '{}',
@@ -174,7 +177,7 @@ final class CalendarControllerTest extends TestCase
     {
         $this->expectException(BadRequestHttpException::class);
 
-        $request = Request::create('/fc-load-events', parameters: [
+        $request = Request::create('/fc-load-events', method: 'POST', parameters: [
             'start' => '',
             'end' => '',
         ]);
@@ -186,7 +189,7 @@ final class CalendarControllerTest extends TestCase
     {
         $this->expectException(BadRequestHttpException::class);
 
-        $request = Request::create('/fc-load-events', parameters: [
+        $request = Request::create('/fc-load-events', method: 'POST', parameters: [
             'start' => '2016-03-01',
             'end' => '',
         ]);
@@ -198,7 +201,7 @@ final class CalendarControllerTest extends TestCase
     {
         $this->expectException(BadRequestHttpException::class);
 
-        $request = Request::create('/fc-load-events', parameters: [
+        $request = Request::create('/fc-load-events', method: 'POST', parameters: [
             'start' => '2016-03-42',
             'end' => '',
         ]);
@@ -210,7 +213,7 @@ final class CalendarControllerTest extends TestCase
     {
         $this->expectException(BadRequestHttpException::class);
 
-        $request = Request::create('/fc-load-events', parameters: [
+        $request = Request::create('/fc-load-events', method: 'POST', parameters: [
             'start' => '2016-03-01',
             'end' => '2016-42-19',
         ]);
@@ -222,7 +225,7 @@ final class CalendarControllerTest extends TestCase
     {
         $this->expectException(BadRequestHttpException::class);
 
-        $request = Request::create('/fc-load-events', parameters: [
+        $request = Request::create('/fc-load-events', method: 'POST', parameters: [
             'start' => '2016-03-01',
             'end' => '2016-03-19',
             'filters' => "{'Hello'}",
