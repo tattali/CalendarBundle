@@ -74,6 +74,7 @@ jobs:
         run: vendor/bin/phpunit
 
       - name: SonarCloud Scan
+        if: matrix.is-current
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
