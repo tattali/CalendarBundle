@@ -16,7 +16,7 @@ $event = new Event(
 );
 ```
 
-`getStart()` and `getEnd()` still return a mutable `\DateTime`. An immutable date is copied into a new `\DateTime` (same date, time and time zone); the immutable you passed is never changed. A `\DateTime` passed for a timed event is still stored as the same instance.
+`getStart()` and `getEnd()` still return a mutable `\DateTime`. An immutable date is copied into a new `\DateTime` (same date, time and time zone); the immutable you passed is never changed. A `\DateTime` passed for a timed event is still stored as the same instance; an all-day event keeps a copy, as before.
 
 ### Multi-Day All-Day Events
 
@@ -42,6 +42,8 @@ $conference = new Event(
 ```php
 $event->setEnd(new \DateTime('2024-01-18'))->setAllDay(true);
 ```
+
+FullCalendar treats the `end` of an all-day event as exclusive, so the Conference above (15th to 18th) shows the 15th to the 17th. To include the last day, pass the day after it as `end`.
 
 ### The Start Time Is Kept
 
@@ -133,5 +135,5 @@ The following remain fully backward compatible:
 
 - `getStart()` and `getEnd()` return types (`\DateTime` and `?\DateTime`)
 - Existing constructor calls and argument order
-- `toArray()` output for events that do not switch between all-day and timed
+- `toArray()` output: this change alters it only for events switched between all-day and timed
 - Event subscriber pattern (`SetDataEvent`)
