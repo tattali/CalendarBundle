@@ -11,6 +11,14 @@ class Event
     protected ?\DateTime $end;
 
     /**
+     * The start as it was given, with its time of day. $start is this same
+     * instance for a timed event, and a copy truncated to midnight for an
+     * all-day one, so the time comes back when the event stops being all-day.
+     * Null until setStart() runs.
+     */
+    protected ?\DateTime $timedStart = null;
+
+    /**
      * @param mixed[] $options
      */
     public function __construct(
@@ -21,7 +29,7 @@ class Event
         protected array $options = [],
     ) {
         // Set before setEnd() runs, as the promoted property used to be.
-        $this->start = self::toMutable($start);
+        $this->start = $this->timedStart = self::toMutable($start);
         $this->setEnd($end);
         $this->setStart($start);
     }
@@ -45,12 +53,9 @@ class Event
 
     public function setStart(\DateTimeInterface $start): self
     {
-        $start = self::toMutable($start);
-        if ($this->allDay) {
-            $start = clone $start;
-            $start->setTime(0, 0, 0, 0);
-        }
-        $this->start = $start;
+        $this->timedStart = self::toMutable($start);
+        $this->start = $this->timedStart;
+        $this->refreshStart(false);
 
         return $this;
     }
@@ -62,8 +67,10 @@ class Event
 
     public function setEnd(?\DateTimeInterface $end): self
     {
+        $wasAllDay = $this->allDay;
         $this->allDay = null === $end;
         $this->end = null === $end ? null : self::toMutable($end);
+        $this->refreshStart($wasAllDay);
 
         return $this;
     }
@@ -75,13 +82,37 @@ class Event
 
     public function setAllDay(bool $allDay): self
     {
+        $wasAllDay = $this->allDay;
         $this->allDay = $allDay;
-        if ($allDay) {
-            $this->start = clone $this->start;
-            $this->start->setTime(0, 0, 0, 0);
-        }
+        $this->refreshStart($wasAllDay);
 
         return $this;
+    }
+
+    /**
+     * Sets the effective start from the all-day state: midnight while the
+     * event is all-day, the start with its time of day once it is not.
+     */
+    private function refreshStart(bool $wasAllDay): void
+    {
+        if ($this->allDay) {
+            $this->start = clone $this->start;
+            $this->start->setTime(0, 0, 0, 0);
+
+            return;
+        }
+
+        if (!$wasAllDay || null === $this->timedStart) {
+            return;
+        }
+
+        // Keep the day of the all-day start, in case it was moved in place.
+        $day = $this->start;
+        if ($day->format('Y-m-d') !== $this->timedStart->format('Y-m-d')) {
+            $this->timedStart = clone $this->timedStart;
+            $this->timedStart->setDate((int) $day->format('Y'), (int) $day->format('n'), (int) $day->format('j'));
+        }
+        $this->start = $this->timedStart;
     }
 
     /**

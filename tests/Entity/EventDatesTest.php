@@ -155,4 +155,143 @@ final class EventDatesTest extends TestCase
 
         self::assertSame('2024-01-15 14:30:00', $event->startSeenBySetEnd);
     }
+
+    public function testSetAllDayFalseRestoresTheOriginalStartTime(): void
+    {
+        $event = new Event('Holiday', new \DateTime('2024-01-15 14:30:00'));
+        self::assertSame('00:00:00', $event->getStart()->format('H:i:s'));
+
+        $event->setAllDay(false);
+
+        self::assertFalse($event->isAllDay());
+        self::assertSame('2024-01-15 14:30:00', $event->getStart()->format('Y-m-d H:i:s'));
+    }
+
+    public function testSetAllDayFalseRestoresTheTimeAndZoneOfAnImmutableStart(): void
+    {
+        $event = new Event('Holiday', new \DateTimeImmutable('2024-01-15 14:30:45.5', new \DateTimeZone('Europe/Paris')));
+
+        $event->setAllDay(false);
+
+        self::assertSame('2024-01-15 14:30:45.500000 Europe/Paris', $event->getStart()->format(self::FORMAT));
+    }
+
+    public function testSetAllDayFalseGivesBackTheCallersMutableStart(): void
+    {
+        $start = new \DateTime('2024-01-15 14:30:00');
+        $event = new Event('Holiday', $start);
+
+        $event->setAllDay(false);
+
+        self::assertSame($start, $event->getStart());
+        self::assertSame('2024-01-15 14:30:00', $start->format('Y-m-d H:i:s'));
+    }
+
+    public function testSetEndOnAnAllDayEventRestoresTheStartTime(): void
+    {
+        $event = new Event('Holiday', new \DateTime('2024-01-15 14:30:00'));
+
+        $event->setEnd(new \DateTime('2024-01-15 16:00:00'));
+
+        self::assertFalse($event->isAllDay());
+        self::assertSame('2024-01-15 14:30:00', $event->getStart()->format('Y-m-d H:i:s'));
+    }
+
+    public function testSetEndNullTruncatesTheStartAgain(): void
+    {
+        $event = new Event('Meeting', new \DateTime('2024-01-15 14:30:00'), new \DateTime('2024-01-15 16:00:00'));
+
+        $event->setEnd(null);
+
+        self::assertTrue($event->isAllDay());
+        self::assertSame('2024-01-15 00:00:00', $event->getStart()->format('Y-m-d H:i:s'));
+
+        $event->setEnd(new \DateTime('2024-01-15 17:00:00'));
+
+        self::assertSame('2024-01-15 14:30:00', $event->getStart()->format('Y-m-d H:i:s'));
+    }
+
+    public function testSetStartOnAnAllDayEventKeepsTheNewTimeForLater(): void
+    {
+        $event = new Event('Holiday', new \DateTime('2024-01-15 14:30:00'));
+
+        $event->setStart(new \DateTimeImmutable('2024-02-01 09:15:00'));
+        self::assertSame('2024-02-01 00:00:00', $event->getStart()->format('Y-m-d H:i:s'));
+
+        $event->setAllDay(false);
+
+        self::assertSame('2024-02-01 09:15:00', $event->getStart()->format('Y-m-d H:i:s'));
+    }
+
+    public function testTimedToAllDayAndBackKeepsTheSameMutableStart(): void
+    {
+        $start = new \DateTime('2024-01-15 14:30:00');
+        $event = new Event('Meeting', $start, new \DateTime('2024-01-15 16:00:00'));
+
+        $event->setAllDay(true);
+        $allDayStart = $event->getStart()->format('Y-m-d H:i:s');
+        $event->setAllDay(true);
+        self::assertSame('2024-01-15 00:00:00', $allDayStart);
+        self::assertSame('2024-01-15 00:00:00', $event->getStart()->format('Y-m-d H:i:s'));
+        $event->setAllDay(false);
+
+        self::assertSame($start, $event->getStart());
+        self::assertSame('2024-01-15 14:30:00', $start->format('Y-m-d H:i:s'));
+    }
+
+    public function testSetAllDayFalseOnATimedEventChangesNothing(): void
+    {
+        $start = new \DateTime('2024-01-15 14:30:00');
+        $event = new Event('Meeting', $start, new \DateTime('2024-01-15 16:00:00'));
+
+        $event->setAllDay(false);
+
+        self::assertSame($start, $event->getStart());
+        self::assertSame('2024-01-15 14:30:00', $start->format('Y-m-d H:i:s'));
+    }
+
+    public function testAnAllDayStartMovedInPlaceKeepsItsNewDayWhenTheTimeIsRestored(): void
+    {
+        $start = new \DateTime('2024-01-15 14:30:00');
+        $event = new Event('Holiday', $start);
+
+        $event->getStart()->modify('+2 days');
+        $event->setAllDay(true);
+        self::assertSame('2024-01-17 00:00:00', $event->getStart()->format('Y-m-d H:i:s'));
+
+        $event->setAllDay(false);
+
+        self::assertSame('2024-01-17 14:30:00', $event->getStart()->format('Y-m-d H:i:s'));
+        self::assertSame('2024-01-15 14:30:00', $start->format('Y-m-d H:i:s'), 'The caller\'s DateTime must not be mutated');
+    }
+
+    public function testATimedStartModifiedInPlaceKeepsTheChangeAcrossAllDay(): void
+    {
+        $event = new Event('Meeting', new \DateTime('2024-01-15 14:30:00'), new \DateTime('2024-01-15 16:00:00'));
+
+        $event->getStart()->modify('+1 hour');
+        $event->setAllDay(true)->setAllDay(false);
+
+        self::assertSame('2024-01-15 15:30:00', $event->getStart()->format('Y-m-d H:i:s'));
+    }
+
+    public function testASubclassThatSetsTheStartItselfIsStillTruncated(): void
+    {
+        $event = new class extends Event {
+            public function __construct()
+            {
+                $this->title = 'Custom';
+                $this->start = new \DateTime('2024-01-15 14:30:00');
+                $this->end = new \DateTime('2024-01-15 16:00:00');
+                $this->allDay = false;
+            }
+        };
+
+        $event->setAllDay(true);
+        $allDayStart = $event->getStart()->format('Y-m-d H:i:s');
+        $event->setAllDay(false);
+
+        self::assertSame('2024-01-15 00:00:00', $allDayStart);
+        self::assertSame('2024-01-15 00:00:00', $event->getStart()->format('Y-m-d H:i:s'), 'No time to restore when setStart() never ran');
+    }
 }
