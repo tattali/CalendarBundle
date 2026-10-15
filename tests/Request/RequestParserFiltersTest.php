@@ -22,7 +22,7 @@ final class RequestParserFiltersTest extends TestCase
         ]);
 
         $this->expectException(InvalidJsonException::class);
-        $this->expectExceptionMessage('Query parameter "filters" must be a JSON object');
+        $this->expectExceptionMessage('Query parameter "filters" must be a JSON object or array');
 
         (new RequestParser())->parse($request);
     }

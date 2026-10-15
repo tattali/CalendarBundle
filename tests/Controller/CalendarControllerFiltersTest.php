@@ -32,7 +32,7 @@ final class CalendarControllerFiltersTest extends TestCase
             self::fail('Expected a bad request for non-object filters.');
         } catch (BadRequestHttpException $e) {
             self::assertSame(400, $e->getStatusCode());
-            self::assertSame('Query parameter "filters" must be a JSON object', $e->getMessage());
+            self::assertSame('Query parameter "filters" must be a JSON object or array', $e->getMessage());
         }
     }
 }

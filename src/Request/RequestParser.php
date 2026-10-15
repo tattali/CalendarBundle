@@ -56,7 +56,7 @@ class RequestParser implements RequestParserInterface
         try {
             $filters = json_decode($value, associative: true, depth: $this->jsonMaxDepth, flags: \JSON_THROW_ON_ERROR);
             if (!\is_array($filters)) {
-                throw InvalidJsonException::mustBeObject('filters');
+                throw InvalidJsonException::mustBeObjectOrArray('filters');
             }
 
             return $filters;
