@@ -25,6 +25,7 @@ class SetDataEvent
         private readonly \DateTime $start,
         private readonly \DateTime $end,
         private readonly array $filters,
+        private readonly ?\DateTimeZone $timeZone = null,
     ) {
         $this->events = [];
     }
@@ -45,6 +46,11 @@ class SetDataEvent
     public function getFilters(): array
     {
         return $this->filters;
+    }
+
+    public function getTimeZone(): ?\DateTimeZone
+    {
+        return $this->timeZone;
     }
 
     public function addEvent(Event $event): self
