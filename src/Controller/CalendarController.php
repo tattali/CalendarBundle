@@ -33,7 +33,7 @@ class CalendarController
         }
 
         $setDataEvent = $this->eventDispatcher->dispatch(
-            new SetDataEvent($params->start, $params->end, $params->filters),
+            new SetDataEvent($params->start, $params->end, $params->filters, $params->timeZone),
         );
 
         $content = $this->serializer->serialize($setDataEvent->getEvents());

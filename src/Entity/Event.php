@@ -138,14 +138,16 @@ class Event
      */
     public function toArray(): array
     {
+        $dateFormat = $this->allDay ? 'Y-m-d' : \DateTime::ATOM;
+
         $event = [
             'title' => $this->title,
-            'start' => $this->start->format(\DateTime::ATOM),
+            'start' => $this->start->format($dateFormat),
             'allDay' => $this->allDay,
         ];
 
         if (null !== $this->end) {
-            $event['end'] = $this->end->format(\DateTime::ATOM);
+            $event['end'] = $this->end->format($dateFormat);
         }
 
         if (null !== $this->resourceId) {

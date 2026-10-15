@@ -16,5 +16,6 @@ final readonly class QueryParameters
         public \DateTime $start,
         public \DateTime $end,
         public array $filters,
+        public ?\DateTimeZone $timeZone = null,
     ) {}
 }
