@@ -275,6 +275,27 @@ final class EventDatesTest extends TestCase
         self::assertSame('2024-01-15 15:30:00', $event->getStart()->format('Y-m-d H:i:s'));
     }
 
+    public function testATimeSetInPlaceOnAnAllDayStartIsKeptBySetEnd(): void
+    {
+        $event = new Event('Dentist', new \DateTime('2024-01-15'));
+
+        $event->getStart()->setTime(9, 0);
+        $event->setEnd(new \DateTime('2024-01-15 10:00:00'));
+
+        self::assertFalse($event->isAllDay());
+        self::assertSame('2024-01-15 09:00:00', $event->getStart()->format('Y-m-d H:i:s'));
+    }
+
+    public function testATimeSetInPlaceOnAnAllDayStartIsKeptBySetAllDayFalse(): void
+    {
+        $event = new Event('Dentist', new \DateTime('2024-01-15 10:00:00'));
+
+        $event->getStart()->setTime(7, 0);
+        $event->setAllDay(false);
+
+        self::assertSame('2024-01-15 07:00:00', $event->getStart()->format('Y-m-d H:i:s'));
+    }
+
     public function testASubclassThatSetsTheStartItselfIsStillTruncated(): void
     {
         $event = new class extends Event {

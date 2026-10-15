@@ -116,6 +116,13 @@ class Event
             return;
         }
 
+        // A time set in place on the all-day start wins over the remembered one.
+        if ('00:00:00.000000' !== $this->start->format('H:i:s.u')) {
+            $this->timedStart = $this->start;
+
+            return;
+        }
+
         // Keep the day of the all-day start, in case it was moved in place.
         $day = $this->start;
         if ($day->format('Y-m-d') !== $this->timedStart->format('Y-m-d')) {
