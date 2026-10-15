@@ -48,6 +48,21 @@ final class RequestParserTimeZoneTest extends TestCase
         self::assertSame('2026-11-01T00:00:00-04:00', $params->end->format(\DateTime::ATOM));
     }
 
+    public function testTimeZoneIsReadFromTheQueryStringOnGetRequests(): void
+    {
+        $request = Request::create('/fc-load-events?' . http_build_query([
+            'start' => '2026-10-01T00:00:00',
+            'end' => '2026-11-01T00:00:00',
+            'timeZone' => 'America/New_York',
+        ]));
+
+        $params = $this->parser->parse($request);
+
+        self::assertNotNull($params->timeZone);
+        self::assertSame('America/New_York', $params->timeZone->getName());
+        self::assertSame('2026-10-01T00:00:00-04:00', $params->start->format(\DateTime::ATOM));
+    }
+
     public function testUtcTimeZoneIsAccepted(): void
     {
         $request = Request::create('/fc-load-events', method: 'POST', parameters: [
