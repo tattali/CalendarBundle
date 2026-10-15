@@ -7,17 +7,21 @@ namespace CalendarBundle\Entity;
 class Event
 {
     protected bool $allDay = true;
+    protected \DateTime $start;
+    protected ?\DateTime $end;
 
     /**
      * @param mixed[] $options
      */
     public function __construct(
         protected string $title,
-        protected \DateTime $start,
-        protected ?\DateTime $end = null,
+        \DateTimeInterface $start,
+        ?\DateTimeInterface $end = null,
         protected ?string $resourceId = null,
         protected array $options = [],
     ) {
+        // Set before setEnd() runs, as the promoted property used to be.
+        $this->start = self::toMutable($start);
         $this->setEnd($end);
         $this->setStart($start);
     }
@@ -39,8 +43,9 @@ class Event
         return $this->start;
     }
 
-    public function setStart(\DateTime $start): self
+    public function setStart(\DateTimeInterface $start): self
     {
+        $start = self::toMutable($start);
         if ($this->allDay) {
             $start = clone $start;
             $start->setTime(0, 0, 0, 0);
@@ -55,10 +60,10 @@ class Event
         return $this->end;
     }
 
-    public function setEnd(?\DateTime $end): self
+    public function setEnd(?\DateTimeInterface $end): self
     {
         $this->allDay = null === $end;
-        $this->end = $end;
+        $this->end = null === $end ? null : self::toMutable($end);
 
         return $this;
     }
@@ -77,6 +82,14 @@ class Event
         }
 
         return $this;
+    }
+
+    /**
+     * Keeps a mutable \DateTime as is (same instance) and copies anything else into one.
+     */
+    private static function toMutable(\DateTimeInterface $date): \DateTime
+    {
+        return $date instanceof \DateTime ? $date : \DateTime::createFromInterface($date);
     }
 
     public function getResourceId(): ?string
