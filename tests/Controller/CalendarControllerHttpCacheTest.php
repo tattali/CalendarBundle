@@ -76,7 +76,7 @@ final class CalendarControllerHttpCacheTest extends TestCase
         $response = $this->controller()->load($request);
 
         $kernel = self::createStub(HttpKernelInterface::class);
-        new SessionListener()->onKernelResponse(new ResponseEvent($kernel, $request, HttpKernelInterface::MAIN_REQUEST, $response));
+        (new SessionListener())->onKernelResponse(new ResponseEvent($kernel, $request, HttpKernelInterface::MAIN_REQUEST, $response));
 
         $control = 'Cache-Control: ' . $response->headers->get('Cache-Control');
         self::assertTrue($response->headers->hasCacheControlDirective('private'), $control);
