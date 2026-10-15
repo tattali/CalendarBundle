@@ -7,18 +7,37 @@ namespace CalendarBundle\Entity;
 class Event
 {
     protected bool $allDay = true;
+    protected \DateTime $start;
+    protected ?\DateTime $end;
 
     /**
-     * @param mixed[] $options
+     * The start as it was given, with its time of day (a copy when it was
+     * given to an all-day event). $start is this same instance for a timed
+     * event, and a copy truncated to midnight for an all-day one, so the time
+     * comes back when the event stops being all-day.
+     * Null until setStart() runs.
+     */
+    protected ?\DateTime $timedStart = null;
+
+    /**
+     * @param mixed[]   $options
+     * @param bool|null $allDay  null makes the event all-day when it has no end;
+     *                           true with an end gives a multi-day all-day event
      */
     public function __construct(
         protected string $title,
-        protected \DateTime $start,
-        protected ?\DateTime $end = null,
+        \DateTimeInterface $start,
+        ?\DateTimeInterface $end = null,
         protected ?string $resourceId = null,
         protected array $options = [],
+        ?bool $allDay = null,
     ) {
+        // Set before setEnd() runs, as the promoted property used to be.
+        $this->start = $this->timedStart = self::toMutable($start);
         $this->setEnd($end);
+        if (null !== $allDay) {
+            $this->allDay = $allDay;
+        }
         $this->setStart($start);
     }
 
@@ -39,13 +58,12 @@ class Event
         return $this->start;
     }
 
-    public function setStart(\DateTime $start): self
+    public function setStart(\DateTimeInterface $start): self
     {
-        if ($this->allDay) {
-            $start = clone $start;
-            $start->setTime(0, 0, 0, 0);
-        }
-        $this->start = $start;
+        // An all-day event copies the start, so later changes by the caller do not leak in.
+        $this->timedStart = $this->allDay ? \DateTime::createFromInterface($start) : self::toMutable($start);
+        $this->start = $this->timedStart;
+        $this->refreshStart(false);
 
         return $this;
     }
@@ -55,10 +73,16 @@ class Event
         return $this->end;
     }
 
-    public function setEnd(?\DateTime $end): self
+    /**
+     * Also resets allDay: true without an end, false with one. For a
+     * multi-day all-day event, call setAllDay(true) after setEnd().
+     */
+    public function setEnd(?\DateTimeInterface $end): self
     {
+        $wasAllDay = $this->allDay;
         $this->allDay = null === $end;
-        $this->end = $end;
+        $this->end = null === $end ? null : self::toMutable($end);
+        $this->refreshStart($wasAllDay);
 
         return $this;
     }
@@ -70,13 +94,52 @@ class Event
 
     public function setAllDay(bool $allDay): self
     {
+        $wasAllDay = $this->allDay;
         $this->allDay = $allDay;
-        if ($allDay) {
-            $this->start = clone $this->start;
-            $this->start->setTime(0, 0, 0, 0);
-        }
+        $this->refreshStart($wasAllDay);
 
         return $this;
+    }
+
+    /**
+     * Sets the effective start from the all-day state: midnight while the
+     * event is all-day, the start with its time of day once it is not.
+     */
+    private function refreshStart(bool $wasAllDay): void
+    {
+        if ($this->allDay) {
+            $this->start = clone $this->start;
+            $this->start->setTime(0, 0, 0, 0);
+
+            return;
+        }
+
+        if (!$wasAllDay || null === $this->timedStart) {
+            return;
+        }
+
+        // A time set in place on the all-day start wins over the remembered one.
+        if ('00:00:00.000000' !== $this->start->format('H:i:s.u')) {
+            $this->timedStart = $this->start;
+
+            return;
+        }
+
+        // Keep the day of the all-day start, in case it was moved in place.
+        $day = $this->start;
+        if ($day->format('Y-m-d') !== $this->timedStart->format('Y-m-d')) {
+            $this->timedStart = clone $this->timedStart;
+            $this->timedStart->setDate((int) $day->format('Y'), (int) $day->format('n'), (int) $day->format('j'));
+        }
+        $this->start = $this->timedStart;
+    }
+
+    /**
+     * Keeps a mutable \DateTime as is (same instance) and copies anything else into one.
+     */
+    private static function toMutable(\DateTimeInterface $date): \DateTime
+    {
+        return $date instanceof \DateTime ? $date : \DateTime::createFromInterface($date);
     }
 
     public function getResourceId(): ?string
