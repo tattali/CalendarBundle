@@ -10,11 +10,13 @@ When the FullCalendar [`timeZone`](https://fullcalendar.io/docs/timeZone) option
 | `'UTC'`                 | `2026-10-01T00:00:00Z`                    | `UTC`              |
 | `'America/New_York'`    | `2026-10-01T00:00:00` (no offset)         | `America/New_York` |
 
+The `America/New_York` row holds without a time zone plugin. With one (luxon or moment-timezone), FullCalendar sends dates with an offset, and the bundle converts them to the requested zone.
+
 The parameter name follows the FullCalendar [`timeZoneParam`](https://fullcalendar.io/docs/timeZoneParam) option; the bundle reads `timeZone`, the default.
 
 ## How the bundle parses it
 
-- No `timeZone` (or an empty one): `start` and `end` are parsed in the server default time zone, as before.
+- No `timeZone` (or an empty one): `start` and `end` are parsed as sent, as before. An offset in the string is kept; a date without one is read in the server default time zone.
 - A valid `timeZone`: `start` and `end` are parsed in that zone. A date without an offset is read as local time there (`2026-10-01T00:00:00` with `America/New_York` is midnight in New York). A date with an offset keeps its instant and is converted to the requested zone.
 - An unknown `timeZone`: the endpoint answers `400 Bad Request` (`Query parameter "timeZone" is not a valid time zone`).
 
@@ -54,5 +56,7 @@ Clone the dates before changing them: `getStart()` and `getEnd()` return the eve
 ## All-day events
 
 All-day events are serialised as plain dates (`"start": "2026-10-15"`, and `"end"` too when set), which is what FullCalendar expects for all-day events. A date carries no offset, so FullCalendar does not shift the event to the previous or next day when the calendar's zone differs from the server's.
+
+FullCalendar treats the `end` of an all-day event as exclusive and only its date is sent, so an all-day event that should include the 18th needs an end on the 19th.
 
 Timed events keep an ISO 8601 date-time with offset (`2026-10-15T09:00:00+02:00`), which FullCalendar converts to the calendar's zone.
