@@ -11,6 +11,11 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
+use Symfony\Component\HttpKernel\EventListener\SessionListener;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 final class CalendarControllerHttpCacheTest extends TestCase
 {
@@ -52,12 +57,40 @@ final class CalendarControllerHttpCacheTest extends TestCase
         self::assertStringNotContainsString('public', $control);
     }
 
+    public function testDefaultCacheRevalidatesEveryRequest(): void
+    {
+        $control = (string) $this->controller()->load($this->request('GET'))->headers->get('Cache-Control');
+
+        self::assertStringContainsString('no-cache', $control);
+        self::assertStringNotContainsString('max-age', $control);
+    }
+
+    public function testSessionListenerDoesNotLetTheBrowserReuseAPrivateFeed(): void
+    {
+        $request = $this->request('GET');
+        $session = new Session(new MockArraySessionStorage());
+        $request->setSession($session);
+        $session->start();
+        $session->get('_security_main');
+
+        $response = $this->controller()->load($request);
+
+        $kernel = self::createStub(HttpKernelInterface::class);
+        (new SessionListener())->onKernelResponse(new ResponseEvent($kernel, $request, HttpKernelInterface::MAIN_REQUEST, $response));
+
+        $control = 'Cache-Control: ' . $response->headers->get('Cache-Control');
+        self::assertTrue($response->headers->hasCacheControlDirective('private'), $control);
+        self::assertLessThanOrEqual(0, (int) $response->getMaxAge(), $control);
+    }
+
     public function testCachePublicOptionAllowsSharedCaching(): void
     {
         $control = (string) $this->controller(cachePublic: true)->load($this->request('GET'))->headers->get('Cache-Control');
 
         self::assertStringContainsString('public', $control);
         self::assertStringNotContainsString('private', $control);
+        self::assertStringContainsString('max-age=300', $control);
+        self::assertStringNotContainsString('no-cache', $control);
     }
 
     public function testDisabledCacheHasNoEtagAndDoesNotReturn304(): void

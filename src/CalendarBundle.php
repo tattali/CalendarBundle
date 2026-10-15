@@ -18,7 +18,7 @@ class CalendarBundle extends AbstractBundle
                 ->integerNode('cache_max_age')
                     ->defaultValue(300)
                     ->min(0)
-                    ->info('HTTP cache max-age in seconds (0 to disable)')
+                    ->info('HTTP cache max-age in seconds for public caching; private feeds are revalidated on every request (0 to disable caching)')
                 ->end()
                 ->booleanNode('cache_public')
                     ->defaultFalse()
