@@ -19,7 +19,9 @@ class Event
     protected ?\DateTime $timedStart = null;
 
     /**
-     * @param mixed[] $options
+     * @param mixed[]   $options
+     * @param bool|null $allDay  null makes the event all-day when it has no end;
+     *                           true with an end gives a multi-day all-day event
      */
     public function __construct(
         protected string $title,
@@ -27,10 +29,14 @@ class Event
         ?\DateTimeInterface $end = null,
         protected ?string $resourceId = null,
         protected array $options = [],
+        ?bool $allDay = null,
     ) {
         // Set before setEnd() runs, as the promoted property used to be.
         $this->start = $this->timedStart = self::toMutable($start);
         $this->setEnd($end);
+        if (null !== $allDay) {
+            $this->allDay = $allDay;
+        }
         $this->setStart($start);
     }
 
@@ -65,6 +71,10 @@ class Event
         return $this->end;
     }
 
+    /**
+     * Also resets allDay: true without an end, false with one. For a
+     * multi-day all-day event, call setAllDay(true) after setEnd().
+     */
     public function setEnd(?\DateTimeInterface $end): self
     {
         $wasAllDay = $this->allDay;

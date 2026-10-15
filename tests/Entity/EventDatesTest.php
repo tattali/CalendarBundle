@@ -294,4 +294,71 @@ final class EventDatesTest extends TestCase
         self::assertSame('2024-01-15 00:00:00', $allDayStart);
         self::assertSame('2024-01-15 00:00:00', $event->getStart()->format('Y-m-d H:i:s'), 'No time to restore when setStart() never ran');
     }
+
+    public function testConstructorBuildsAMultiDayAllDayEvent(): void
+    {
+        $end = new \DateTime('2024-01-18');
+
+        $event = new Event('Conference', new \DateTimeImmutable('2024-01-15 14:30:00', new \DateTimeZone('UTC')), $end, allDay: true);
+
+        self::assertTrue($event->isAllDay());
+        self::assertSame($end, $event->getEnd());
+        self::assertSame('2024-01-15 00:00:00.000000 UTC', $event->getStart()->format(self::FORMAT));
+        self::assertSame(
+            [
+                'title' => 'Conference',
+                'start' => '2024-01-15T00:00:00+00:00',
+                'allDay' => true,
+                'end' => $end->format(\DateTime::ATOM),
+            ],
+            $event->toArray(),
+        );
+    }
+
+    public function testAMultiDayAllDayEventGetsItsTimeBackWhenItStopsBeingAllDay(): void
+    {
+        $event = new Event('Conference', new \DateTime('2024-01-15 14:30:00'), new \DateTime('2024-01-18 12:00:00'), null, [], true);
+        $allDayStart = $event->getStart()->format('Y-m-d H:i:s');
+
+        $event->setAllDay(false);
+
+        self::assertSame('2024-01-15 00:00:00', $allDayStart);
+        self::assertSame('2024-01-15 14:30:00', $event->getStart()->format('Y-m-d H:i:s'));
+    }
+
+    public function testConstructorBuildsATimedEventWithoutAnEnd(): void
+    {
+        $start = new \DateTime('2024-01-15 14:30:00');
+
+        $event = new Event('Reminder', $start, allDay: false);
+
+        self::assertFalse($event->isAllDay());
+        self::assertNull($event->getEnd());
+        self::assertSame($start, $event->getStart());
+        self::assertSame('2024-01-15 14:30:00', $event->getStart()->format('Y-m-d H:i:s'));
+    }
+
+    public function testConstructorStillInfersAllDayFromTheEndByDefault(): void
+    {
+        $withoutEnd = new Event('Holiday', new \DateTime('2024-01-15 14:30:00'), null, null, [], null);
+        $withEnd = new Event('Meeting', new \DateTime('2024-01-15 14:30:00'), new \DateTime('2024-01-15 16:00:00'), allDay: null);
+
+        self::assertTrue($withoutEnd->isAllDay());
+        self::assertSame('00:00:00', $withoutEnd->getStart()->format('H:i:s'));
+        self::assertFalse($withEnd->isAllDay());
+        self::assertSame('14:30:00', $withEnd->getStart()->format('H:i:s'));
+    }
+
+    public function testSetEndStillResetsAllDaySoSetAllDayMustComeAfterIt(): void
+    {
+        $event = new Event('Conference', new \DateTime('2024-01-15 14:30:00'), new \DateTime('2024-01-18'), allDay: true);
+
+        $event->setEnd(new \DateTime('2024-01-19'));
+        $timedAfterSetEnd = !$event->isAllDay();
+        $event->setAllDay(true);
+
+        self::assertTrue($timedAfterSetEnd);
+        self::assertTrue($event->isAllDay());
+        self::assertSame('2024-01-15 00:00:00', $event->getStart()->format('Y-m-d H:i:s'));
+    }
 }
