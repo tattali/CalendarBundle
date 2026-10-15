@@ -8,19 +8,22 @@ CalendarBundle provides optional configuration for caching and security.
 # config/packages/calendar.yaml
 calendar:
     cache_max_age: 300    # HTTP cache max-age in seconds (default: 300, 0 to disable)
+    cache_public: false   # Allow shared caches only when events do not depend on the user
     json_max_depth: 4     # Max JSON nesting for filters (default: 4, range: 1-512)
 ```
 
 ## HTTP Caching
 
-The bundle includes built-in HTTP caching using ETag headers for the `/fc-load-events` endpoint.
+The bundle includes built-in HTTP caching using ETag headers for the `/fc-load-events` endpoint. The endpoint reads its parameters from the query string on GET requests (FullCalendar's default) and from the body on POST requests.
 
 ### How It Works
 
 When `cache_max_age > 0`:
-- Response includes `Cache-Control: public, max-age=X` header
+- Response includes `Cache-Control: private, max-age=X` by default
 - ETag header generated using xxh3 hash (fast, non-cryptographic)
-- Clients sending `If-None-Match` header receive `304 Not Modified` when content unchanged
+- GET requests with a matching `If-None-Match` receive `304 Not Modified` with an empty body. POST requests return 200; browsers do not revalidate POST.
+
+The default is `private` because events often depend on the current user. Set `cache_public: true` only when the feed is the same for everyone, so shared caches such as proxies and CDNs may store it.
 
 ### Configuration
 
