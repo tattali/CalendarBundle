@@ -88,7 +88,7 @@ final class CalendarControllerTest extends TestCase
 
         // Verify cache headers
         self::assertTrue($response->headers->has('ETag'));
-        self::assertStringContainsString('public', (string) $response->headers->get('Cache-Control'));
+        self::assertStringContainsString('private', (string) $response->headers->get('Cache-Control'));
         self::assertStringContainsString('max-age=300', (string) $response->headers->get('Cache-Control'));
     }
 
@@ -111,7 +111,7 @@ final class CalendarControllerTest extends TestCase
         self::assertSame(JsonResponse::HTTP_OK, $response->getStatusCode());
         // But cache headers are still set for informational purposes
         self::assertTrue($response->headers->has('ETag'));
-        self::assertStringContainsString('public', (string) $response->headers->get('Cache-Control'));
+        self::assertStringContainsString('private', (string) $response->headers->get('Cache-Control'));
         self::assertStringContainsString('max-age=300', (string) $response->headers->get('Cache-Control'));
     }
 

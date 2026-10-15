@@ -21,6 +21,7 @@ class CalendarController
         private readonly SerializerInterface $serializer,
         private readonly RequestParserInterface $requestParser,
         private readonly int $cacheMaxAge = 300,
+        private readonly bool $cachePublic = false,
     ) {}
 
     public function load(Request $request): JsonResponse
@@ -49,8 +50,13 @@ class CalendarController
 
         if ($this->cacheMaxAge > 0) {
             $response->setETag(hash('xxh3', $content));
-            $response->setPublic();
+            if ($this->cachePublic) {
+                $response->setPublic();
+            } else {
+                $response->setPrivate();
+            }
             $response->setMaxAge($this->cacheMaxAge);
+            $response->isNotModified($request);
         }
 
         return $response;

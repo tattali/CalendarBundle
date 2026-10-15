@@ -20,6 +20,10 @@ class CalendarBundle extends AbstractBundle
                     ->min(0)
                     ->info('HTTP cache max-age in seconds (0 to disable)')
                 ->end()
+                ->booleanNode('cache_public')
+                    ->defaultFalse()
+                    ->info('Allow shared caches (proxies, CDNs) to store the events feed; keep false when events depend on the user')
+                ->end()
                 ->integerNode('json_max_depth')
                     ->defaultValue(4)
                     ->min(1)
@@ -43,6 +47,7 @@ class CalendarBundle extends AbstractBundle
         $container->services()
             ->get('CalendarBundle\Controller\CalendarController')
             ->arg('$cacheMaxAge', $config['cache_max_age'])
+            ->arg('$cachePublic', $config['cache_public'] ?? false)
         ;
 
         $container->services()
