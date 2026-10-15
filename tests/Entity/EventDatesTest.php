@@ -176,14 +176,15 @@ final class EventDatesTest extends TestCase
         self::assertSame('2024-01-15 14:30:45.500000 Europe/Paris', $event->getStart()->format(self::FORMAT));
     }
 
-    public function testSetAllDayFalseGivesBackTheCallersMutableStart(): void
+    public function testSetAllDayFalseGivesBackACopyOfTheCallersMutableStart(): void
     {
         $start = new \DateTime('2024-01-15 14:30:00');
         $event = new Event('Holiday', $start);
 
         $event->setAllDay(false);
 
-        self::assertSame($start, $event->getStart());
+        self::assertNotSame($start, $event->getStart());
+        self::assertSame('2024-01-15 14:30:00', $event->getStart()->format('Y-m-d H:i:s'));
         self::assertSame('2024-01-15 14:30:00', $start->format('Y-m-d H:i:s'));
     }
 
@@ -294,6 +295,31 @@ final class EventDatesTest extends TestCase
         $event->setAllDay(false);
 
         self::assertSame('2024-01-15 07:00:00', $event->getStart()->format('Y-m-d H:i:s'));
+    }
+
+    public function testAnAllDayEventIgnoresLaterChangesToTheCallersStart(): void
+    {
+        $start = new \DateTime('2024-01-15 09:00:00');
+        $event = new Event('Holiday', $start);
+
+        $start->setTime(23, 59);
+        $event->setAllDay(false);
+
+        self::assertSame('2024-01-15 09:00:00', $event->getStart()->format('Y-m-d H:i:s'));
+        self::assertNotSame($start, $event->getStart());
+    }
+
+    public function testSetStartOnAnAllDayEventIgnoresLaterChangesToTheCallersStart(): void
+    {
+        $event = new Event('Holiday', new \DateTime('2024-01-10 08:00:00'));
+        $start = new \DateTime('2024-01-15 09:00:00');
+
+        $event->setStart($start);
+        $start->setTime(23, 59);
+        $event->setEnd(new \DateTime('2024-01-15 10:00:00'));
+
+        self::assertSame('2024-01-15 09:00:00', $event->getStart()->format('Y-m-d H:i:s'));
+        self::assertNotSame($start, $event->getStart());
     }
 
     public function testASubclassThatSetsTheStartItselfIsStillTruncated(): void

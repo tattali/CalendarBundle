@@ -11,9 +11,10 @@ class Event
     protected ?\DateTime $end;
 
     /**
-     * The start as it was given, with its time of day. $start is this same
-     * instance for a timed event, and a copy truncated to midnight for an
-     * all-day one, so the time comes back when the event stops being all-day.
+     * The start as it was given, with its time of day (a copy when it was
+     * given to an all-day event). $start is this same instance for a timed
+     * event, and a copy truncated to midnight for an all-day one, so the time
+     * comes back when the event stops being all-day.
      * Null until setStart() runs.
      */
     protected ?\DateTime $timedStart = null;
@@ -59,7 +60,8 @@ class Event
 
     public function setStart(\DateTimeInterface $start): self
     {
-        $this->timedStart = self::toMutable($start);
+        // An all-day event copies the start, so later changes by the caller do not leak in.
+        $this->timedStart = $this->allDay ? \DateTime::createFromInterface($start) : self::toMutable($start);
         $this->start = $this->timedStart;
         $this->refreshStart(false);
 
