@@ -6,6 +6,11 @@ namespace CalendarBundle\Exception;
 
 class InvalidJsonException extends \InvalidArgumentException implements CalendarExceptionInterface
 {
+    public static function mustBeObject(string $parameter): self
+    {
+        return new self(\sprintf('Query parameter "%s" must be a JSON object', $parameter));
+    }
+
     public static function forParameter(string $parameter, ?\Throwable $previous = null): self
     {
         return new self(
