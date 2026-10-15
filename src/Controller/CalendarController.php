@@ -52,10 +52,11 @@ class CalendarController
             $response->setETag(hash('xxh3', $content));
             if ($this->cachePublic) {
                 $response->setPublic();
+                $response->setMaxAge($this->cacheMaxAge);
             } else {
                 $response->setPrivate();
+                $response->headers->addCacheControlDirective('no-cache');
             }
-            $response->setMaxAge($this->cacheMaxAge);
             $response->isNotModified($request);
         }
 

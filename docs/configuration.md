@@ -7,7 +7,7 @@ CalendarBundle provides optional configuration for caching and security.
 ```yaml
 # config/packages/calendar.yaml
 calendar:
-    cache_max_age: 300    # HTTP cache max-age in seconds (default: 300, 0 to disable)
+    cache_max_age: 300    # HTTP cache max-age in seconds for public caching (default: 300, 0 to disable)
     cache_public: false   # Allow shared caches only when events do not depend on the user
     json_max_depth: 4     # Max JSON nesting for filters (default: 4, range: 1-512)
 ```
@@ -19,20 +19,21 @@ The bundle includes built-in HTTP caching using ETag headers for the `/fc-load-e
 ### How It Works
 
 When `cache_max_age > 0`:
-- Response includes `Cache-Control: private, max-age=X` by default
+- Response includes `Cache-Control: no-cache, private` by default: the browser revalidates every request with the ETag and gets `304 Not Modified` when nothing changed
+- With `cache_public: true`, the response includes `Cache-Control: public, max-age=X` instead
 - ETag header generated using xxh3 hash (fast, non-cryptographic)
 - GET requests with a matching `If-None-Match` receive `304 Not Modified` with an empty body. POST requests return 200; browsers do not revalidate POST.
 
-The default is `private` because events often depend on the current user. Set `cache_public: true` only when the feed is the same for everyone, so shared caches such as proxies and CDNs may store it.
+The default is `private` because events often depend on the current user. Set `cache_public: true` only when the feed is the same for everyone, so shared caches such as proxies and CDNs may store it for `cache_max_age` seconds. When the request uses the session, Symfony's session listener marks the response `private` and adds `must-revalidate` (with `max-age=0` for public responses).
 
 ### Configuration
 
 ```yaml
 calendar:
-    # Cache for 5 minutes (default)
+    # With cache_public: true, cache for 5 minutes (default)
     cache_max_age: 300
 
-    # Cache for 1 hour
+    # With cache_public: true, cache for 1 hour
     cache_max_age: 3600
 
     # Disable caching entirely

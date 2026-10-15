@@ -89,7 +89,7 @@ final class CalendarControllerTest extends TestCase
         // Verify cache headers
         self::assertTrue($response->headers->has('ETag'));
         self::assertStringContainsString('private', (string) $response->headers->get('Cache-Control'));
-        self::assertStringContainsString('max-age=300', (string) $response->headers->get('Cache-Control'));
+        self::assertStringContainsString('no-cache', (string) $response->headers->get('Cache-Control'));
     }
 
     public function testItSetsEtagAndCacheHeadersForPostRequest(): void
@@ -112,7 +112,7 @@ final class CalendarControllerTest extends TestCase
         // But cache headers are still set for informational purposes
         self::assertTrue($response->headers->has('ETag'));
         self::assertStringContainsString('private', (string) $response->headers->get('Cache-Control'));
-        self::assertStringContainsString('max-age=300', (string) $response->headers->get('Cache-Control'));
+        self::assertStringContainsString('no-cache', (string) $response->headers->get('Cache-Control'));
     }
 
     public function testCacheDisabledWhenMaxAgeIsZero(): void
