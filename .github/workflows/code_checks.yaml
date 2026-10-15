@@ -15,13 +15,23 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - php: '8.3'
+            symfony-version: 7.4.*
+            stability: prefer-lowest
+            minimum-stability: stable
+            is-current: false
+          - php: '8.3'
+            symfony-version: 7.4.*
+            stability: prefer-stable
+            minimum-stability: stable
+            is-current: false
           - php: '8.4'
-            symfony-version: 8.0.*
+            symfony-version: 8.1.*
             stability: prefer-stable
             minimum-stability: stable
             is-current: true
           - php: '8.5'
-            symfony-version: 8.0.*
+            symfony-version: 8.1.*
             stability: prefer-stable
             minimum-stability: stable
             is-current: false
@@ -48,7 +58,7 @@ jobs:
           composer global config --no-plugins allow-plugins.symfony/flex true
           composer global require --no-progress --no-scripts --no-plugins symfony/flex
           composer config minimum-stability ${{ matrix.minimum-stability }}
-          composer update --no-interaction --prefer-dist --no-security-blocking
+          composer update --no-interaction --prefer-dist --no-security-blocking --prefer-stable ${{ matrix.stability == 'prefer-lowest' && '--prefer-lowest' || '' }}
 
       - name: PHP-CS-Fixer
         continue-on-error: ${{ !matrix.is-current }}
