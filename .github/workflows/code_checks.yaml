@@ -16,7 +16,7 @@ jobs:
       matrix:
         include:
           - php: '8.3'
-            symfony-version: 7.4.*
+            symfony-version: 7.0.*
             stability: prefer-lowest
             minimum-stability: stable
             is-current: false
