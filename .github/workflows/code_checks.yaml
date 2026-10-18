@@ -58,10 +58,12 @@ jobs:
           composer global config --no-plugins allow-plugins.symfony/flex true
           composer global require --no-progress --no-scripts --no-plugins symfony/flex
           composer config minimum-stability ${{ matrix.minimum-stability }}
+          # php-cs-fixer needs symfony/process 7.2+, so it cannot install on the Symfony 7.0 job
+          if [ "${{ matrix.is-current }}" != "true" ]; then composer remove --dev --no-update friendsofphp/php-cs-fixer; fi
           composer update --no-interaction --prefer-dist --no-security-blocking --prefer-stable ${{ matrix.stability == 'prefer-lowest' && '--prefer-lowest' || '' }}
 
       - name: PHP-CS-Fixer
-        continue-on-error: ${{ !matrix.is-current }}
+        if: matrix.is-current
         run: vendor/bin/php-cs-fixer fix --ansi -v --dry-run
 
       - name: PHPStan
