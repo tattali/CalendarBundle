@@ -15,7 +15,7 @@ final class RequestParserQueryStringTest extends TestCase
     {
         $request = Request::create('/fc-load-events?start=2024-01-01&end=2024-01-31&filters=%7B%22category%22%3A%22meeting%22%7D');
 
-        $params = (new RequestParser())->parse($request);
+        $params = new RequestParser()->parse($request);
 
         self::assertSame('2024-01-01', $params->start->format('Y-m-d'));
         self::assertSame('2024-01-31', $params->end->format('Y-m-d'));
@@ -26,7 +26,7 @@ final class RequestParserQueryStringTest extends TestCase
     {
         $request = Request::create('/fc-load-events?start=2024-02-01&end=2024-02-29&filters=%7B%22category%22%3A%22holiday%22%7D', method: 'HEAD');
 
-        $params = (new RequestParser())->parse($request);
+        $params = new RequestParser()->parse($request);
 
         self::assertSame('2024-02-01', $params->start->format('Y-m-d'));
         self::assertSame('2024-02-29', $params->end->format('Y-m-d'));
@@ -41,7 +41,7 @@ final class RequestParserQueryStringTest extends TestCase
             'filters' => '{"category":"work"}',
         ]);
 
-        $params = (new RequestParser())->parse($request);
+        $params = new RequestParser()->parse($request);
 
         self::assertSame('2024-03-01', $params->start->format('Y-m-d'));
         self::assertSame('2024-03-31', $params->end->format('Y-m-d'));
@@ -57,6 +57,6 @@ final class RequestParserQueryStringTest extends TestCase
         $this->expectException(InvalidDateException::class);
         $this->expectExceptionMessage('Query parameter "start" is required');
 
-        (new RequestParser())->parse($request);
+        new RequestParser()->parse($request);
     }
 }
