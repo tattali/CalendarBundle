@@ -1,24 +1,32 @@
 CalendarBundle - FullCalendar.js integration
 ===========================================
 
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/tattali/CalendarBundle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/tattali/CalendarBundle/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/tattali/CalendarBundle/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/tattali/CalendarBundle/?branch=master)
-[![Build Status](https://travis-ci.com/tattali/CalendarBundle.svg?branch=master)](https://travis-ci.com/tattali/CalendarBundle)
+[![CI](https://img.shields.io/github/actions/workflow/status/tattali/CalendarBundle/ci.yml?branch=5.x&label=CI)](https://github.com/tattali/CalendarBundle/actions/workflows/ci.yml?query=branch%3A5.x)
 [![Total Downloads](https://poser.pugx.org/tattali/calendar-bundle/downloads)](https://packagist.org/packages/tattali/calendar-bundle)
 [![Latest Stable Version](https://poser.pugx.org/tattali/calendar-bundle/v/stable)](https://packagist.org/packages/tattali/calendar-bundle)
 
-This bundle allow you to integrate [FullCalendar.js](https://fullcalendar.io/) library in your Symfony 3 to 7 project.
+This bundle allow you to integrate [FullCalendar.js](https://fullcalendar.io/) library in your Symfony 5.4 project.
+
+This is the 5.x branch: Symfony 5.4 and PHP 8.0 or later. It gets security fixes only.
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/10502887/56835704-47687080-6875-11e9-9102-0533d2bbbf18.png" alt="Calendar image">
 </p>
 
-The following table shows the compatibilities of different versions of the bundle :
+Versions
+--------
 
-| Version                                                               | Symfony            | PHP          |
-|-----------------------------------------------------------------------|--------------------|--------------|
-| [1.3 (master)](https://github.com/tattali/CalendarBundle/tree/master) | ^5.4 + ^6.3 + ^7.0 | >=8.0        |
-| [1.0](https://github.com/tattali/CalendarBundle/tree/1.x)             | ^3.4 - ^6.2        | ^7.1 and 8.0 |
+Each major version of the bundle supports one Symfony major version:
+
+| Bundle | Branch                                                     | Symfony    | PHP  |
+|--------|------------------------------------------------------------|------------|------|
+| 8.x    | [main](https://github.com/tattali/CalendarBundle/tree/main) | 8          | 8.4+ |
+| 7.x    | [7.x](https://github.com/tattali/CalendarBundle/tree/7.x)   | 7          | 8.2+ |
+| 6.x    | [6.x](https://github.com/tattali/CalendarBundle/tree/6.x)   | 6.4        | 8.1+ |
+| 5.x    | [5.x](https://github.com/tattali/CalendarBundle/tree/5.x)   | 5.4        | 8.0+ |
+| 1.x    | tags `v1.*`                                                | 3.4 to 7   | 7.1+ |
+
+New features go to `main`. The `7.x` and `6.x` branches get bug fixes, and `5.x` gets security fixes only.
 
 * No storage dependencies (Compatible with: Doctrine, MongoDB, CouchDB...)
 
