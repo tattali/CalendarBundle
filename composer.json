@@ -25,7 +25,7 @@
         "symfony/framework-bundle": "^6.4"
     },
     "require-dev": {
-        "phpspec/prophecy": "^1.8",
+        "phpspec/prophecy": "^1.15",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpstan/phpstan": "^2.1",
         "phpunit/phpunit": "^9.6 || ^10.4",
