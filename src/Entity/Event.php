@@ -9,6 +9,13 @@ class Event
     protected bool $allDay = true;
 
     /**
+     * The start with the time of day it was given, kept while an all-day
+     * event exposes it truncated to midnight, so the time comes back when
+     * the event becomes timed.
+     */
+    private ?\DateTime $startWithTime = null;
+
+    /**
      * @param mixed[] $options
      */
     public function __construct(
@@ -39,7 +46,9 @@ class Event
 
     public function setStart(\DateTime $start): void
     {
+        $this->startWithTime = null;
         if ($this->allDay) {
+            $this->startWithTime = clone $start;
             $start = clone $start;
             $start->setTime(0, 0, 0, 0);
         }
@@ -55,6 +64,7 @@ class Event
     {
         if (null !== $end) {
             $this->allDay = false;
+            $this->restoreStartTime();
         }
         $this->end = $end;
     }
@@ -67,6 +77,9 @@ class Event
     public function setAllDay(bool $allDay): void
     {
         $this->allDay = $allDay;
+        if (!$allDay) {
+            $this->restoreStartTime();
+        }
     }
 
     public function getResourceId(): ?string
@@ -137,5 +150,22 @@ class Event
         }
 
         return [...$event, ...$this->getOptions()];
+    }
+
+    /**
+     * Gives back the time of day an all-day start was truncated from, on the
+     * day the start is on now (it may have been moved in place). A time set in
+     * place on the truncated start wins over the remembered one.
+     */
+    private function restoreStartTime(): void
+    {
+        $start = $this->startWithTime;
+        $this->startWithTime = null;
+        if (null === $start || '00:00:00.000000' !== $this->start->format('H:i:s.u')) {
+            return;
+        }
+
+        $start->setDate((int) $this->start->format('Y'), (int) $this->start->format('n'), (int) $this->start->format('j'));
+        $this->start = $start;
     }
 }
