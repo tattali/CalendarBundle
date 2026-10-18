@@ -10,11 +10,26 @@ CalendarBundle - FullCalendar.js integration
 [![Symfony](https://img.shields.io/packagist/dependency-v/tattali/calendar-bundle/symfony/framework-bundle?label=symfony)](https://packagist.org/packages/tattali/calendar-bundle)
 [![License](https://img.shields.io/packagist/l/tattali/calendar-bundle)](LICENSE)
 
-This bundle allow you to integrate [FullCalendar.js](https://fullcalendar.io/) library in your Symfony 5.4 to 8 project.
+This bundle allow you to integrate [FullCalendar.js](https://fullcalendar.io/) library in your Symfony 8 project.
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/10502887/56835704-47687080-6875-11e9-9102-0533d2bbbf18.png" alt="Calendar image">
 </p>
+
+Versions
+--------
+
+Each major version of the bundle supports one Symfony major version:
+
+| Bundle | Branch                                                     | Symfony    | PHP  |
+|--------|------------------------------------------------------------|------------|------|
+| 8.x    | [main](https://github.com/tattali/CalendarBundle/tree/main) | 8          | 8.4+ |
+| 7.x    | [7.x](https://github.com/tattali/CalendarBundle/tree/7.x)   | 7          | 8.2+ |
+| 6.x    | [6.x](https://github.com/tattali/CalendarBundle/tree/6.x)   | 6.4        | 8.1+ |
+| 5.x    | [5.x](https://github.com/tattali/CalendarBundle/tree/5.x)   | 5.4        | 8.0+ |
+| 1.x    | tags `v1.*`                                                | 3.4 to 7   | 7.1+ |
+
+New features go to `main`. The `7.x` and `6.x` branches get bug fixes, and `5.x` gets security fixes only.
 
 Documentation
 -------------
