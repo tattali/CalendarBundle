@@ -16,6 +16,7 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class CalendarControllerTest extends TestCase
 {
@@ -101,6 +102,53 @@ class CalendarControllerTest extends TestCase
         $this->assertEquals('application/json', $response->headers->get('Content-Type'));
         $this->assertEquals($data, $response->getContent());
         $this->assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
+    }
+
+    /**
+     * @dataProvider invalidQueryProvider
+     */
+    public function testItAnswersBadRequestForAnInvalidQuery(array $query, string $message): void
+    {
+        $this->eventDispatcher->dispatch(Argument::cetera())->shouldNotBeCalled();
+
+        $this->expectException(BadRequestHttpException::class);
+        $this->expectExceptionMessage($message);
+
+        $this->controller->loadAction(Request::create('/fc-load-events', 'GET', $query));
+    }
+
+    public static function invalidQueryProvider(): iterable
+    {
+        $valid = ['start' => '2016-03-01', 'end' => '2016-03-19'];
+
+        yield 'missing start' => [['end' => '2016-03-19'], 'Query parameter "start" should be a string'];
+        yield 'start as an array' => [['start' => ['2016-03-01']] + $valid, 'Query parameter "start" should be a string'];
+        yield 'missing end' => [['start' => '2016-03-01'], 'Query parameter "end" should be a string'];
+        yield 'end as an array' => [['end' => ['2016-03-19']] + $valid, 'Query parameter "end" should be a string'];
+        yield 'filters not JSON' => [$valid + ['filters' => 'not json'], 'Query parameter "filters" is not valid'];
+        yield 'filters a JSON scalar' => [$valid + ['filters' => '1'], 'Query parameter "filters" is not valid'];
+    }
+
+    public function testItPassesTheQueryToTheCalendarEvent(): void
+    {
+        $this->eventDispatcher
+            ->dispatch(Argument::that(static fn (CalendarEvent $event): bool => '2016-03-01' === $event->getStart()->format('Y-m-d')
+                && '2016-03-19' === $event->getEnd()->format('Y-m-d')
+                && ['category' => 'work'] === $event->getFilters()), CalendarEvents::SET_DATA)
+            ->willReturn($this->calendarEvent)
+            ->shouldBeCalledOnce()
+        ;
+        $this->calendarEvent->getEvents()->willReturn([]);
+        $this->serializer->serialize([])->willReturn('[]');
+
+        $response = $this->controller->loadAction(Request::create('/fc-load-events', 'GET', [
+            'start' => '2016-03-01',
+            'end' => '2016-03-19',
+            'filters' => '{"category":"work"}',
+        ]));
+
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $this->assertEquals('[]', $response->getContent());
     }
 
     private function eventDispatcher($event, ?string $eventName = null): void
