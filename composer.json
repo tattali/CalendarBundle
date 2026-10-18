@@ -20,9 +20,12 @@
     "require": {
         "php": ">=8.0",
         "ext-json": "*",
+        "symfony/config": "^5.4",
         "symfony/dependency-injection": "^5.4",
         "symfony/event-dispatcher": "^5.4",
-        "symfony/framework-bundle": "^5.4"
+        "symfony/framework-bundle": "^5.4",
+        "symfony/http-foundation": "^5.4",
+        "symfony/http-kernel": "^5.4"
     },
     "require-dev": {
         "infection/infection": "^0.29",
@@ -32,9 +35,8 @@
         "phpstan/phpstan-strict-rules": "^2.0",
         "phpstan/phpstan-symfony": "^2.0",
         "phpunit/phpunit": "^9.6",
-        "symfony/dotenv": "^5.4",
-        "symfony/phpunit-bridge": "^5.4",
-        "symfony/yaml": "^5.4"
+        "shipmonk/composer-dependency-analyser": "^1.8",
+        "symfony/phpunit-bridge": "^5.4"
     },
     "suggest": {
         "symfony/orm-pack": "To support Doctrine ORM and Migration.",
