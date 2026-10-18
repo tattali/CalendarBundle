@@ -20,7 +20,6 @@ return new Config()
         '@auto:risky' => true,
         '@Symfony' => true,
         '@Symfony:risky' => true,
-        // @Symfony:risky removes it since php-cs-fixer 3.95
         'declare_strict_types' => true,
         'no_useless_else' => true,
         'no_useless_return' => true,
