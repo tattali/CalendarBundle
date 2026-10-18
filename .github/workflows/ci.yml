@@ -49,7 +49,7 @@ jobs:
         id: composer-cache
         run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: composer-${{ matrix.php }}-${{ matrix.symfony }}-${{ matrix.lowest && 'lowest' || 'stable' }}-${{ hashFiles('composer.json') }}
@@ -85,7 +85,7 @@ jobs:
       - name: SonarCloud
         # secrets are not available to pull requests opened from another repository
         if: matrix.current && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
-        uses: SonarSource/sonarqube-scan-action@v6
+        uses: SonarSource/sonarqube-scan-action@v8
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
