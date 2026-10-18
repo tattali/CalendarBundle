@@ -125,6 +125,7 @@ Add the calendar to your template:
 - [Webpack Encore](docs/es6-encore.md) - ES6 module setup
 - [Multi-calendar](docs/multi-calendar.md) - Multiple calendars on one page
 - [Security](docs/configuration.md#security) - Securing the endpoint
+- [Time zones](docs/timezone.md) - FullCalendar `timeZone` parameter and all-day dates
 
 #### Upgrade Guides
 

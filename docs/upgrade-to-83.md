@@ -49,6 +49,10 @@ FullCalendar treats the `end` of an all-day event as exclusive, so the conferenc
 
 A GET request whose `If-None-Match` header matches the feed's ETag now gets an empty `304 Not Modified` response.
 
+### FullCalendar timeZone Parameter
+
+The endpoint reads the `timeZone` parameter that FullCalendar sends when its `timeZone` option is not `local`, parses `start` and `end` in that zone and passes it to listeners as `SetDataEvent::getTimeZone()` (`null` when none was sent). See [timezone.md](timezone.md).
+
 ## Breaking Changes
 
 ### Events Feed Is Private by Default
@@ -64,6 +68,28 @@ calendar:
 ```
 
 `cache_max_age` then sets the `max-age` as before.
+
+### All-Day Events Are Serialised as Dates
+
+`Event::toArray()`, and so the JSON feed, gives the `start` and `end` of an all-day event as `Y-m-d` (`2026-10-15`) instead of an ATOM date-time (`2026-10-15T00:00:00+02:00`), so the event stays on its day whatever the calendar's time zone. Timed events are unchanged. FullCalendar accepts both forms.
+
+**Migration**: code that reads `toArray()` or the feed and parses these values as a date-time must accept a plain date for all-day events, or check `allDay` first:
+
+```php
+$start = $data['allDay']
+    ? \DateTime::createFromFormat('!Y-m-d', $data['start'])
+    : new \DateTime($data['start']);
+```
+
+### Listener Dates Follow the Requested Time Zone
+
+When a client sends `timeZone`, listeners receive `start` and `end` in that zone instead of the server's. Without it, nothing changes.
+
+**Migration**: listeners that compare these dates with stored ones should compare instants (`getTimestamp()` or `DateTime` comparison), not formatted wall-clock strings.
+
+### Unknown Time Zones Answer 400
+
+An unknown `timeZone` value now gives a `400 Bad Request` through the new `InvalidTimeZoneException`, which implements `CalendarExceptionInterface`. Before, the parameter was ignored.
 
 ## Coming in 9.0
 

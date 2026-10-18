@@ -6,6 +6,7 @@ namespace CalendarBundle\Request;
 
 use CalendarBundle\Exception\InvalidDateException;
 use CalendarBundle\Exception\InvalidJsonException;
+use CalendarBundle\Exception\InvalidTimeZoneException;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -25,14 +26,36 @@ class RequestParser implements RequestParserInterface
 
     public function parse(Request $request): QueryParameters
     {
+        $timeZone = $this->parseTimeZone($request);
+
         return new QueryParameters(
-            $this->parseDate($request, 'start'),
-            $this->parseDate($request, 'end'),
+            $this->parseDate($request, 'start', $timeZone),
+            $this->parseDate($request, 'end', $timeZone),
             $this->parseFilters($request),
+            $timeZone,
         );
     }
 
-    private function parseDate(Request $request, string $parameter): \DateTime
+    private function parseTimeZone(Request $request): ?\DateTimeZone
+    {
+        $value = $this->input($request)->getString('timeZone');
+
+        if ('' === $value) {
+            return null;
+        }
+
+        if (str_contains($value, "\0")) {
+            throw InvalidTimeZoneException::forParameter('timeZone');
+        }
+
+        try {
+            return new \DateTimeZone($value);
+        } catch (\DateInvalidTimeZoneException $e) {
+            throw InvalidTimeZoneException::forParameter('timeZone', $e);
+        }
+    }
+
+    private function parseDate(Request $request, string $parameter, ?\DateTimeZone $timeZone = null): \DateTime
     {
         $value = $this->input($request)->getString($parameter);
 
@@ -41,10 +64,16 @@ class RequestParser implements RequestParserInterface
         }
 
         try {
-            return new \DateTime($value);
+            $date = new \DateTime($value, $timeZone);
         } catch (\DateMalformedStringException $e) {
             throw InvalidDateException::forParameter($parameter, $e);
         }
+
+        if (null !== $timeZone) {
+            $date->setTimezone($timeZone);
+        }
+
+        return $date;
     }
 
     /**
