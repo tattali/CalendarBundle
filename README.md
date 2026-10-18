@@ -129,6 +129,7 @@ Add the calendar to your template:
 
 #### Upgrade Guides
 
+- [Migrating to v8.3](docs/upgrade-to-83.md)
 - [Migrating to v8.2](docs/upgrade-to-82.md)
 - [Migrating to v8.1](docs/upgrade-to-81.md)
 

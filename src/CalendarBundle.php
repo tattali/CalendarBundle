@@ -47,7 +47,7 @@ class CalendarBundle extends AbstractBundle
         $container->services()
             ->get('CalendarBundle\Controller\CalendarController')
             ->arg('$cacheMaxAge', $config['cache_max_age'])
-            ->arg('$cachePublic', $config['cache_public'] ?? false)
+            ->arg('$cachePublic', $config['cache_public'])
         ;
 
         $container->services()
