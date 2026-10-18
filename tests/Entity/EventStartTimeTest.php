@@ -108,6 +108,18 @@ final class EventStartTimeTest extends TestCase
         self::assertSame('2024-01-15 14:30:00', $event->getStart()->format('Y-m-d H:i:s'));
     }
 
+    public function testChangesToTheGivenStartAfterSetAllDayTrueDoNotLeakIn(): void
+    {
+        $start = new \DateTime('2024-01-15 14:30:00');
+        $event = new Event('Title', $start, new \DateTime('2024-01-15 16:00:00'));
+
+        $event->setAllDay(true);
+        $start->setTime(18, 0);
+        $event->setAllDay(false);
+
+        self::assertSame('2024-01-15 14:30:00', $event->getStart()->format('Y-m-d H:i:s'));
+    }
+
     public function testSetEndGivesBackTheTimeThatSetAllDayTrueRemoved(): void
     {
         $event = new Event('Title', new \DateTime('2024-01-15 14:30:00'), new \DateTime('2024-01-15 16:00:00'));
