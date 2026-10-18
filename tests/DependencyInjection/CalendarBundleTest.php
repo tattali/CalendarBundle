@@ -126,6 +126,7 @@ final class CalendarBundleTest extends TestCase
 
         $bundle->loadExtension([
             'cache_max_age' => 300,
+            'cache_public' => false,
             'json_max_depth' => 4,
         ], $configurator, $container);
 
