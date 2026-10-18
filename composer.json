@@ -28,7 +28,7 @@
         "phpspec/prophecy": "^1.8",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpstan/phpstan": "^2.1",
-        "phpunit/phpunit": "^9.6 || ^10.4",
+        "phpunit/phpunit": "^9.6",
         "symfony/dotenv": "^5.4",
         "symfony/phpunit-bridge": "^5.4",
         "symfony/yaml": "^5.4"
