@@ -10,6 +10,7 @@ use CalendarBundle\Serializer\SerializerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class CalendarController
 {
@@ -24,10 +25,23 @@ class CalendarController
      */
     public function loadAction(Request $request): Response
     {
-        $start = new \DateTime($request->get('start'));
-        $end = new \DateTime($request->get('end'));
+        $start = $request->get('start');
+        if (!\is_string($start)) {
+            throw new BadRequestHttpException('Query parameter "start" should be a string');
+        }
+        $start = new \DateTime($start);
+
+        $end = $request->get('end');
+        if (!\is_string($end)) {
+            throw new BadRequestHttpException('Query parameter "end" should be a string');
+        }
+        $end = new \DateTime($end);
+
         $filters = $request->get('filters', '{}');
-        $filters = \is_array($filters) ? $filters : json_decode($filters, true);
+        $filters = \is_string($filters) ? json_decode($filters, true) : $filters;
+        if (!\is_array($filters)) {
+            throw new BadRequestHttpException('Query parameter "filters" is not valid');
+        }
 
         $event = $this->eventDispatcher->dispatch(
             new CalendarEvent($start, $end, $filters),
