@@ -6,6 +6,7 @@ namespace CalendarBundle\Request;
 
 use CalendarBundle\Exception\InvalidDateException;
 use CalendarBundle\Exception\InvalidJsonException;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 
 class RequestParser implements RequestParserInterface
@@ -33,7 +34,7 @@ class RequestParser implements RequestParserInterface
 
     private function parseDate(Request $request, string $parameter): \DateTime
     {
-        $value = $request->request->getString($parameter);
+        $value = $this->input($request)->getString($parameter);
 
         if ('' === $value) {
             throw InvalidDateException::missingParameter($parameter);
@@ -51,7 +52,7 @@ class RequestParser implements RequestParserInterface
      */
     private function parseFilters(Request $request): array
     {
-        $value = $request->request->getString('filters', '{}');
+        $value = $this->input($request)->getString('filters', '{}');
 
         try {
             $filters = json_decode($value, associative: true, depth: $this->jsonMaxDepth, flags: \JSON_THROW_ON_ERROR);
@@ -63,5 +64,13 @@ class RequestParser implements RequestParserInterface
         } catch (\JsonException $e) {
             throw InvalidJsonException::forParameter('filters', $e);
         }
+    }
+
+    /**
+     * @return InputBag<string|int|float|bool|null>
+     */
+    private function input(Request $request): InputBag
+    {
+        return $request->isMethod('GET') || $request->isMethod('HEAD') ? $request->query : $request->request;
     }
 }
