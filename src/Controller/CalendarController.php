@@ -22,21 +22,21 @@ class CalendarController
     public function load(Request $request): JsonResponse
     {
         try {
-            $start = $request->get('start');
+            $start = $this->getParameter($request, 'start');
             if ($start && \is_string($start)) {
                 $start = new \DateTime($start);
             } else {
                 throw new \UnexpectedValueException('Query parameter "start" should be a string');
             }
 
-            $end = $request->get('end');
+            $end = $this->getParameter($request, 'end');
             if ($end && \is_string($end)) {
                 $end = new \DateTime($end);
             } else {
                 throw new \UnexpectedValueException('Query parameter "end" should be a string');
             }
 
-            $filters = $request->get('filters', '{}');
+            $filters = $this->getParameter($request, 'filters', '{}');
             $filters = match (true) {
                 \is_array($filters) => $filters,
                 \is_string($filters) => json_decode($filters, true),
@@ -58,5 +58,20 @@ class CalendarController
             $content,
             empty($content) ? Response::HTTP_NO_CONTENT : Response::HTTP_OK,
         );
+    }
+
+    /**
+     * Reads a parameter the way Request::get() does, without its deprecation in Symfony 7.4:
+     * the request attributes first, then the query string, then the request body.
+     */
+    private function getParameter(Request $request, string $key, mixed $default = null): mixed
+    {
+        foreach ([$request->attributes, $request->query, $request->request] as $parameters) {
+            if ($parameters->has($key)) {
+                return $parameters->all()[$key];
+            }
+        }
+
+        return $default;
     }
 }

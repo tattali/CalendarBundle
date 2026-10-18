@@ -17,7 +17,6 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 final class CalendarControllerTest extends TestCase
 {
-    private MockObject&Request $request;
     private MockObject&SetDataEvent $calendarEvent;
     private MockObject&Event $event;
 
@@ -28,7 +27,6 @@ final class CalendarControllerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->request = $this->createMock(Request::class);
         $this->calendarEvent = $this->createMock(SetDataEvent::class);
         $this->event = $this->createMock(Event::class);
 
@@ -43,15 +41,6 @@ final class CalendarControllerTest extends TestCase
 
     public function testItProvidesAnEventsFeedForACalendar(): void
     {
-        $this->request->method('get')
-            ->willReturnCallback(static fn(string $key) => match ($key) {
-                'start' => '2016-03-01',
-                'end' => '2016-03-19',
-                'filters' => '{}',
-                default => throw new \LogicException(),
-            })
-        ;
-
         $this->calendarEvent->method('getEvents')
             ->willReturn([$this->event])
         ;
@@ -80,7 +69,11 @@ final class CalendarControllerTest extends TestCase
             ->willReturn($data)
         ;
 
-        $response = $this->controller->load($this->request);
+        $response = $this->controller->load(Request::create('/', 'GET', [
+            'start' => '2016-03-01',
+            'end' => '2016-03-19',
+            'filters' => '{}',
+        ]));
 
         self::assertInstanceOf(JsonResponse::class, $response);
 
@@ -90,15 +83,6 @@ final class CalendarControllerTest extends TestCase
 
     public function testItNotFindAnyEvents(): void
     {
-        $this->request->method('get')
-            ->willReturnCallback(static fn(string $key) => match ($key) {
-                'start' => '2016-03-01',
-                'end' => '2016-03-19',
-                'filters' => '{}',
-                default => throw new \LogicException(),
-            })
-        ;
-
         $this->calendarEvent->method('getEvents')
             ->willReturn([$this->event])
         ;
@@ -115,7 +99,11 @@ final class CalendarControllerTest extends TestCase
             ->willReturn($data)
         ;
 
-        $response = $this->controller->load($this->request);
+        $response = $this->controller->load(Request::create('/', 'GET', [
+            'start' => '2016-03-01',
+            'end' => '2016-03-19',
+            'filters' => '{}',
+        ]));
 
         self::assertInstanceOf(JsonResponse::class, $response);
 
@@ -127,29 +115,128 @@ final class CalendarControllerTest extends TestCase
     {
         $this->expectException(BadRequestHttpException::class);
 
-        $this->request->method('get')
-            ->willReturnCallback(static fn(string $key) => match ($key) {
-                'start' => '',
-                'end' => '',
-                default => throw new \LogicException(),
-            })
-        ;
-
-        $this->controller->load($this->request);
+        $this->controller->load(Request::create('/', 'GET', [
+            'start' => '',
+            'end' => '',
+        ]));
     }
 
     public function testItShouldThrowErrorOnEndParam(): void
     {
         $this->expectException(BadRequestHttpException::class);
 
-        $this->request->method('get')
-            ->willReturnCallback(static fn(string $key) => match ($key) {
-                'start' => '2016-03-01',
-                'end' => '',
-                default => throw new \LogicException(),
+        $this->controller->load(Request::create('/', 'GET', [
+            'start' => '2016-03-01',
+            'end' => '',
+        ]));
+    }
+
+    public function testItReadsTheQueryStringOfAGetRequest(): void
+    {
+        $setDataEvent = $this->loadAndCaptureSetDataEvent(Request::create('/', 'GET', [
+            'start' => '2016-03-01',
+            'end' => '2016-03-19',
+            'filters' => '{"calendar-id":"holidays"}',
+        ]));
+
+        self::assertSame('2016-03-01', $setDataEvent->getStart()->format('Y-m-d'));
+        self::assertSame('2016-03-19', $setDataEvent->getEnd()->format('Y-m-d'));
+        self::assertSame(['calendar-id' => 'holidays'], $setDataEvent->getFilters());
+    }
+
+    public function testItReadsFiltersGivenAsAnArrayInTheQueryString(): void
+    {
+        $setDataEvent = $this->loadAndCaptureSetDataEvent(Request::create('/', 'GET', [
+            'start' => '2016-03-01',
+            'end' => '2016-03-19',
+            'filters' => ['calendar-id' => 'holidays'],
+        ]));
+
+        self::assertSame(['calendar-id' => 'holidays'], $setDataEvent->getFilters());
+    }
+
+    public function testItUsesEmptyFiltersWhenNoneAreGiven(): void
+    {
+        $setDataEvent = $this->loadAndCaptureSetDataEvent(Request::create('/', 'GET', [
+            'start' => '2016-03-01',
+            'end' => '2016-03-19',
+        ]));
+
+        self::assertSame([], $setDataEvent->getFilters());
+    }
+
+    public function testItReadsTheBodyOfAPostRequest(): void
+    {
+        $setDataEvent = $this->loadAndCaptureSetDataEvent(Request::create('/', 'POST', [
+            'start' => '2016-03-01',
+            'end' => '2016-03-19',
+            'filters' => '{"calendar-id":"holidays"}',
+        ]));
+
+        self::assertSame('2016-03-01', $setDataEvent->getStart()->format('Y-m-d'));
+        self::assertSame('2016-03-19', $setDataEvent->getEnd()->format('Y-m-d'));
+        self::assertSame(['calendar-id' => 'holidays'], $setDataEvent->getFilters());
+    }
+
+    public function testTheQueryStringTakesPrecedenceOverThePostBody(): void
+    {
+        $setDataEvent = $this->loadAndCaptureSetDataEvent(Request::create('/?start=2016-03-01', 'POST', [
+            'start' => '2017-01-01',
+            'end' => '2017-01-31',
+        ]));
+
+        self::assertSame('2016-03-01', $setDataEvent->getStart()->format('Y-m-d'));
+        self::assertSame('2017-01-31', $setDataEvent->getEnd()->format('Y-m-d'));
+    }
+
+    public function testRequestAttributesTakePrecedenceOverTheQueryString(): void
+    {
+        $request = Request::create('/', 'GET', [
+            'start' => '2016-03-01',
+            'end' => '2016-03-19',
+        ]);
+        $request->attributes->set('start', '2020-05-01');
+
+        $setDataEvent = $this->loadAndCaptureSetDataEvent($request);
+
+        self::assertSame('2020-05-01', $setDataEvent->getStart()->format('Y-m-d'));
+        self::assertSame('2016-03-19', $setDataEvent->getEnd()->format('Y-m-d'));
+    }
+
+    public function testARequestAttributeSetToNullHidesTheQueryString(): void
+    {
+        $request = Request::create('/', 'GET', [
+            'start' => '2016-03-01',
+            'end' => '2016-03-19',
+            'filters' => '{}',
+        ]);
+        $request->attributes->set('filters', null);
+
+        $this->expectException(BadRequestHttpException::class);
+        $this->expectExceptionMessage('Query parameter "filters" is not valid');
+
+        $this->controller->load($request);
+    }
+
+    private function loadAndCaptureSetDataEvent(Request $request): SetDataEvent
+    {
+        $dispatched = null;
+
+        $this->eventDispatcher->expects(self::once())
+            ->method('dispatch')
+            ->willReturnCallback(static function (object $event) use (&$dispatched): object {
+                return $dispatched = $event;
             })
         ;
 
-        $this->controller->load($this->request);
+        $this->serializer->method('serialize')
+            ->willReturn('[]')
+        ;
+
+        $this->controller->load($request);
+
+        self::assertInstanceOf(SetDataEvent::class, $dispatched);
+
+        return $dispatched;
     }
 }

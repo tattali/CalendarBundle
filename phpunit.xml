@@ -5,6 +5,8 @@
          backupGlobals="false"
          colors="true"
          bootstrap="vendor/autoload.php"
+         displayDetailsOnTestsThatTriggerDeprecations="true"
+         failOnDeprecation="true"
          failOnRisky="true"
          failOnWarning="true">
   <php>
@@ -18,7 +20,8 @@
     </testsuite>
   </testsuites>
 
-  <source>
+  <!-- Symfony triggers its deprecations silenced with @, so they must be reported explicitly -->
+  <source ignoreSuppressionOfDeprecations="true">
     <include>
       <directory>./src/</directory>
     </include>
