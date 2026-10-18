@@ -76,9 +76,9 @@ final class CalendarControllerHttpCacheTest extends TestCase
         $response = $this->controller()->load($request);
 
         $kernel = self::createStub(HttpKernelInterface::class);
-        (new SessionListener())->onKernelResponse(new ResponseEvent($kernel, $request, HttpKernelInterface::MAIN_REQUEST, $response));
+        new SessionListener()->onKernelResponse(new ResponseEvent($kernel, $request, HttpKernelInterface::MAIN_REQUEST, $response));
 
-        $control = 'Cache-Control: ' . $response->headers->get('Cache-Control');
+        $control = 'Cache-Control: '.$response->headers->get('Cache-Control');
         self::assertTrue($response->headers->hasCacheControlDirective('private'), $control);
         self::assertLessThanOrEqual(0, (int) $response->getMaxAge(), $control);
     }
@@ -104,7 +104,7 @@ final class CalendarControllerHttpCacheTest extends TestCase
     private function controller(int $cacheMaxAge = 300, bool $cachePublic = false): CalendarController
     {
         $dispatcher = self::createStub(EventDispatcherInterface::class);
-        $dispatcher->method('dispatch')->willReturnCallback(static fn(object $event): object => $event);
+        $dispatcher->method('dispatch')->willReturnCallback(static fn (object $event): object => $event);
 
         $serializer = self::createStub(SerializerInterface::class);
         $serializer->method('serialize')->willReturn('[{"title":"Event"}]');
@@ -121,7 +121,7 @@ final class CalendarControllerHttpCacheTest extends TestCase
         $parameters = ['start' => '2024-01-01', 'end' => '2024-01-31'];
         $uri = '/fc-load-events';
         if ('GET' === $method) {
-            $uri .= '?' . http_build_query($parameters);
+            $uri .= '?'.http_build_query($parameters);
             $parameters = [];
         }
 

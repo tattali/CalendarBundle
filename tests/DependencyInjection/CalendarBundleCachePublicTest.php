@@ -24,9 +24,9 @@ final class CalendarBundleCachePublicTest extends TestCase
     {
         $treeBuilder = new TreeBuilder('calendar');
         $loader = self::createStub(DefinitionFileLoader::class);
-        (new CalendarBundle())->configure(new DefinitionConfigurator($treeBuilder, $loader, '', __FILE__));
+        new CalendarBundle()->configure(new DefinitionConfigurator($treeBuilder, $loader, '', __FILE__));
 
-        $config = (new Processor())->process($treeBuilder->buildTree(), []);
+        $config = new Processor()->process($treeBuilder->buildTree(), []);
 
         self::assertArrayHasKey('cache_public', $config);
         self::assertFalse($config['cache_public']);
@@ -36,7 +36,7 @@ final class CalendarBundleCachePublicTest extends TestCase
     {
         $bundle = new CalendarBundle();
         $container = new ContainerBuilder();
-        $bundlePath = \dirname(__DIR__, 2) . '/src';
+        $bundlePath = \dirname(__DIR__, 2).'/src';
         $locator = new FileLocator($bundlePath);
         $resolver = new LoaderResolver([
             new YamlFileLoader($container, $locator),
