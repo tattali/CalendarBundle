@@ -110,7 +110,7 @@ final class EventTest extends TestCase
     public function testSetStartDoesNotMutateOriginalDateTimeForAllDayEvent(): void
     {
         $originalTime = '14:30:00';
-        $date = new \DateTime('2024-01-15 ' . $originalTime);
+        $date = new \DateTime('2024-01-15 '.$originalTime);
 
         $event = new Event('All day event', $date);
 

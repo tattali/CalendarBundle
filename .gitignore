@@ -9,3 +9,4 @@ composer.lock
 .php-cs-fixer.cache
 
 .idea
+/.php-cs-fixer.php
