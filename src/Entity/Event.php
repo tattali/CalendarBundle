@@ -8,6 +8,10 @@ class Event
 {
     protected bool $allDay = true;
 
+    protected \DateTime $start;
+
+    protected ?\DateTime $end;
+
     /**
      * The start with the time of day it had, kept while an all-day event
      * exposes it truncated to midnight, so the time comes back when the
@@ -16,16 +20,29 @@ class Event
     private ?\DateTime $startWithTime = null;
 
     /**
-     * @param mixed[] $options
+     * An immutable date is copied into a \DateTime; a \DateTime is used as is.
+     *
+     * @param mixed[]   $options
+     * @param bool|null $allDay  null makes the event all-day without an end and timed with one;
+     *                           true with an end gives a multi-day all-day event
      */
     public function __construct(
         protected string $title,
-        protected \DateTime $start,
-        protected ?\DateTime $end = null,
+        \DateTimeInterface $start,
+        ?\DateTimeInterface $end = null,
         protected ?string $resourceId = null,
         protected array $options = [],
+        ?bool $allDay = null,
     ) {
+        $start = $start instanceof \DateTime ? $start : \DateTime::createFromInterface($start);
+        $end = null === $end || $end instanceof \DateTime ? $end : \DateTime::createFromInterface($end);
+        // set before setEnd() runs, as the promoted properties used to be
+        $this->start = $start;
+        $this->end = $end;
         $this->setEnd($end);
+        if (null !== $allDay) {
+            $this->allDay = $allDay;
+        }
         $this->setStart($start);
     }
 
@@ -46,6 +63,11 @@ class Event
         return $this->start;
     }
 
+    /**
+     * In 9.0, $start will be typed \DateTimeInterface. A subclass that overrides
+     * this method should declare its parameter as \DateTimeInterface: PHP already
+     * accepts that wider type in an override, so it can be changed now.
+     */
     public function setStart(\DateTime $start): self
     {
         $this->startWithTime = null;
@@ -64,6 +86,13 @@ class Event
         return $this->end;
     }
 
+    /**
+     * Also resets allDay: true without an end, false with one.
+     *
+     * In 9.0, $end will be typed ?\DateTimeInterface. A subclass that overrides
+     * this method should declare its parameter as ?\DateTimeInterface: PHP already
+     * accepts that wider type in an override, so it can be changed now.
+     */
     public function setEnd(?\DateTime $end): self
     {
         $this->allDay = null === $end;
