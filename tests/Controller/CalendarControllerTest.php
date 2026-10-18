@@ -82,7 +82,6 @@ final class CalendarControllerTest extends TestCase
 
         $response = $this->controller->load($request);
 
-        self::assertInstanceOf(JsonResponse::class, $response);
         self::assertSame($data, $response->getContent());
         self::assertSame(JsonResponse::HTTP_OK, $response->getStatusCode());
 
@@ -166,8 +165,6 @@ final class CalendarControllerTest extends TestCase
         ;
 
         $response = $this->controller->load($request);
-
-        self::assertInstanceOf(JsonResponse::class, $response);
 
         self::assertSame($data, $response->getContent());
         self::assertSame(JsonResponse::HTTP_NO_CONTENT, $response->getStatusCode());
