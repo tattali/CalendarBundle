@@ -1,16 +1,33 @@
 CalendarBundle - FullCalendar.js integration
 ===========================================
 
-[![Build Status](https://github.com/tattali/CalendarBundle/actions/workflows/code_checks.yaml/badge.svg)](https://github.com/tattali/CalendarBundle/actions)
+[![CI](https://img.shields.io/github/actions/workflow/status/tattali/CalendarBundle/ci.yml?branch=7.x&label=CI)](https://github.com/tattali/CalendarBundle/actions/workflows/ci.yml?query=branch%3A7.x)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=tattali_CalendarBundle&metric=coverage)](https://sonarcloud.io/summary/new_code?id=tattali_CalendarBundle)
 [![Packagist Downloads](https://img.shields.io/packagist/dm/tattali/calendar-bundle)](https://packagist.org/packages/tattali/calendar-bundle)
 [![Packagist Version](https://img.shields.io/packagist/v/tattali/calendar-bundle)](https://packagist.org/packages/tattali/calendar-bundle)
 
-This bundle allow you to integrate [FullCalendar.js](https://fullcalendar.io/) library in your Symfony 5.4 to 7 project.
+This bundle allow you to integrate [FullCalendar.js](https://fullcalendar.io/) library in your Symfony 7 project.
+
+This is the 7.x branch: Symfony 7.0 to 7.4 and PHP 8.2 or later. It gets bug fixes.
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/10502887/56835704-47687080-6875-11e9-9102-0533d2bbbf18.png" alt="Calendar image">
 </p>
+
+Versions
+--------
+
+Each major version of the bundle supports one Symfony major version:
+
+| Bundle | Branch                                                     | Symfony    | PHP  |
+|--------|------------------------------------------------------------|------------|------|
+| 8.x    | [main](https://github.com/tattali/CalendarBundle/tree/main) | 8          | 8.4+ |
+| 7.x    | [7.x](https://github.com/tattali/CalendarBundle/tree/7.x)   | 7          | 8.2+ |
+| 6.x    | [6.x](https://github.com/tattali/CalendarBundle/tree/6.x)   | 6.4        | 8.1+ |
+| 5.x    | [5.x](https://github.com/tattali/CalendarBundle/tree/5.x)   | 5.4        | 8.0+ |
+| 1.x    | tags `v1.*`                                                | 3.4 to 7   | 7.1+ |
+
+New features go to `main`. The `7.x` and `6.x` branches get bug fixes, and `5.x` gets security fixes only.
 
 Documentation
 -------------
