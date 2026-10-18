@@ -19,6 +19,9 @@ class CalendarEvent
      */
     protected array $events = [];
 
+    /**
+     * @param array<mixed> $filters
+     */
     public function __construct(
         protected DateTimeInterface $start,
         protected DateTimeInterface $end,
@@ -36,6 +39,9 @@ class CalendarEvent
         return $this->end;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getFilters(): array
     {
         return $this->filters;
