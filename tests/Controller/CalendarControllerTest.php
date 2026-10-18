@@ -125,6 +125,8 @@ class CalendarControllerTest extends TestCase
         yield 'start as an array' => [['start' => ['2016-03-01']] + $valid, 'Query parameter "start" should be a string'];
         yield 'missing end' => [['start' => '2016-03-01'], 'Query parameter "end" should be a string'];
         yield 'end as an array' => [['end' => ['2016-03-19']] + $valid, 'Query parameter "end" should be a string'];
+        yield 'start not a date' => [['start' => 'foo'] + $valid, 'Query parameter "start" is not a valid date'];
+        yield 'end not a date' => [['end' => 'foo'] + $valid, 'Query parameter "end" is not a valid date'];
         yield 'filters not JSON' => [$valid + ['filters' => 'not json'], 'Query parameter "filters" is not valid'];
         yield 'filters a JSON scalar' => [$valid + ['filters' => '1'], 'Query parameter "filters" is not valid'];
     }
