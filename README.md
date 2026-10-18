@@ -1,10 +1,14 @@
 CalendarBundle - FullCalendar.js integration
 ===========================================
 
-[![Build Status](https://github.com/tattali/CalendarBundle/actions/workflows/code_checks.yaml/badge.svg)](https://github.com/tattali/CalendarBundle/actions)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=tattali_CalendarBundle&metric=coverage)](https://sonarcloud.io/summary/new_code?id=tattali_CalendarBundle)
-[![Packagist Downloads](https://img.shields.io/packagist/dm/tattali/calendar-bundle)](https://packagist.org/packages/tattali/calendar-bundle)
-[![Packagist Version](https://img.shields.io/packagist/v/tattali/calendar-bundle)](https://packagist.org/packages/tattali/calendar-bundle)
+[![CI](https://img.shields.io/github/actions/workflow/status/tattali/CalendarBundle/ci.yml?branch=main&label=CI)](https://github.com/tattali/CalendarBundle/actions/workflows/ci.yml?query=branch%3Amain)
+[![Quality Gate](https://img.shields.io/sonar/quality_gate/tattali_CalendarBundle?server=https%3A%2F%2Fsonarcloud.io)](https://sonarcloud.io/summary/new_code?id=tattali_CalendarBundle)
+[![Coverage](https://img.shields.io/sonar/coverage/tattali_CalendarBundle?server=https%3A%2F%2Fsonarcloud.io)](https://sonarcloud.io/summary/new_code?id=tattali_CalendarBundle)
+[![Latest Version](https://img.shields.io/packagist/v/tattali/calendar-bundle)](https://packagist.org/packages/tattali/calendar-bundle)
+[![Downloads](https://img.shields.io/packagist/dt/tattali/calendar-bundle)](https://packagist.org/packages/tattali/calendar-bundle/stats)
+[![PHP](https://img.shields.io/packagist/dependency-v/tattali/calendar-bundle/php)](https://packagist.org/packages/tattali/calendar-bundle)
+[![Symfony](https://img.shields.io/packagist/dependency-v/tattali/calendar-bundle/symfony/framework-bundle?label=symfony)](https://packagist.org/packages/tattali/calendar-bundle)
+[![License](https://img.shields.io/packagist/l/tattali/calendar-bundle)](LICENSE)
 
 This bundle allow you to integrate [FullCalendar.js](https://fullcalendar.io/) library in your Symfony 5.4 to 8 project.
 
