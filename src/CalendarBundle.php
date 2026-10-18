@@ -31,7 +31,7 @@ class CalendarBundle extends AbstractBundle
     }
 
     /**
-     * @param array<string, mixed> $config
+     * @param array<mixed> $config
      */
     public function loadExtension(
         array $config,

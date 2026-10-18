@@ -49,7 +49,7 @@ class CalendarController
         $response = JsonResponse::fromJsonString($content);
 
         if ($this->cacheMaxAge > 0) {
-            $response->setETag(hash('xxh3', $content));
+            $response->setEtag(hash('xxh3', $content));
             $response->setPublic();
             $response->setMaxAge($this->cacheMaxAge);
         }

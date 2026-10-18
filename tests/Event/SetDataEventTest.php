@@ -49,7 +49,6 @@ final class SetDataEventTest extends TestCase
 
         $this->event->addEvent($this->eventEntity);
         self::assertSame([$this->eventEntity], $this->event->getEvents());
-        self::assertCount(1, $this->event->getEvents());
         self::assertSame(1, $this->event->getEventCount());
 
         $this->event->addEvent($this->eventEntity);

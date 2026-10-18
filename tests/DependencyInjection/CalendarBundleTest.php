@@ -20,7 +20,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
 final class CalendarBundleTest extends TestCase
 {
@@ -55,13 +54,6 @@ final class CalendarBundleTest extends TestCase
         self::assertSame(CalendarController::class, $definition->getClass());
         self::assertTrue($definition->isPublic());
         self::assertTrue($definition->isAutowired());
-    }
-
-    public function testBundleExtendsAbstractBundle(): void
-    {
-        $bundle = new CalendarBundle();
-
-        self::assertInstanceOf(AbstractBundle::class, $bundle);
     }
 
     public function testBundleConfigureDefinesOptions(): void
