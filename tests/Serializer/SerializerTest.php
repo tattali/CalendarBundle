@@ -61,4 +61,14 @@ class SerializerTest extends TestCase
     {
         $this->assertEquals('[]', $this->serializer->serialize([]));
     }
+
+    public function testItThrowsAJsonExceptionWhenAnEventCannotBeEncoded(): void
+    {
+        $event = new Event("Caf\xE9", new \DateTime('2015-01-20 11:50:00'));
+
+        $this->expectException(\JsonException::class);
+        $this->expectExceptionMessage('Malformed UTF-8 characters');
+
+        $this->serializer->serialize([$event]);
+    }
 }
