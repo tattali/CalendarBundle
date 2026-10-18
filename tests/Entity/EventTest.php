@@ -56,6 +56,7 @@ class EventTest extends TestCase
         $this->entity->removeOption('be-removed');
 
         $this->assertNull($this->entity->removeOption('no-found-key'));
+        $this->assertNull($this->entity->getOption('non-existent-key'));
 
         $this->entity->setOptions($options);
         $this->assertEquals($options, $this->entity->getOptions());
