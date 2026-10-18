@@ -61,6 +61,11 @@ class Event
         return $this->start;
     }
 
+    /**
+     * In 9.0, $start will be typed \DateTimeInterface. A subclass that overrides
+     * this method should declare its parameter as \DateTimeInterface: PHP already
+     * accepts that wider type in an override, so it can be changed now.
+     */
     public function setStart(\DateTime $start): self
     {
         $this->startWithTime = null;
@@ -79,6 +84,13 @@ class Event
         return $this->end;
     }
 
+    /**
+     * Also resets allDay: true without an end, false with one.
+     *
+     * In 9.0, $end will be typed ?\DateTimeInterface. A subclass that overrides
+     * this method should declare its parameter as ?\DateTimeInterface: PHP already
+     * accepts that wider type in an override, so it can be changed now.
+     */
     public function setEnd(?\DateTime $end): self
     {
         $this->allDay = null === $end;

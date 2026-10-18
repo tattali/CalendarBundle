@@ -41,6 +41,37 @@ $conference = new Event(
 
 FullCalendar treats the `end` of an all-day event as exclusive, so the conference above shows the 15th to the 17th. To include the last day, pass the day after it as `end`.
 
+## Coming in 9.0
+
+### setStart() and setEnd() Will Accept \DateTimeInterface
+
+In 9.0, `Event::setStart()` will take a `\DateTimeInterface $start` and `Event::setEnd()` a `?\DateTimeInterface $end`. Calls keep working. A subclass that overrides one of them with a `\DateTime` parameter will then stop with:
+
+```
+PHP Fatal error:  Declaration of App\Calendar\MyEvent::setStart(DateTime $start): App\Calendar\MyEvent must be compatible with CalendarBundle\Entity\Event::setStart(DateTimeInterface $start): CalendarBundle\Entity\Event
+```
+
+Prepare now by widening the parameter types in your overrides. PHP already accepts the wider type in an override of the 8.3 methods:
+
+```php
+class MyEvent extends Event
+{
+    public function setStart(\DateTimeInterface $start): self
+    {
+        // ...
+        return parent::setStart($start instanceof \DateTime ? $start : \DateTime::createFromInterface($start));
+    }
+
+    public function setEnd(?\DateTimeInterface $end): self
+    {
+        // ...
+        return parent::setEnd(null === $end || $end instanceof \DateTime ? $end : \DateTime::createFromInterface($end));
+    }
+}
+```
+
+The conversion before calling `parent` is needed only while the bundle is on 8.x. Overridden constructors are not affected.
+
 ## Migration Steps
 
 1. **Update the bundle**:
@@ -49,6 +80,8 @@ FullCalendar treats the `end` of an all-day event as exclusive, so the conferenc
    ```
 
 2. **Optional**: pass `\DateTimeImmutable` values to the `Event` constructor directly and remove any `\DateTime::createFromImmutable()` conversions.
+
+3. **Optional, before 9.0**: widen the `setStart()`/`setEnd()` overrides in your `Event` subclasses, if any.
 
 ## No Changes Required
 

@@ -108,4 +108,24 @@ final class EventConstructorTest extends TestCase
         self::assertSame(['setEnd 16:00', 'setStart 14:30'], $event->calls);
     }
 
+    public function testSubclassesCanAlreadyWidenTheSetterParameters(): void
+    {
+        $event = new class('Title', new \DateTimeImmutable('2024-01-15 14:30:00')) extends Event {
+            public function setStart(\DateTimeInterface $start): Event
+            {
+                return parent::setStart($start instanceof \DateTime ? $start : \DateTime::createFromInterface($start));
+            }
+
+            public function setEnd(?\DateTimeInterface $end): Event
+            {
+                return parent::setEnd(null === $end || $end instanceof \DateTime ? $end : \DateTime::createFromInterface($end));
+            }
+        };
+
+        $event->setEnd(new \DateTimeImmutable('2024-01-15 16:00:00'));
+        $event->setStart(new \DateTimeImmutable('2024-01-15 15:00:00'));
+
+        self::assertSame('2024-01-15 15:00:00', $event->getStart()->format('Y-m-d H:i:s'));
+        self::assertSame('2024-01-15 16:00:00', $event->getEnd()?->format('Y-m-d H:i:s'));
+    }
 }
