@@ -108,6 +108,18 @@ final class EventConstructorTest extends TestCase
         self::assertSame(['setEnd 16:00', 'setStart 14:30'], $event->calls);
     }
 
+    public function testSubclassesOverridingSetEndWithoutParentStillGetTheConstructorEnd(): void
+    {
+        $event = new class('Title', new \DateTime('2024-01-15 14:30:00'), new \DateTime('2024-01-15 16:00:00')) extends Event {
+            public function setEnd(?\DateTime $end): Event
+            {
+                return $this;
+            }
+        };
+
+        self::assertSame('2024-01-15 16:00:00', $event->getEnd()?->format('Y-m-d H:i:s'));
+    }
+
     public function testSubclassesCanAlreadyWidenTheSetterParameters(): void
     {
         $event = new class('Title', new \DateTimeImmutable('2024-01-15 14:30:00')) extends Event {

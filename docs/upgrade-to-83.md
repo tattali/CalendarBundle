@@ -83,8 +83,8 @@ The conversion before calling `parent` is needed only while the bundle is on 8.x
 
 3. **Optional, before 9.0**: widen the `setStart()`/`setEnd()` overrides in your `Event` subclasses, if any.
 
-## No Changes Required
+## No Changes Required by the Event Constructor Change
 
 - Existing constructor calls and argument order
 - `getStart()`, `getEnd()`, `setStart()` and `setEnd()` signatures
-- `toArray()` output
+- This change does not alter the `toArray()` output

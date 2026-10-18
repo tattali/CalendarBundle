@@ -35,9 +35,11 @@ class Event
         ?bool $allDay = null,
     ) {
         $start = $start instanceof \DateTime ? $start : \DateTime::createFromInterface($start);
-        // set before setEnd() runs, as the promoted property used to be
+        $end = null === $end || $end instanceof \DateTime ? $end : \DateTime::createFromInterface($end);
+        // set before setEnd() runs, as the promoted properties used to be
         $this->start = $start;
-        $this->setEnd(null === $end || $end instanceof \DateTime ? $end : \DateTime::createFromInterface($end));
+        $this->end = $end;
+        $this->setEnd($end);
         if (null !== $allDay) {
             $this->allDay = $allDay;
         }
