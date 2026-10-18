@@ -1,0 +1,91 @@
+# Supported: PHP >=8.2, Symfony ^7.0.
+# The lowest job installs the oldest allowed versions. The current job runs the linters,
+# coverage and SonarCloud; the other jobs only run the tests. The nightly job tries the next
+# PHP and Symfony versions in development and may fail without failing the workflow.
+name: CI
+
+on:
+  push:
+    branches: [main, '[0-9]*.x']
+  pull_request:
+  schedule:
+    - cron: '0 6 * * 1' # every Monday, to catch breakage from new dependency releases
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    name: PHP ${{ matrix.php }} - Symfony ${{ matrix.symfony }}${{ matrix.lowest && ' - lowest' || '' }}${{ matrix.nightly && ' - nightly' || '' }}
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.nightly == true }}
+    environment: main # holds SONAR_TOKEN
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { php: '8.2', symfony: '7.0.*', lowest: true }
+          - { php: '8.4', symfony: '7.4.*', current: true }
+          - { php: '8.5', symfony: '7.4.*' }
+          - { php: '8.6', symfony: '7.4.*', nightly: true }
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: ${{ matrix.current && '0' || '1' }} # SonarCloud needs the full history
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: ${{ matrix.current && 'xdebug' || 'none' }}
+          tools: flex
+
+      - name: Get the Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: composer-${{ matrix.php }}-${{ matrix.symfony }}-${{ matrix.lowest && 'lowest' || 'stable' }}-${{ hashFiles('composer.json') }}
+          restore-keys: composer-${{ matrix.php }}-${{ matrix.symfony }}-${{ matrix.lowest && 'lowest' || 'stable' }}-
+
+      - name: Install dependencies
+        env:
+          SYMFONY_REQUIRE: ${{ matrix.symfony }}
+        run: |
+          if [ "${{ matrix.symfony }}" = next ]; then
+            # the Symfony version in development, read from symfony.com so it follows each release
+            SYMFONY_REQUIRE="$(curl -fsS https://symfony.com/releases.json | jq -r '.symfony_versions.next | split(".")[:2] | join(".")').*"
+            export SYMFONY_REQUIRE
+            composer config minimum-stability dev
+          fi
+          # only the current job lints, and the lint tools cannot install on every PHP and Symfony version
+          if [ "${{ matrix.current }}" != "true" ]; then
+            for tool in friendsofphp/php-cs-fixer phpstan/phpstan phpstan/extension-installer phpstan/phpstan-phpunit phpstan/phpstan-symfony phpstan/phpstan-deprecation-rules phpstan/phpstan-nette squizlabs/php_codesniffer; do
+              if grep -q "\"$tool\"" composer.json; then composer remove --dev --no-update --no-interaction "$tool"; fi
+            done
+          fi
+          composer update --no-interaction --no-progress --prefer-dist --prefer-stable ${{ matrix.lowest && '--prefer-lowest --no-security-blocking' || '' }} ${{ matrix.nightly && '--ignore-platform-req=php+' || '' }}
+
+      - name: PHPStan
+        if: matrix.current
+        run: vendor/bin/phpstan analyse src tests --level 9 --no-progress --error-format=github
+
+      - name: PHPUnit
+        env:
+          SYMFONY_DEPRECATIONS_HELPER: max[direct]=0
+        run: vendor/bin/phpunit ${{ matrix.current && '--coverage-clover=build/coverage.xml' || '--no-coverage' }}
+
+      - name: SonarCloud
+        # secrets are not available to pull requests opened from another repository
+        if: matrix.current && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
