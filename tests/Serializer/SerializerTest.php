@@ -61,4 +61,13 @@ class SerializerTest extends TestCase
     {
         $this->assertEquals('[]', $this->serializer->serialize([]));
     }
+
+    public function testItFailsWhenTheEventsCannotBeEncoded(): void
+    {
+        $this->eventEntity1->method('toArray')->willReturn(['title' => "\xB1\x31"]);
+
+        $this->expectException(\TypeError::class);
+
+        $this->serializer->serialize([$this->eventEntity1]);
+    }
 }

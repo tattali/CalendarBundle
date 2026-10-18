@@ -21,6 +21,11 @@ class Serializer implements SerializerInterface
             $result[] = $event->toArray();
         }
 
-        return json_encode($result);
+        $json = json_encode($result);
+        if (false === $json) {
+            throw new \TypeError(sprintf('The events cannot be encoded to JSON: %s.', json_last_error_msg()));
+        }
+
+        return $json;
     }
 }

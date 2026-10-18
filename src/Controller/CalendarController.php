@@ -24,10 +24,13 @@ class CalendarController
      */
     public function loadAction(Request $request): Response
     {
-        $start = new \DateTime($request->get('start'));
-        $end = new \DateTime($request->get('end'));
+        $start = new \DateTime(self::stringParameter($request, 'start'));
+        $end = new \DateTime(self::stringParameter($request, 'end'));
         $filters = $request->get('filters', '{}');
-        $filters = \is_array($filters) ? $filters : json_decode($filters, true);
+        $filters = \is_string($filters) ? json_decode($filters, true) : $filters;
+        if (!\is_array($filters)) {
+            throw new \TypeError(sprintf('The "filters" parameter must be an array or a JSON object, "%s" given.', get_debug_type($filters)));
+        }
 
         $event = $this->eventDispatcher->dispatch(
             new CalendarEvent($start, $end, $filters),
@@ -38,8 +41,18 @@ class CalendarController
         $response = new Response();
         $response->headers->set('Content-Type', 'application/json');
         $response->setContent($content);
-        $response->setStatusCode(empty($content) ? Response::HTTP_NO_CONTENT : Response::HTTP_OK);
+        $response->setStatusCode(\in_array($content, ['', '0'], true) ? Response::HTTP_NO_CONTENT : Response::HTTP_OK);
 
         return $response;
+    }
+
+    private static function stringParameter(Request $request, string $name): string
+    {
+        $value = $request->get($name);
+        if (!\is_string($value)) {
+            throw new \TypeError(sprintf('The "%s" parameter must be a string, "%s" given.', $name, get_debug_type($value)));
+        }
+
+        return $value;
     }
 }
