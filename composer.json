@@ -30,7 +30,10 @@
         "symfony/phpunit-bridge": "^7.0",
         "symfony/yaml": "^7.0",
         "friendsofphp/php-cs-fixer": "^3.65",
-        "phpstan/phpstan": "^2.0"
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-strict-rules": "^2.0",
+        "phpstan/phpstan-symfony": "^2.0",
+        "phpstan/phpstan-phpunit": "^2.0"
     },
     "suggest": {
         "symfony/orm-pack": "To support Doctrine ORM and Migration.",

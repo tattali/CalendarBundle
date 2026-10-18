@@ -53,7 +53,7 @@ class Event
 
     public function setEnd(?\DateTime $end): void
     {
-        if ($end) {
+        if (null !== $end) {
             $this->allDay = false;
         }
         $this->end = $end;
@@ -128,11 +128,11 @@ class Event
             'allDay' => $this->isAllDay(),
         ];
 
-        if ($this->getEnd()) {
+        if (null !== $this->getEnd()) {
             $event['end'] = $this->getEnd()->format(\DateTime::ATOM);
         }
 
-        if ($this->getResourceId()) {
+        if (!\in_array($this->getResourceId(), [null, '', '0'], true)) {
             $event['resourceId'] = $this->getResourceId();
         }
 
