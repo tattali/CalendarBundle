@@ -21,7 +21,8 @@ class CalendarController
         private readonly SerializerInterface $serializer,
         private readonly RequestParserInterface $requestParser,
         private readonly int $cacheMaxAge = 300,
-    ) {}
+    ) {
+    }
 
     public function load(Request $request): JsonResponse
     {

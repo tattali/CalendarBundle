@@ -4,4 +4,6 @@ declare(strict_types=1);
 
 namespace CalendarBundle\Exception;
 
-interface CalendarExceptionInterface extends \Throwable {}
+interface CalendarExceptionInterface extends \Throwable
+{
+}
