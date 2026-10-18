@@ -29,7 +29,10 @@ jobs:
       matrix:
         include:
           - { php: '8.0', symfony: '5.4.*', lowest: true }
+          - { php: '8.0', symfony: '5.4.*' }
           - { php: '8.1', symfony: '5.4.*', current: true }
+          - { php: '8.2', symfony: '5.4.*' }
+          - { php: '8.3', symfony: '5.4.*' }
           - { php: '8.4', symfony: '5.4.*' }
     steps:
       - uses: actions/checkout@v6
@@ -64,7 +67,7 @@ jobs:
           fi
           # only the current job lints, and the lint tools cannot install on every PHP and Symfony version
           if [ "${{ matrix.current }}" != "true" ]; then
-            for tool in friendsofphp/php-cs-fixer phpstan/phpstan phpstan/extension-installer phpstan/phpstan-phpunit phpstan/phpstan-symfony phpstan/phpstan-deprecation-rules phpstan/phpstan-nette squizlabs/php_codesniffer; do
+            for tool in friendsofphp/php-cs-fixer phpstan/phpstan phpstan/extension-installer phpstan/phpstan-phpunit phpstan/phpstan-symfony phpstan/phpstan-deprecation-rules phpstan/phpstan-nette phpstan/phpstan-strict-rules squizlabs/php_codesniffer infection/infection shipmonk/composer-dependency-analyser; do
               if grep -q "\"$tool\"" composer.json; then composer remove --dev --no-update --no-interaction "$tool"; fi
             done
           fi
