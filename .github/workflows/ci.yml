@@ -99,8 +99,6 @@ jobs:
         run: vendor/bin/composer-dependency-analyser
 
       - name: PHPUnit
-        env:
-          SYMFONY_DEPRECATIONS_HELPER: max[direct]=0
         run: vendor/bin/phpunit ${{ matrix.current && '--coverage-clover=build/coverage.xml' || '--no-coverage' }}
 
       - name: Mutation tests
