@@ -24,14 +24,14 @@ class CalendarController
         try {
             $start = $this->getParameter($request, 'start');
             if ($start && \is_string($start)) {
-                $start = new \DateTime($start);
+                $start = $this->createDate($start, 'start');
             } else {
                 throw new \UnexpectedValueException('Query parameter "start" should be a string');
             }
 
             $end = $this->getParameter($request, 'end');
             if ($end && \is_string($end)) {
-                $end = new \DateTime($end);
+                $end = $this->createDate($end, 'end');
             } else {
                 throw new \UnexpectedValueException('Query parameter "end" should be a string');
             }
@@ -73,5 +73,14 @@ class CalendarController
         }
 
         return $default;
+    }
+
+    private function createDate(string $value, string $key): \DateTime
+    {
+        try {
+            return new \DateTime($value);
+        } catch (\Exception $e) {
+            throw new \UnexpectedValueException(\sprintf('Query parameter "%s" is not a valid date', $key), 0, $e);
+        }
     }
 }

@@ -8,6 +8,7 @@ use CalendarBundle\Controller\CalendarController;
 use CalendarBundle\Entity\Event;
 use CalendarBundle\Event\SetDataEvent;
 use CalendarBundle\Serializer\SerializerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -129,6 +130,32 @@ final class CalendarControllerTest extends TestCase
             'start' => '2016-03-01',
             'end' => '',
         ]));
+    }
+
+    /**
+     * @param array<string, string> $query
+     */
+    #[DataProvider('queryWithAnInvalidDateProvider')]
+    public function testItAnswersBadRequestWhenADateCannotBeParsed(array $query, string $message): void
+    {
+        $this->eventDispatcher->expects(self::never())->method('dispatch');
+
+        try {
+            $this->controller->load(Request::create('/', 'GET', $query));
+            self::fail('A BadRequestHttpException should have been thrown.');
+        } catch (BadRequestHttpException $e) {
+            self::assertSame(400, $e->getStatusCode());
+            self::assertSame($message, $e->getMessage());
+        }
+    }
+
+    /**
+     * @return iterable<string, array{array<string, string>, string}>
+     */
+    public static function queryWithAnInvalidDateProvider(): iterable
+    {
+        yield 'start not a date' => [['start' => 'foo', 'end' => '2016-03-19'], 'Query parameter "start" is not a valid date'];
+        yield 'end not a date' => [['start' => '2016-03-01', 'end' => 'foo'], 'Query parameter "end" is not a valid date'];
     }
 
     public function testItReadsTheQueryStringOfAGetRequest(): void
