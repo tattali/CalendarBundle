@@ -53,10 +53,12 @@ final class EventStartTimeTest extends TestCase
         $start->setTime(18, 0);
         $event->setAllDay(false);
 
-        self::assertSame('2024-01-15 14:30:00', $event->getStart()?->format('Y-m-d H:i:s'));
-        self::assertNotSame($start, $event->getStart());
+        $restored = $event->getStart();
+        self::assertNotNull($restored);
+        self::assertSame('2024-01-15 14:30:00', $restored->format('Y-m-d H:i:s'));
+        self::assertNotSame($start, $restored);
 
-        $event->getStart()?->setTime(20, 0);
+        $restored->setTime(20, 0);
         self::assertSame('18:00:00', $start->format('H:i:s'));
     }
 
