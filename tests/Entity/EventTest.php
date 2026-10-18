@@ -74,4 +74,27 @@ class EventTest extends TestCase
             $this->entity->toArray()
         );
     }
+
+    public function testItFormatsTheStartAsADateWhenAnOptionMakesItAllDay(): void
+    {
+        $this->entity->setOptions(['allDay' => 1]);
+        $this->assertSame('2019-03-18', $this->entity->toArray()['start']);
+
+        $this->entity->setOptions(['allDay' => '0']);
+        $this->assertSame($this->start->format(Event::DATE_FORMAT), $this->entity->toArray()['start']);
+    }
+
+    public function testItFailsToConvertAnEventWithoutStart(): void
+    {
+        $event = new class('Title', new \DateTime()) extends Event {
+            public function getStart(): ?\DateTimeInterface
+            {
+                return null;
+            }
+        };
+
+        $this->expectException(\Error::class);
+
+        $event->toArray();
+    }
 }

@@ -52,7 +52,7 @@ class CalendarController
         $response = new Response();
         $response->headers->set('Content-Type', 'application/json');
         $response->setContent($content);
-        $response->setStatusCode(empty($content) ? Response::HTTP_NO_CONTENT : Response::HTTP_OK);
+        $response->setStatusCode(\in_array($content, ['', '0'], true) ? Response::HTTP_NO_CONTENT : Response::HTTP_OK);
 
         return $response;
     }

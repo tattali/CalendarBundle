@@ -22,7 +22,7 @@ concurrency:
 jobs:
   tests:
     name: PHP ${{ matrix.php }} - Symfony ${{ matrix.symfony }}${{ matrix.lowest && ' - lowest' || '' }}${{ matrix.nightly && ' - nightly' || '' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     continue-on-error: ${{ matrix.nightly == true }}
     environment: main # holds SONAR_TOKEN
     timeout-minutes: 15
@@ -49,7 +49,7 @@ jobs:
         id: composer-cache
         run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: composer-${{ matrix.php }}-${{ matrix.symfony }}-${{ matrix.lowest && 'lowest' || 'stable' }}-${{ hashFiles('composer.json') }}
@@ -67,7 +67,7 @@ jobs:
           fi
           # only the current job lints, and the lint tools cannot install on every PHP and Symfony version
           if [ "${{ matrix.current }}" != "true" ]; then
-            for tool in friendsofphp/php-cs-fixer phpstan/phpstan phpstan/extension-installer phpstan/phpstan-phpunit phpstan/phpstan-symfony phpstan/phpstan-deprecation-rules phpstan/phpstan-nette squizlabs/php_codesniffer; do
+            for tool in friendsofphp/php-cs-fixer phpstan/phpstan phpstan/extension-installer phpstan/phpstan-phpunit phpstan/phpstan-symfony phpstan/phpstan-deprecation-rules phpstan/phpstan-nette phpstan/phpstan-strict-rules squizlabs/php_codesniffer infection/infection shipmonk/composer-dependency-analyser; do
               if grep -q "\"$tool\"" composer.json; then composer remove --dev --no-update --no-interaction "$tool"; fi
             done
           fi
@@ -85,7 +85,7 @@ jobs:
       - name: SonarCloud
         # secrets are not available to pull requests opened from another repository
         if: matrix.current && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
-        uses: SonarSource/sonarqube-scan-action@v6
+        uses: SonarSource/sonarqube-scan-action@v8
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

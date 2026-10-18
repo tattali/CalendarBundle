@@ -151,6 +151,40 @@ class CalendarControllerTest extends TestCase
         $this->assertEquals('[]', $response->getContent());
     }
 
+    public function testItPassesTheQueryToTheListeners(): void
+    {
+        $this->request->get('start')->willReturn('2016-03-01');
+        $this->request->get('end')->willReturn('2016-03-19 15:11:00');
+        $this->request->get('filters', '{}')->willReturn(['calendar' => 'work']);
+
+        $this->eventDispatcher(
+            Argument::that(static fn (CalendarEvent $event): bool => '2016-03-01 00:00:00' === $event->getStart()->format('Y-m-d H:i:s')
+                && '2016-03-19 15:11:00' === $event->getEnd()->format('Y-m-d H:i:s')
+                && ['calendar' => 'work'] === $event->getFilters()),
+            CalendarEvents::SET_DATA
+        );
+        $this->calendarEvent->getEvents()->willReturn([]);
+        $this->serializer->serialize([])->willReturn('[]');
+
+        $response = $this->controller->loadAction($this->request->reveal());
+
+        $this->assertSame('[]', $response->getContent());
+        $this->assertSame(Response::HTTP_OK, $response->getStatusCode());
+    }
+
+    public function testItAnswersNoContentWhenTheSerializerReturnsZero(): void
+    {
+        $this->request->get('start')->willReturn('2016-03-01');
+        $this->request->get('end')->willReturn('2016-03-19');
+        $this->request->get('filters', '{}')->willReturn('{}');
+
+        $this->eventDispatcher(Argument::type(CalendarEvent::class), CalendarEvents::SET_DATA);
+        $this->calendarEvent->getEvents()->willReturn([]);
+        $this->serializer->serialize([])->willReturn('0');
+
+        $this->assertSame(Response::HTTP_NO_CONTENT, $this->controller->loadAction($this->request->reveal())->getStatusCode());
+    }
+
     private function eventDispatcher($event, ?string $eventName = null): void
     {
         $this->eventDispatcher

@@ -12,6 +12,9 @@ class Event
 
     protected bool $allDay = true;
 
+    /**
+     * @param array<mixed> $options
+     */
     public function __construct(
         protected string $title,
         protected DateTimeInterface $start,
@@ -75,21 +78,33 @@ class Event
         $this->resourceId = $resourceId;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getOptions(): array
     {
         return $this->options;
     }
 
+    /**
+     * @param array<mixed> $options
+     */
     public function setOptions(array $options): void
     {
         $this->options = $options;
     }
 
+    /**
+     * @return mixed
+     */
     public function getOption(int|string $name)
     {
         return $this->options[$name] ?? null;
     }
 
+    /**
+     * @param mixed $value
+     */
     public function addOption(int|string $name, $value): void
     {
         $this->options[$name] = $value;
@@ -107,11 +122,14 @@ class Event
         return $removed;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function toArray(): array
     {
         $event = [
             'title' => $this->getTitle(),
-            'start' => $this->getStart()->format(self::DATE_FORMAT),
+            'start' => $this->formatStart(self::DATE_FORMAT),
             'allDay' => $this->isAllDay(),
         ];
 
@@ -125,10 +143,20 @@ class Event
 
         $toReturn = array_merge($event, $this->getOptions());
 
-        if (isset($toReturn['allDay']) && $toReturn['allDay']) {
-            $toReturn['start'] = $this->getStart()->format('Y-m-d');
+        if (isset($toReturn['allDay']) && (bool) $toReturn['allDay']) {
+            $toReturn['start'] = $this->formatStart('Y-m-d');
         }
 
         return $toReturn;
+    }
+
+    private function formatStart(string $format): string
+    {
+        $start = $this->getStart();
+        if (null === $start) {
+            throw new \Error(sprintf('%s::getStart() returned null, so the event has no start date to format.', static::class));
+        }
+
+        return $start->format($format);
     }
 }
