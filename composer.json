@@ -25,12 +25,13 @@
         "symfony/framework-bundle": "^6.4"
     },
     "require-dev": {
+        "infection/infection": "^0.35",
         "phpspec/prophecy": "^1.15",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpstan/phpstan": "^2.1",
         "phpstan/phpstan-strict-rules": "^2.0",
         "phpstan/phpstan-symfony": "^2.0",
-        "phpunit/phpunit": "^9.6 || ^10.4",
+        "phpunit/phpunit": "^10.5",
         "symfony/dotenv": "^6.4",
         "symfony/phpunit-bridge": "^6.4",
         "symfony/yaml": "^6.4"
@@ -47,6 +48,11 @@
     "autoload-dev": {
         "psr-4": {
             "CalendarBundle\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "infection/extension-installer": false
         }
     }
 }
