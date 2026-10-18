@@ -1,18 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- https://phpunit.de/manual/current/en/appendixes.configuration.html -->
+<!-- https://docs.phpunit.de/en/10.5/configuration.html -->
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          colors="true"
-         bootstrap="./vendor/autoload.php">
+         bootstrap="./vendor/autoload.php"
+         cacheDirectory=".phpunit.cache">
 
     <coverage includeUncoveredFiles="true">
-        <include>
-            <directory>.</directory>
-        </include>
-        <exclude>
-            <directory>tests</directory>
-            <directory>vendor</directory>
-        </exclude>
         <report>
             <clover outputFile="build/coverage.xml"/>
             <html outputDirectory="build/coverage"/>
@@ -31,9 +25,14 @@
             <directory>tests</directory>
         </testsuite>
     </testsuites>
-    <logging/>
 
-    <listeners>
-        <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener"/>
-    </listeners>
+    <source>
+        <include>
+            <directory>.</directory>
+        </include>
+        <exclude>
+            <directory>tests</directory>
+            <directory>vendor</directory>
+        </exclude>
+    </source>
 </phpunit>
