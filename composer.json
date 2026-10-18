@@ -25,6 +25,7 @@
         "symfony/framework-bundle": "^5.4"
     },
     "require-dev": {
+        "infection/infection": "^0.29",
         "phpspec/prophecy": "^1.8",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpstan/phpstan": "^2.1",
@@ -47,6 +48,11 @@
     "autoload-dev": {
         "psr-4": {
             "CalendarBundle\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "infection/extension-installer": false
         }
     }
 }
