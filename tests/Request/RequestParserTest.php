@@ -6,7 +6,6 @@ namespace CalendarBundle\Tests\Request;
 
 use CalendarBundle\Exception\InvalidDateException;
 use CalendarBundle\Exception\InvalidJsonException;
-use CalendarBundle\Request\QueryParameters;
 use CalendarBundle\Request\RequestParser;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,7 +29,6 @@ final class RequestParserTest extends TestCase
 
         $params = $this->parser->parse($request);
 
-        self::assertInstanceOf(QueryParameters::class, $params);
         self::assertSame('2024-01-01', $params->start->format('Y-m-d'));
         self::assertSame('2024-01-31', $params->end->format('Y-m-d'));
         self::assertSame(['category' => 'meeting'], $params->filters);

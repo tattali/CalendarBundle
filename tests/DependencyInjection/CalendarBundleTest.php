@@ -20,14 +20,13 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
 final class CalendarBundleTest extends TestCase
 {
     public function testLoadExtensionRegistersServices(): void
     {
         $container = new ContainerBuilder();
-        $loader = new YamlFileLoader($container, new FileLocator(\dirname(__DIR__, 2) . '/config'));
+        $loader = new YamlFileLoader($container, new FileLocator(\dirname(__DIR__, 2).'/config'));
         $loader->load('services.yaml');
 
         self::assertTrue($container->hasDefinition(Serializer::class));
@@ -38,7 +37,7 @@ final class CalendarBundleTest extends TestCase
     public function testSerializerServiceConfiguration(): void
     {
         $container = new ContainerBuilder();
-        $loader = new YamlFileLoader($container, new FileLocator(\dirname(__DIR__, 2) . '/config'));
+        $loader = new YamlFileLoader($container, new FileLocator(\dirname(__DIR__, 2).'/config'));
         $loader->load('services.yaml');
 
         $definition = $container->getDefinition(Serializer::class);
@@ -48,20 +47,13 @@ final class CalendarBundleTest extends TestCase
     public function testControllerServiceConfiguration(): void
     {
         $container = new ContainerBuilder();
-        $loader = new YamlFileLoader($container, new FileLocator(\dirname(__DIR__, 2) . '/config'));
+        $loader = new YamlFileLoader($container, new FileLocator(\dirname(__DIR__, 2).'/config'));
         $loader->load('services.yaml');
 
         $definition = $container->getDefinition(CalendarController::class);
         self::assertSame(CalendarController::class, $definition->getClass());
         self::assertTrue($definition->isPublic());
         self::assertTrue($definition->isAutowired());
-    }
-
-    public function testBundleExtendsAbstractBundle(): void
-    {
-        $bundle = new CalendarBundle();
-
-        self::assertInstanceOf(AbstractBundle::class, $bundle);
     }
 
     public function testBundleConfigureDefinesOptions(): void
@@ -74,7 +66,7 @@ final class CalendarBundleTest extends TestCase
         $bundle->configure($configurator);
 
         $tree = $treeBuilder->buildTree();
-        self::assertTrue($tree instanceof ArrayNode);
+        self::assertInstanceOf(ArrayNode::class, $tree);
         $children = $tree->getChildren();
 
         self::assertArrayHasKey('cache_max_age', $children);
@@ -91,7 +83,7 @@ final class CalendarBundleTest extends TestCase
         $bundle->configure($configurator);
 
         $tree = $treeBuilder->buildTree();
-        $config = (new Processor())->process($tree, []);
+        $config = new Processor()->process($tree, []);
 
         self::assertSame(300, $config['cache_max_age']);
         self::assertSame(4, $config['json_max_depth']);
@@ -107,7 +99,7 @@ final class CalendarBundleTest extends TestCase
         $bundle->configure($configurator);
 
         $tree = $treeBuilder->buildTree();
-        $config = (new Processor())->process($tree, [
+        $config = new Processor()->process($tree, [
             ['cache_max_age' => 0, 'json_max_depth' => 1],
         ]);
 
@@ -119,7 +111,7 @@ final class CalendarBundleTest extends TestCase
     {
         $bundle = new CalendarBundle();
         $container = new ContainerBuilder();
-        $bundlePath = \dirname(__DIR__, 2) . '/src';
+        $bundlePath = \dirname(__DIR__, 2).'/src';
 
         $locator = new FileLocator($bundlePath);
         $resolver = new LoaderResolver([
