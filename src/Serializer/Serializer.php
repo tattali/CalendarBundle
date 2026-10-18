@@ -21,6 +21,6 @@ class Serializer implements SerializerInterface
             $result[] = $event->toArray();
         }
 
-        return json_encode($result);
+        return json_encode($result, \JSON_THROW_ON_ERROR);
     }
 }
