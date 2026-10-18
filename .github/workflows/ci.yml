@@ -6,7 +6,7 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, '[0-9]*.x']
   pull_request:
   schedule:
     - cron: '0 6 * * 1' # every Monday, to catch breakage from new dependency releases
@@ -65,8 +65,12 @@ jobs:
             export SYMFONY_REQUIRE
             composer config minimum-stability dev
           fi
-          # php-cs-fixer cannot install on the lowest Symfony versions, and only the current job lints
-          if [ "${{ matrix.current }}" != "true" ]; then composer remove --dev --no-update friendsofphp/php-cs-fixer; fi
+          # only the current job lints, and the lint tools cannot install on every PHP and Symfony version
+          if [ "${{ matrix.current }}" != "true" ]; then
+            for tool in friendsofphp/php-cs-fixer phpstan/phpstan phpstan/extension-installer phpstan/phpstan-phpunit phpstan/phpstan-symfony phpstan/phpstan-deprecation-rules phpstan/phpstan-nette squizlabs/php_codesniffer; do
+              if grep -q "\"$tool\"" composer.json; then composer remove --dev --no-update --no-interaction "$tool"; fi
+            done
+          fi
           composer update --no-interaction --no-progress --prefer-dist --prefer-stable ${{ matrix.lowest && '--prefer-lowest --no-security-blocking' || '' }} ${{ matrix.nightly && '--ignore-platform-req=php+' || '' }}
 
       - name: PHP-CS-Fixer
