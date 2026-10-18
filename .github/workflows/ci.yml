@@ -21,7 +21,7 @@ concurrency:
 jobs:
   tests:
     name: PHP ${{ matrix.php }} - Symfony ${{ matrix.symfony }}${{ matrix.lowest && ' - lowest' || '' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     environment: main # holds SONAR_TOKEN
     timeout-minutes: 15
     strategy:
@@ -71,7 +71,7 @@ jobs:
               if grep -q "\"$tool\"" composer.json; then composer remove --dev --no-update --no-interaction "$tool"; fi
             done
           fi
-          composer update --no-interaction --no-progress --prefer-dist --prefer-stable ${{ matrix.lowest && '--prefer-lowest --no-security-blocking' || '' }}
+          composer update --no-interaction --no-progress --prefer-dist --prefer-stable ${{ matrix.lowest && '--prefer-lowest --no-blocking' || '' }}
 
       - name: PHPStan
         if: matrix.current
