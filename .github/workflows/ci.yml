@@ -31,6 +31,23 @@ jobs:
       matrix:
         include:
           - { php: '8.2', symfony: '7.0.*', lowest: true }
+          - { php: '8.2', symfony: '7.0.*' }
+          - { php: '8.3', symfony: '7.0.*' }
+          - { php: '8.4', symfony: '7.0.*' }
+          - { php: '8.2', symfony: '7.1.*' }
+          - { php: '8.3', symfony: '7.1.*' }
+          - { php: '8.4', symfony: '7.1.*' }
+          - { php: '8.5', symfony: '7.1.*' }
+          - { php: '8.2', symfony: '7.2.*' }
+          - { php: '8.3', symfony: '7.2.*' }
+          - { php: '8.4', symfony: '7.2.*' }
+          - { php: '8.5', symfony: '7.2.*' }
+          - { php: '8.2', symfony: '7.3.*' }
+          - { php: '8.3', symfony: '7.3.*' }
+          - { php: '8.4', symfony: '7.3.*' }
+          - { php: '8.5', symfony: '7.3.*' }
+          - { php: '8.2', symfony: '7.4.*' }
+          - { php: '8.3', symfony: '7.4.*' }
           - { php: '8.4', symfony: '7.4.*', current: true }
           - { php: '8.5', symfony: '7.4.*' }
           - { php: '8.6', symfony: '7.4.*', nightly: true }
