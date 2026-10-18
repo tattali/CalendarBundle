@@ -8,6 +8,10 @@ class Event
 {
     protected bool $allDay = true;
 
+    protected \DateTime $start;
+
+    protected ?\DateTime $end;
+
     /**
      * The start with the time of day it had, kept while an all-day event
      * exposes it truncated to midnight, so the time comes back when the
@@ -16,16 +20,27 @@ class Event
     private ?\DateTime $startWithTime = null;
 
     /**
-     * @param mixed[] $options
+     * An immutable date is copied into a \DateTime; a \DateTime is used as is.
+     *
+     * @param mixed[]   $options
+     * @param bool|null $allDay  null makes the event all-day without an end and timed with one;
+     *                           true with an end gives a multi-day all-day event
      */
     public function __construct(
         protected string $title,
-        protected \DateTime $start,
-        protected ?\DateTime $end = null,
+        \DateTimeInterface $start,
+        ?\DateTimeInterface $end = null,
         protected ?string $resourceId = null,
         protected array $options = [],
+        ?bool $allDay = null,
     ) {
-        $this->setEnd($end);
+        $start = $start instanceof \DateTime ? $start : \DateTime::createFromInterface($start);
+        // set before setEnd() runs, as the promoted property used to be
+        $this->start = $start;
+        $this->setEnd(null === $end || $end instanceof \DateTime ? $end : \DateTime::createFromInterface($end));
+        if (null !== $allDay) {
+            $this->allDay = $allDay;
+        }
         $this->setStart($start);
     }
 
