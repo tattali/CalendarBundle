@@ -97,7 +97,7 @@ class Event
 
     public function getOption(string $name): mixed
     {
-        return $this->options[$name];
+        return $this->options[$name] ?? null;
     }
 
     public function addOption(string $name, mixed $value): void
