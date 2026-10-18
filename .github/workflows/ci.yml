@@ -31,8 +31,10 @@ jobs:
       matrix:
         include:
           - { php: '8.4', symfony: '8.0.*', lowest: true }
-          - { php: '8.4', symfony: '8.*', current: true }
-          - { php: '8.5', symfony: '8.*' }
+          - { php: '8.4', symfony: '8.0.*', eol: true }
+          - { php: '8.5', symfony: '8.0.*', eol: true }
+          - { php: '8.4', symfony: '8.1.*', current: true }
+          - { php: '8.5', symfony: '8.1.*' }
           - { php: '8.6', symfony: 'next', nightly: true }
     steps:
       - uses: actions/checkout@v6
@@ -71,7 +73,7 @@ jobs:
               if grep -q "\"$tool\"" composer.json; then composer remove --dev --no-update --no-interaction "$tool"; fi
             done
           fi
-          composer update --no-interaction --no-progress --prefer-dist --prefer-stable ${{ matrix.lowest && '--prefer-lowest --no-blocking' || '' }} ${{ matrix.nightly && '--ignore-platform-req=php+' || '' }}
+          composer update --no-interaction --no-progress --prefer-dist --prefer-stable ${{ matrix.lowest && '--prefer-lowest --no-blocking' || '' }} ${{ matrix.nightly && '--ignore-platform-req=php+' || '' }} ${{ matrix.eol && '--no-blocking' || '' }}
 
       - name: PHP-CS-Fixer
         if: matrix.current
