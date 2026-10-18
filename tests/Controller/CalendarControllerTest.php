@@ -76,8 +76,6 @@ final class CalendarControllerTest extends TestCase
             'filters' => '{}',
         ]));
 
-        self::assertInstanceOf(JsonResponse::class, $response);
-
         self::assertSame($data, $response->getContent());
         self::assertSame(JsonResponse::HTTP_OK, $response->getStatusCode());
     }
@@ -105,8 +103,6 @@ final class CalendarControllerTest extends TestCase
             'end' => '2016-03-19',
             'filters' => '{}',
         ]));
-
-        self::assertInstanceOf(JsonResponse::class, $response);
 
         self::assertSame($data, $response->getContent());
         self::assertSame(JsonResponse::HTTP_NO_CONTENT, $response->getStatusCode());

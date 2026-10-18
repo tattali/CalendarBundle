@@ -23,14 +23,14 @@ class CalendarController
     {
         try {
             $start = $this->getParameter($request, 'start');
-            if ($start && \is_string($start)) {
+            if (\is_string($start) && !\in_array($start, ['', '0'], true)) {
                 $start = $this->createDate($start, 'start');
             } else {
                 throw new \UnexpectedValueException('Query parameter "start" should be a string');
             }
 
             $end = $this->getParameter($request, 'end');
-            if ($end && \is_string($end)) {
+            if (\is_string($end) && !\in_array($end, ['', '0'], true)) {
                 $end = $this->createDate($end, 'end');
             } else {
                 throw new \UnexpectedValueException('Query parameter "end" should be a string');
@@ -56,7 +56,7 @@ class CalendarController
 
         return JsonResponse::fromJsonString(
             $content,
-            empty($content) ? Response::HTTP_NO_CONTENT : Response::HTTP_OK,
+            \in_array($content, ['', '0'], true) ? Response::HTTP_NO_CONTENT : Response::HTTP_OK,
         );
     }
 
