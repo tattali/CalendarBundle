@@ -6,6 +6,6 @@
     "logs": {
         "text": "build/infection.log"
     },
-    "minMsi": 83,
-    "minCoveredMsi": 83
+    "minMsi": 86,
+    "minCoveredMsi": 86
 }

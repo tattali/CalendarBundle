@@ -99,6 +99,10 @@ jobs:
           SYMFONY_DEPRECATIONS_HELPER: max[direct]=0
         run: vendor/bin/phpunit ${{ matrix.current && '--coverage-clover=build/coverage.xml' || '--no-coverage' }}
 
+      - name: Mutation tests
+        if: matrix.current
+        run: vendor/bin/infection --threads=max --no-progress --show-mutations
+
       - name: SonarCloud
         # secrets are not available to pull requests opened from another repository
         if: matrix.current && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
