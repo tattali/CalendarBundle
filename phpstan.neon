@@ -1,5 +1,9 @@
+includes:
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
+    - vendor/phpstan/phpstan-symfony/extension.neon
+
 parameters:
-    level: 5
-    phpVersion: 80100
+    level: max
+    phpVersion: 80100 # the lowest PHP version of the 6.x branch
     paths:
         - src
