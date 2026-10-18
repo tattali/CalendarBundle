@@ -25,17 +25,8 @@ class CalendarController
      */
     public function loadAction(Request $request): Response
     {
-        $start = $request->get('start');
-        if (!\is_string($start)) {
-            throw new BadRequestHttpException('Query parameter "start" should be a string');
-        }
-        $start = new \DateTime($start);
-
-        $end = $request->get('end');
-        if (!\is_string($end)) {
-            throw new BadRequestHttpException('Query parameter "end" should be a string');
-        }
-        $end = new \DateTime($end);
+        $start = self::dateParameter($request, 'start');
+        $end = self::dateParameter($request, 'end');
 
         $filters = $request->get('filters', '{}');
         $filters = \is_string($filters) ? json_decode($filters, true) : $filters;
@@ -55,5 +46,19 @@ class CalendarController
         $response->setStatusCode(\in_array($content, ['', '0'], true) ? Response::HTTP_NO_CONTENT : Response::HTTP_OK);
 
         return $response;
+    }
+
+    private static function dateParameter(Request $request, string $name): \DateTime
+    {
+        $value = $request->get($name);
+        if (!\is_string($value)) {
+            throw new BadRequestHttpException(sprintf('Query parameter "%s" should be a string', $name));
+        }
+
+        try {
+            return new \DateTime($value);
+        } catch (\Exception $e) {
+            throw new BadRequestHttpException(sprintf('Query parameter "%s" is not a valid date', $name), $e);
+        }
     }
 }
