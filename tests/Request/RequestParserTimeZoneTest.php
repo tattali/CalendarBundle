@@ -50,7 +50,7 @@ final class RequestParserTimeZoneTest extends TestCase
 
     public function testTimeZoneIsReadFromTheQueryStringOnGetRequests(): void
     {
-        $request = Request::create('/fc-load-events?' . http_build_query([
+        $request = Request::create('/fc-load-events?'.http_build_query([
             'start' => '2026-10-01T00:00:00',
             'end' => '2026-11-01T00:00:00',
             'timeZone' => 'America/New_York',
@@ -88,11 +88,11 @@ final class RequestParserTimeZoneTest extends TestCase
 
         $params = $this->parser->parse($request);
 
-        self::assertSame((new \DateTime('2026-10-01T00:00:00+02:00'))->getTimestamp(), $params->start->getTimestamp());
+        self::assertSame(new \DateTime('2026-10-01T00:00:00+02:00')->getTimestamp(), $params->start->getTimestamp());
         self::assertSame('America/New_York', $params->start->getTimezone()->getName());
         self::assertSame('2026-09-30T18:00:00-04:00', $params->start->format(\DateTime::ATOM));
 
-        self::assertSame((new \DateTime('2026-11-01T00:00:00+01:00'))->getTimestamp(), $params->end->getTimestamp());
+        self::assertSame(new \DateTime('2026-11-01T00:00:00+01:00')->getTimestamp(), $params->end->getTimestamp());
         self::assertSame('America/New_York', $params->end->getTimezone()->getName());
         self::assertSame('2026-10-31T19:00:00-04:00', $params->end->format(\DateTime::ATOM));
     }
@@ -137,9 +137,9 @@ final class RequestParserTimeZoneTest extends TestCase
         try {
             $this->parser->parse($request);
             self::fail('An invalid time zone must be rejected');
-        } catch (InvalidTimeZoneException $e) {
-            self::assertInstanceOf(CalendarExceptionInterface::class, $e);
-            self::assertInstanceOf(\InvalidArgumentException::class, $e);
+        } catch (CalendarExceptionInterface $e) {
+            // the controller turns every CalendarExceptionInterface into a 400
+            self::assertInstanceOf(InvalidTimeZoneException::class, $e);
             self::assertSame('Query parameter "timeZone" is not a valid time zone', $e->getMessage());
         }
     }
