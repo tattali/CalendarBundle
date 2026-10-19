@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CalendarBundle\Exception;
 
-class InvalidJsonException extends \InvalidArgumentException implements CalendarExceptionInterface
+final class InvalidJsonException extends \InvalidArgumentException implements CalendarExceptionInterface
 {
     public static function mustBeObjectOrArray(string $parameter): self
     {

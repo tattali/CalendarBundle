@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace CalendarBundle\Exception;
 
-class InvalidTimeZoneException extends \InvalidArgumentException implements CalendarExceptionInterface
+final class InvalidTimeZoneException extends \InvalidArgumentException implements CalendarExceptionInterface
 {
     public static function forParameter(string $parameter, ?\Throwable $previous = null): self
     {
