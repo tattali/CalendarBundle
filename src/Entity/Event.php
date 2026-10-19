@@ -120,7 +120,7 @@ class Event
 
     public function removeOption(string $name): mixed
     {
-        if (!isset($this->options[$name])) {
+        if (!\array_key_exists($name, $this->options)) {
             return null;
         }
 
