@@ -84,34 +84,34 @@ final class EventConstructorTest extends TestCase
         self::assertSame('2024-01-15 14:30:00', $event->getStart()->format('Y-m-d H:i:s'));
     }
 
-    public function testSubclassesOverridingTheSettersWithDateTimeStillGetDateTimes(): void
+    public function testTheConstructorPassesDateTimesToOverriddenSetters(): void
     {
         $event = new class('Title', new \DateTimeImmutable('2024-01-15 14:30:00'), new \DateTimeImmutable('2024-01-15 16:00:00')) extends Event {
             /** @var list<string> */
             public array $calls = [];
 
-            public function setStart(\DateTime $start): Event
+            public function setStart(\DateTimeInterface $start): Event
             {
-                $this->calls[] = 'setStart '.$start->format('H:i');
+                $this->calls[] = 'setStart '.$start::class.' '.$start->format('H:i');
 
                 return parent::setStart($start);
             }
 
-            public function setEnd(?\DateTime $end): Event
+            public function setEnd(?\DateTimeInterface $end): Event
             {
-                $this->calls[] = 'setEnd '.$end?->format('H:i');
+                $this->calls[] = 'setEnd '.(null === $end ? '' : $end::class.' '.$end->format('H:i'));
 
                 return parent::setEnd($end);
             }
         };
 
-        self::assertSame(['setEnd 16:00', 'setStart 14:30'], $event->calls);
+        self::assertSame(['setEnd DateTime 16:00', 'setStart DateTime 14:30'], $event->calls);
     }
 
     public function testSubclassesOverridingSetEndWithoutParentStillGetTheConstructorEnd(): void
     {
         $event = new class('Title', new \DateTime('2024-01-15 14:30:00'), new \DateTime('2024-01-15 16:00:00')) extends Event {
-            public function setEnd(?\DateTime $end): Event
+            public function setEnd(?\DateTimeInterface $end): Event
             {
                 return $this;
             }
@@ -120,17 +120,17 @@ final class EventConstructorTest extends TestCase
         self::assertSame('2024-01-15 16:00:00', $event->getEnd()?->format('Y-m-d H:i:s'));
     }
 
-    public function testSubclassesCanAlreadyWidenTheSetterParameters(): void
+    public function testSubclassesWithWidenedSettersCanPassImmutablesToTheParent(): void
     {
         $event = new class('Title', new \DateTimeImmutable('2024-01-15 14:30:00')) extends Event {
             public function setStart(\DateTimeInterface $start): Event
             {
-                return parent::setStart($start instanceof \DateTime ? $start : \DateTime::createFromInterface($start));
+                return parent::setStart($start);
             }
 
             public function setEnd(?\DateTimeInterface $end): Event
             {
-                return parent::setEnd(null === $end || $end instanceof \DateTime ? $end : \DateTime::createFromInterface($end));
+                return parent::setEnd($end);
             }
         };
 
