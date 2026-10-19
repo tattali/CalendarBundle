@@ -16,7 +16,19 @@ $event = new Event(
 );
 ```
 
-An immutable date is copied into a `\DateTime` with the same date, time and time zone; the value you passed is never changed. A `\DateTime` is used as before. `getStart()`, `getEnd()`, `setStart()` and `setEnd()` keep their `\DateTime` types in 8.3.
+An immutable date is copied into a `\DateTime` with the same date, time and time zone; the value you passed is never changed. A `\DateTime` is used as before. `getStart()` and `getEnd()` keep returning `\DateTime`.
+
+### DateTimeInterface Dates in setStart() and setEnd()
+
+`Event::setStart()` now accepts any `\DateTimeInterface $start` and `Event::setEnd()` any `?\DateTimeInterface $end`:
+
+```php
+$event
+    ->setEnd($booking->getEndAt())      // \DateTimeImmutable
+    ->setStart($booking->getBeginAt()); // \DateTimeImmutable
+```
+
+As in the constructor, an immutable date is copied into a `\DateTime` with the same date, time and time zone, and a `\DateTime` is used as before. Overriding these setters in a subclass needs a change: see [Breaking Changes](#setstart-and-setend-accept-datetimeinterface).
 
 ### Multi-Day All-Day Events
 
@@ -91,17 +103,15 @@ When a client sends `timeZone`, listeners receive `start` and `end` in that zone
 
 An unknown `timeZone` value now gives a `400 Bad Request` through the new `InvalidTimeZoneException`, which implements `CalendarExceptionInterface`. Before, the parameter was ignored.
 
-## Coming in 9.0
+### setStart() and setEnd() Accept \DateTimeInterface
 
-### setStart() and setEnd() Will Accept \DateTimeInterface
-
-In 9.0, `Event::setStart()` will take a `\DateTimeInterface $start` and `Event::setEnd()` a `?\DateTimeInterface $end`. Calls keep working. A subclass that overrides one of them with a `\DateTime` parameter will then stop with:
+`Event::setStart()` now takes a `\DateTimeInterface $start` and `Event::setEnd()` a `?\DateTimeInterface $end`. Calls keep working. A subclass that overrides one of them with a `\DateTime` parameter now stops with:
 
 ```
 PHP Fatal error:  Declaration of App\Calendar\MyEvent::setStart(DateTime $start): App\Calendar\MyEvent must be compatible with CalendarBundle\Entity\Event::setStart(DateTimeInterface $start): CalendarBundle\Entity\Event
 ```
 
-Prepare now by widening the parameter types in your overrides. PHP already accepts the wider type in an override of the 8.3 methods:
+**Migration**: widen the parameter types in your overrides:
 
 ```php
 class MyEvent extends Event
@@ -109,18 +119,18 @@ class MyEvent extends Event
     public function setStart(\DateTimeInterface $start): self
     {
         // ...
-        return parent::setStart($start instanceof \DateTime ? $start : \DateTime::createFromInterface($start));
+        return parent::setStart($start);
     }
 
     public function setEnd(?\DateTimeInterface $end): self
     {
         // ...
-        return parent::setEnd(null === $end || $end instanceof \DateTime ? $end : \DateTime::createFromInterface($end));
+        return parent::setEnd($end);
     }
 }
 ```
 
-The conversion before calling `parent` is needed only while the bundle is on 8.x. Overridden constructors are not affected.
+The constructor still passes a `\DateTime` to these setters. Overridden constructors are not affected.
 
 ## Migration Steps
 
@@ -129,12 +139,13 @@ The conversion before calling `parent` is needed only while the bundle is on 8.x
    composer update tattali/calendar-bundle
    ```
 
-2. **Optional**: pass `\DateTimeImmutable` values to the `Event` constructor directly and remove any `\DateTime::createFromImmutable()` conversions.
+2. **If you subclass `Event`**: widen the `setStart()`/`setEnd()` overrides to `\DateTimeInterface`/`?\DateTimeInterface`, if any.
 
-3. **Optional, before 9.0**: widen the `setStart()`/`setEnd()` overrides in your `Event` subclasses, if any.
+3. **Optional**: pass `\DateTimeImmutable` values to the `Event` constructor, `setStart()` and `setEnd()` directly and remove any `\DateTime::createFromImmutable()` conversions.
 
-## No Changes Required by the Event Constructor Change
+## No Changes Required by the DateTimeInterface Dates
 
 - Existing constructor calls and argument order
-- `getStart()`, `getEnd()`, `setStart()` and `setEnd()` signatures
-- This change does not alter the `toArray()` output
+- Existing `setStart()` and `setEnd()` calls
+- `getStart()` and `getEnd()` signatures
+- These changes do not alter the `toArray()` output

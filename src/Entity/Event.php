@@ -34,8 +34,8 @@ class Event
         protected array $options = [],
         ?bool $allDay = null,
     ) {
-        $start = $start instanceof \DateTime ? $start : \DateTime::createFromInterface($start);
-        $end = null === $end || $end instanceof \DateTime ? $end : \DateTime::createFromInterface($end);
+        $start = self::toDateTime($start);
+        $end = null === $end ? null : self::toDateTime($end);
         // set before setEnd() runs, as the promoted properties used to be
         $this->start = $start;
         $this->end = $end;
@@ -64,12 +64,11 @@ class Event
     }
 
     /**
-     * In 9.0, $start will be typed \DateTimeInterface. A subclass that overrides
-     * this method should declare its parameter as \DateTimeInterface: PHP already
-     * accepts that wider type in an override, so it can be changed now.
+     * An immutable date is copied into a \DateTime.
      */
-    public function setStart(\DateTime $start): self
+    public function setStart(\DateTimeInterface $start): self
     {
+        $start = self::toDateTime($start);
         $this->startWithTime = null;
         if ($this->allDay) {
             $this->startWithTime = clone $start;
@@ -87,14 +86,12 @@ class Event
     }
 
     /**
-     * Also resets allDay: true without an end, false with one.
-     *
-     * In 9.0, $end will be typed ?\DateTimeInterface. A subclass that overrides
-     * this method should declare its parameter as ?\DateTimeInterface: PHP already
-     * accepts that wider type in an override, so it can be changed now.
+     * Also resets allDay: true without an end, false with one. An immutable
+     * date is copied into a \DateTime.
      */
-    public function setEnd(?\DateTime $end): self
+    public function setEnd(?\DateTimeInterface $end): self
     {
+        $end = null === $end ? null : self::toDateTime($end);
         $this->allDay = null === $end;
         $this->end = $end;
         if (null !== $end) {
@@ -201,6 +198,11 @@ class Event
         }
 
         return $event + $this->options;
+    }
+
+    private static function toDateTime(\DateTimeInterface $date): \DateTime
+    {
+        return $date instanceof \DateTime ? $date : \DateTime::createFromInterface($date);
     }
 
     /**
