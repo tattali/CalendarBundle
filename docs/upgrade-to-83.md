@@ -94,6 +94,48 @@ calendar:
 
 `cache_max_age` then sets the `max-age` as before.
 
+### RequestParser and Serializer Are Final
+
+`CalendarBundle\Request\RequestParser` and `CalendarBundle\Serializer\Serializer` are now `final`. A class that extends one of them now stops with:
+
+```
+PHP Fatal error:  Class App\Calendar\EventSerializer cannot extend final class CalendarBundle\Serializer\Serializer
+```
+
+**Migration**: implement the interface instead of extending the class, and either replace the bundle's service through the interface alias (see [Replacing the Request Parser or the Serializer](#replacing-the-request-parser-or-the-serializer)) or decorate it to keep its behaviour and add yours:
+
+```php
+// 8.2
+class EventSerializer extends Serializer
+{
+    public function serialize(array $events): string
+    {
+        return '{"events":'.parent::serialize($events).'}';
+    }
+}
+
+// 8.3
+use CalendarBundle\Serializer\SerializerInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
+use Symfony\Component\DependencyInjection\Attribute\AutowireDecorated;
+
+#[AsDecorator(decorates: SerializerInterface::class)]
+final class EventSerializer implements SerializerInterface
+{
+    public function __construct(
+        #[AutowireDecorated] private readonly SerializerInterface $inner,
+    ) {
+    }
+
+    public function serialize(array $events): string
+    {
+        return '{"events":'.$this->inner->serialize($events).'}';
+    }
+}
+```
+
+The decorator replaces the service behind the alias, so the events feed calls it, and `$inner` is the bundle's service. `RequestParserInterface` is decorated the same way; the parser's `json_max_depth` option keeps applying to the inner `RequestParser`.
+
 ### All-Day Events Are Serialised as Dates
 
 `Event::toArray()`, and so the JSON feed, gives the `start` and `end` of an all-day event as `Y-m-d` (`2026-10-15`) instead of an ATOM date-time (`2026-10-15T00:00:00+02:00`), so the event stays on its day whatever the calendar's time zone. Timed events are unchanged. FullCalendar accepts both forms.
