@@ -23,6 +23,26 @@ final class EventConstructorTest extends TestCase
         self::assertSame('2024-01-15 14:30:00.250000', $start->format('Y-m-d H:i:s.u'));
     }
 
+    public function testATimedEventKeepsTheGivenImmutableDates(): void
+    {
+        $start = new \DateTimeImmutable('2024-01-15 14:30:00');
+        $end = new \DateTimeImmutable('2024-01-15 16:00:00');
+
+        $event = new Event('Title', $start, $end);
+
+        self::assertSame($start, $event->getStart());
+        self::assertSame($end, $event->getEnd());
+    }
+
+    public function testAnAllDayEventKeepsTheGivenImmutableEnd(): void
+    {
+        $end = new \DateTimeImmutable('2024-01-18');
+
+        $event = new Event('Title', new \DateTimeImmutable('2024-01-15'), $end, allDay: true);
+
+        self::assertSame($end, $event->getEnd());
+    }
+
     public function testAnImmutableStartMakesAnAllDayEventThatKeepsItsTime(): void
     {
         $event = new Event('Title', new \DateTimeImmutable('2024-01-15 14:30:00'));
@@ -84,7 +104,7 @@ final class EventConstructorTest extends TestCase
         self::assertSame('2024-01-15 14:30:00', $event->getStart()->format('Y-m-d H:i:s'));
     }
 
-    public function testTheConstructorPassesDateTimesToOverriddenSetters(): void
+    public function testTheConstructorPassesTheGivenDatesToOverriddenSetters(): void
     {
         $event = new class('Title', new \DateTimeImmutable('2024-01-15 14:30:00'), new \DateTimeImmutable('2024-01-15 16:00:00')) extends Event {
             /** @var list<string> */
@@ -105,7 +125,31 @@ final class EventConstructorTest extends TestCase
             }
         };
 
-        self::assertSame(['setEnd DateTime 16:00', 'setStart DateTime 14:30'], $event->calls);
+        self::assertSame(['setEnd DateTimeImmutable 16:00', 'setStart DateTimeImmutable 14:30'], $event->calls);
+    }
+
+    public function testTheConstructorPassesAGivenDateTimeToOverriddenSetters(): void
+    {
+        $event = new class('Title', new \DateTime('2024-01-15 14:30:00'), new \DateTime('2024-01-15 16:00:00')) extends Event {
+            /** @var list<string> */
+            public array $calls = [];
+
+            public function setStart(\DateTimeInterface $start): Event
+            {
+                $this->calls[] = 'setStart '.$start::class;
+
+                return parent::setStart($start);
+            }
+
+            public function setEnd(?\DateTimeInterface $end): Event
+            {
+                $this->calls[] = 'setEnd '.(null === $end ? '' : $end::class);
+
+                return parent::setEnd($end);
+            }
+        };
+
+        self::assertSame(['setEnd DateTime', 'setStart DateTime'], $event->calls);
     }
 
     public function testSubclassesOverridingSetEndWithoutParentStillGetTheConstructorEnd(): void
