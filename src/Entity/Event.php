@@ -21,8 +21,8 @@ class Event
 
     /**
      * The dates are stored as \DateTimeImmutable: a \DateTime is copied, so
-     * changing it later does not change the event. The setters still receive
-     * a \DateTime, as in 8.2.
+     * changing it later does not change the event, and an immutable date is
+     * stored as is. The dates are passed to setStart() and setEnd() as given.
      *
      * @param mixed[]   $options
      * @param bool|null $allDay  null makes the event all-day without an end and timed with one;
@@ -36,8 +36,6 @@ class Event
         protected array $options = [],
         ?bool $allDay = null,
     ) {
-        $start = self::toDateTime($start);
-        $end = null === $end ? null : self::toDateTime($end);
         // set before setEnd() runs, as the promoted properties used to be
         $this->start = self::toImmutable($start);
         $this->end = null === $end ? null : self::toImmutable($end);
@@ -199,11 +197,6 @@ class Event
         }
 
         return $event + $this->options;
-    }
-
-    private static function toDateTime(\DateTimeInterface $date): \DateTime
-    {
-        return $date instanceof \DateTime ? $date : \DateTime::createFromInterface($date);
     }
 
     private static function toImmutable(\DateTimeInterface $date): \DateTimeImmutable
