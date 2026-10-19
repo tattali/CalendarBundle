@@ -10,7 +10,7 @@ use CalendarBundle\Exception\InvalidTimeZoneException;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 
-class RequestParser implements RequestParserInterface
+final class RequestParser implements RequestParserInterface
 {
     /** @var int<1, 512> */
     private readonly int $jsonMaxDepth;
