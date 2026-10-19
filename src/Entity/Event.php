@@ -8,19 +8,21 @@ class Event
 {
     protected bool $allDay = true;
 
-    protected \DateTime $start;
+    protected \DateTimeImmutable $start;
 
-    protected ?\DateTime $end;
+    protected ?\DateTimeImmutable $end;
 
     /**
      * The start with the time of day it had, kept while an all-day event
      * exposes it truncated to midnight, so the time comes back when the
      * event becomes timed.
      */
-    private ?\DateTime $startWithTime = null;
+    private ?\DateTimeImmutable $startWithTime = null;
 
     /**
-     * An immutable date is copied into a \DateTime; a \DateTime is used as is.
+     * The dates are stored as \DateTimeImmutable: a \DateTime is copied, so
+     * changing it later does not change the event. The setters still receive
+     * a \DateTime, as in 8.2.
      *
      * @param mixed[]   $options
      * @param bool|null $allDay  null makes the event all-day without an end and timed with one;
@@ -37,8 +39,8 @@ class Event
         $start = self::toDateTime($start);
         $end = null === $end ? null : self::toDateTime($end);
         // set before setEnd() runs, as the promoted properties used to be
-        $this->start = $start;
-        $this->end = $end;
+        $this->start = self::toImmutable($start);
+        $this->end = null === $end ? null : self::toImmutable($end);
         $this->setEnd($end);
         if (null !== $allDay) {
             $this->allDay = $allDay;
@@ -58,40 +60,40 @@ class Event
         return $this;
     }
 
-    public function getStart(): \DateTime
+    public function getStart(): \DateTimeImmutable
     {
         return $this->start;
     }
 
     /**
-     * An immutable date is copied into a \DateTime.
+     * A \DateTime is copied into a \DateTimeImmutable; an immutable date is
+     * stored as is.
      */
     public function setStart(\DateTimeInterface $start): self
     {
-        $start = self::toDateTime($start);
+        $start = self::toImmutable($start);
         $this->startWithTime = null;
         if ($this->allDay) {
-            $this->startWithTime = clone $start;
-            $start = clone $start;
-            $start->setTime(0, 0, 0, 0);
+            $this->startWithTime = $start;
+            $start = $start->setTime(0, 0, 0, 0);
         }
         $this->start = $start;
 
         return $this;
     }
 
-    public function getEnd(): ?\DateTime
+    public function getEnd(): ?\DateTimeImmutable
     {
         return $this->end;
     }
 
     /**
-     * Also resets allDay: true without an end, false with one. An immutable
-     * date is copied into a \DateTime.
+     * Also resets allDay: true without an end, false with one. A \DateTime
+     * is copied into a \DateTimeImmutable; an immutable date is stored as is.
      */
     public function setEnd(?\DateTimeInterface $end): self
     {
-        $end = null === $end ? null : self::toDateTime($end);
+        $end = null === $end ? null : self::toImmutable($end);
         $this->allDay = null === $end;
         $this->end = $end;
         if (null !== $end) {
@@ -113,10 +115,9 @@ class Event
             $this->restoreStartTime();
         } else {
             if ('00:00:00.000000' !== $this->start->format('H:i:s.u')) {
-                $this->startWithTime = clone $this->start;
+                $this->startWithTime = $this->start;
             }
-            $this->start = clone $this->start;
-            $this->start->setTime(0, 0, 0, 0);
+            $this->start = $this->start->setTime(0, 0, 0, 0);
         }
 
         return $this;
@@ -205,10 +206,15 @@ class Event
         return $date instanceof \DateTime ? $date : \DateTime::createFromInterface($date);
     }
 
+    private static function toImmutable(\DateTimeInterface $date): \DateTimeImmutable
+    {
+        return $date instanceof \DateTimeImmutable ? $date : \DateTimeImmutable::createFromInterface($date);
+    }
+
     /**
      * Gives back the time of day an all-day start was truncated from, on the
-     * day the start is on now (it may have been moved in place). A time set in
-     * place on the truncated start wins over the remembered one.
+     * day the start is on now (a subclass may have moved it). A time a
+     * subclass set on the truncated start wins over the remembered one.
      */
     private function restoreStartTime(): void
     {
@@ -218,7 +224,6 @@ class Event
             return;
         }
 
-        $start->setDate((int) $this->start->format('Y'), (int) $this->start->format('n'), (int) $this->start->format('j'));
-        $this->start = $start;
+        $this->start = $start->setDate((int) $this->start->format('Y'), (int) $this->start->format('n'), (int) $this->start->format('j'));
     }
 }

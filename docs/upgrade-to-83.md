@@ -16,7 +16,7 @@ $event = new Event(
 );
 ```
 
-An immutable date is copied into a `\DateTime` with the same date, time and time zone; the value you passed is never changed. A `\DateTime` is used as before. `getStart()` and `getEnd()` keep returning `\DateTime`.
+The event stores its dates as `\DateTimeImmutable`: an immutable date is kept as is, and a `\DateTime` is copied with the same date, time and time zone. See [Event Dates Are Immutable](#event-dates-are-immutable).
 
 ### DateTimeInterface Dates in setStart() and setEnd()
 
@@ -28,7 +28,7 @@ $event
     ->setStart($booking->getBeginAt()); // \DateTimeImmutable
 ```
 
-As in the constructor, an immutable date is copied into a `\DateTime` with the same date, time and time zone, and a `\DateTime` is used as before. Overriding these setters in a subclass needs a change: see [Breaking Changes](#setstart-and-setend-accept-datetimeinterface).
+As in the constructor, an immutable date is stored as is and a `\DateTime` is copied. Overriding these setters in a subclass needs a change: see [Breaking Changes](#setstart-and-setend-accept-datetimeinterface).
 
 ### Multi-Day All-Day Events
 
@@ -103,6 +103,44 @@ When a client sends `timeZone`, listeners receive `start` and `end` in that zone
 
 An unknown `timeZone` value now gives a `400 Bad Request` through the new `InvalidTimeZoneException`, which implements `CalendarExceptionInterface`. Before, the parameter was ignored.
 
+### Event Dates Are Immutable
+
+`Event::getStart()` now returns `\DateTimeImmutable` and `Event::getEnd()` returns `?\DateTimeImmutable`. The protected `$start` and `$end` properties are typed the same way. A `\DateTime` passed to the constructor, `setStart()` or `setEnd()` is copied, so changing it afterwards no longer changes the event. `toArray()` and the JSON feed are unchanged.
+
+Before, the getters returned the event's own `\DateTime`, so `$event->getStart()->modify('+1 day')` moved the event. Now `modify()`, `setTime()`, `setDate()`, `setTimezone()` and the other modifiers return a new date and leave the event as it was, without any error.
+
+**Migration**:
+
+- Code that changes a date of the event in place must pass the new date to the setter:
+
+  ```php
+  // 8.2
+  $event->getStart()->modify('+1 day');
+  $event->getEnd()->setTime(18, 0);
+
+  // 8.3
+  $event->setStart($event->getStart()->modify('+1 day'));
+  $event->setEnd($event->getEnd()->setTime(18, 0));
+  ```
+
+  `setEnd()` also resets `allDay` (all-day without an end, timed with one). For a multi-day all-day event, call `setAllDay(true)` after it.
+
+- On an all-day event, `getStart()` is at midnight and the event remembers the time it was given, to restore it if the event becomes timed. `setStart()` replaces that time with the time of the date you pass, so `$event->setStart($event->getStart()->modify('+1 day'))` keeps midnight. Changing the day in place used to keep the remembered time. If you need it, pass the start with its time of day.
+
+- Code that receives these dates as `\DateTime` gets a `TypeError`. Accept `\DateTimeInterface`, or convert with `\DateTime::createFromImmutable($event->getStart())`.
+
+- A subclass that overrides `getStart()` or `getEnd()` with a `\DateTime` return type now stops with:
+
+  ```
+  PHP Fatal error:  Declaration of App\Calendar\MyEvent::getStart(): DateTime must be compatible with CalendarBundle\Entity\Event::getStart(): DateTimeImmutable
+  ```
+
+  Change the return types to `\DateTimeImmutable` and `?\DateTimeImmutable`.
+
+- A subclass that assigns a `\DateTime` to `$this->start` or `$this->end` gets `Cannot assign DateTime to property CalendarBundle\Entity\Event::$start of type DateTimeImmutable`. Assign a `\DateTimeImmutable` (`\DateTimeImmutable::createFromMutable($date)`), or call the setters.
+
+Comparing the dates with `<`, `>` or `==` works as before, with either `\DateTime` or `\DateTimeImmutable` on the other side.
+
 ### setStart() and setEnd() Accept \DateTimeInterface
 
 `Event::setStart()` now takes a `\DateTimeInterface $start` and `Event::setEnd()` a `?\DateTimeInterface $end`. Calls keep working. A subclass that overrides one of them with a `\DateTime` parameter now stops with:
@@ -139,13 +177,14 @@ The constructor still passes a `\DateTime` to these setters. Overridden construc
    composer update tattali/calendar-bundle
    ```
 
-2. **If you subclass `Event`**: widen the `setStart()`/`setEnd()` overrides to `\DateTimeInterface`/`?\DateTimeInterface`, if any.
+2. **If you subclass `Event`**: widen the `setStart()`/`setEnd()` overrides to `\DateTimeInterface`/`?\DateTimeInterface`, change the `getStart()`/`getEnd()` overrides to return `\DateTimeImmutable`/`?\DateTimeImmutable`, and assign `\DateTimeImmutable` values to `$start` and `$end`, if any.
 
-3. **Optional**: pass `\DateTimeImmutable` values to the `Event` constructor, `setStart()` and `setEnd()` directly and remove any `\DateTime::createFromImmutable()` conversions.
+3. **If you change event dates in place**: replace `$event->getStart()->modify(...)` and similar calls with `$event->setStart($event->getStart()->modify(...))`, and the same for the end. Accept `\DateTimeInterface` where you pass `getStart()` or `getEnd()` to code typed `\DateTime`.
+
+4. **Optional**: pass `\DateTimeImmutable` values to the `Event` constructor, `setStart()` and `setEnd()` directly and remove any `\DateTime::createFromImmutable()` conversions.
 
 ## No Changes Required by the DateTimeInterface Dates
 
 - Existing constructor calls and argument order
 - Existing `setStart()` and `setEnd()` calls
-- `getStart()` and `getEnd()` signatures
 - These changes do not alter the `toArray()` output

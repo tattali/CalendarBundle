@@ -57,7 +57,7 @@ final class EventSettersTest extends TestCase
         self::assertNull($event->getEnd());
     }
 
-    public function testSettersKeepTheGivenDateTimeInstancesOfATimedEvent(): void
+    public function testSettersCopyTheDateTimesOfATimedEvent(): void
     {
         $event = new Event('Title', new \DateTimeImmutable('2024-01-15 14:30:00'));
         $start = new \DateTime('2024-01-16 09:15:00');
@@ -65,7 +65,7 @@ final class EventSettersTest extends TestCase
 
         $event->setEnd($end)->setStart($start);
 
-        self::assertSame($start, $event->getStart());
-        self::assertSame($end, $event->getEnd());
+        self::assertSame('2024-01-16 09:15:00', $event->getStart()->format('Y-m-d H:i:s'));
+        self::assertSame('2024-01-16 10:00:00', $event->getEnd()?->format('Y-m-d H:i:s'));
     }
 }
