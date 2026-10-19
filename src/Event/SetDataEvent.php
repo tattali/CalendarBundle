@@ -18,24 +18,33 @@ class SetDataEvent
      */
     private array $events;
 
+    private readonly \DateTimeImmutable $start;
+
+    private readonly \DateTimeImmutable $end;
+
     /**
+     * A \DateTime is copied into a \DateTimeImmutable; an immutable date is
+     * stored as is.
+     *
      * @param mixed[] $filters
      */
     public function __construct(
-        private readonly \DateTime $start,
-        private readonly \DateTime $end,
+        \DateTimeInterface $start,
+        \DateTimeInterface $end,
         private readonly array $filters,
         private readonly ?\DateTimeZone $timeZone = null,
     ) {
+        $this->start = $start instanceof \DateTimeImmutable ? $start : \DateTimeImmutable::createFromInterface($start);
+        $this->end = $end instanceof \DateTimeImmutable ? $end : \DateTimeImmutable::createFromInterface($end);
         $this->events = [];
     }
 
-    public function getStart(): \DateTime
+    public function getStart(): \DateTimeImmutable
     {
         return $this->start;
     }
 
-    public function getEnd(): \DateTime
+    public function getEnd(): \DateTimeImmutable
     {
         return $this->end;
     }

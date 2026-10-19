@@ -141,6 +141,41 @@ Before, the getters returned the event's own `\DateTime`, so `$event->getStart()
 
 Comparing the dates with `<`, `>` or `==` works as before, with either `\DateTime` or `\DateTimeImmutable` on the other side.
 
+### Listener Dates Are Immutable
+
+`SetDataEvent::getStart()` and `SetDataEvent::getEnd()` now return `\DateTimeImmutable`, and the `start` and `end` properties of `QueryParameters` are `\DateTimeImmutable`. `RequestParser` builds immutable dates. The `SetDataEvent` and `QueryParameters` constructors still accept any `\DateTimeInterface`: a `\DateTime` is copied and an immutable date is kept as is.
+
+Before, every listener received the same `\DateTime` objects, so a listener that changed them in place, for example with `setTimezone()`, changed the dates the next listeners received. Now the modifiers return a new date and the event keeps its own.
+
+**Migration**:
+
+- A listener, or a method it passes the dates to, with a `\DateTime` parameter gets a `TypeError`. Accept `\DateTimeInterface` (or `\DateTimeImmutable`):
+
+  ```php
+  // 8.2
+  private function fillCalendar(SetDataEvent $setDataEvent, \DateTime $start, \DateTime $end): void
+
+  // 8.3
+  private function fillCalendar(SetDataEvent $setDataEvent, \DateTimeInterface $start, \DateTimeInterface $end): void
+  ```
+
+- Code that changes the dates in place must use the returned date:
+
+  ```php
+  // 8.2
+  $start = $setDataEvent->getStart();
+  $start->setTimezone($storageZone);
+
+  // 8.3
+  $start = $setDataEvent->getStart()->setTimezone($storageZone);
+  ```
+
+  `(clone $setDataEvent->getStart())->setTimezone($storageZone)` keeps working.
+
+- A subclass of `SetDataEvent` that overrides `getStart()` or `getEnd()` with a `\DateTime` return type now stops with a fatal error (`Declaration of ...::getStart(): DateTime must be compatible with CalendarBundle\Event\SetDataEvent::getStart(): DateTimeImmutable`). Change the return types to `\DateTimeImmutable`.
+
+- Code that reads `QueryParameters::$start` or `$end`, for example in a decorated request parser, gets `\DateTimeImmutable`. Custom parsers that build `QueryParameters` with `\DateTime` values need no change.
+
 ### setStart() and setEnd() Accept \DateTimeInterface
 
 `Event::setStart()` now takes a `\DateTimeInterface $start` and `Event::setEnd()` a `?\DateTimeInterface $end`. Calls keep working. A subclass that overrides one of them with a `\DateTime` parameter now stops with:
@@ -181,7 +216,9 @@ The constructor still passes a `\DateTime` to these setters. Overridden construc
 
 3. **If you change event dates in place**: replace `$event->getStart()->modify(...)` and similar calls with `$event->setStart($event->getStart()->modify(...))`, and the same for the end. Accept `\DateTimeInterface` where you pass `getStart()` or `getEnd()` to code typed `\DateTime`.
 
-4. **Optional**: pass `\DateTimeImmutable` values to the `Event` constructor, `setStart()` and `setEnd()` directly and remove any `\DateTime::createFromImmutable()` conversions.
+4. **If you have `SetDataEvent` listeners**: accept `\DateTimeInterface` where they pass `getStart()` or `getEnd()` to code typed `\DateTime`, and use the date returned by `setTimezone()`, `modify()` and the other modifiers instead of changing the dates in place.
+
+5. **Optional**: pass `\DateTimeImmutable` values to the `Event` constructor, `setStart()` and `setEnd()` directly and remove any `\DateTime::createFromImmutable()` conversions.
 
 ## No Changes Required by the DateTimeInterface Dates
 

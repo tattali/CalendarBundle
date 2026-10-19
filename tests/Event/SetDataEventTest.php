@@ -37,8 +37,8 @@ final class SetDataEventTest extends TestCase
 
     public function testItHasRequireValues(): void
     {
-        self::assertSame($this->start, $this->event->getStart());
-        self::assertSame($this->end, $this->event->getEnd());
+        self::assertSame($this->start->format(\DateTime::ATOM), $this->event->getStart()->format(\DateTime::ATOM));
+        self::assertSame($this->end->format(\DateTime::ATOM), $this->event->getEnd()->format(\DateTime::ATOM));
         self::assertSame($this->filters, $this->event->getFilters());
     }
 
