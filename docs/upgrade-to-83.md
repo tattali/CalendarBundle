@@ -93,6 +93,32 @@ $start = $data['allDay']
     : new \DateTime($data['start']);
 ```
 
+### Exception Classes Are Final
+
+`InvalidDateException` and `InvalidJsonException`, and the new `InvalidTimeZoneException`, in `CalendarBundle\Exception`, are now `final`. Throwing and catching them is unchanged. A class that extends one of them now stops with:
+
+```
+PHP Fatal error:  Class App\Calendar\InvalidRangeException cannot extend final class CalendarBundle\Exception\InvalidDateException
+```
+
+**Migration**: extend `\InvalidArgumentException` and implement `CalendarExceptionInterface` instead. A request parser that throws it still gets a `400 Bad Request`, since the controller catches the interface:
+
+```php
+// 8.2
+class InvalidRangeException extends InvalidDateException
+{
+}
+
+// 8.3
+use CalendarBundle\Exception\CalendarExceptionInterface;
+
+final class InvalidRangeException extends \InvalidArgumentException implements CalendarExceptionInterface
+{
+}
+```
+
+Code that catches `InvalidDateException` to handle your exception too must catch `CalendarExceptionInterface`.
+
 ### Listener Dates Follow the Requested Time Zone
 
 When a client sends `timeZone`, listeners receive `start` and `end` in that zone instead of the server's. Without it, nothing changes.
