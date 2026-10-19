@@ -55,7 +55,7 @@ class RequestParser implements RequestParserInterface
         }
     }
 
-    private function parseDate(Request $request, string $parameter, ?\DateTimeZone $timeZone = null): \DateTime
+    private function parseDate(Request $request, string $parameter, ?\DateTimeZone $timeZone = null): \DateTimeImmutable
     {
         $value = $this->input($request)->getString($parameter);
 
@@ -64,13 +64,13 @@ class RequestParser implements RequestParserInterface
         }
 
         try {
-            $date = new \DateTime($value, $timeZone);
+            $date = new \DateTimeImmutable($value, $timeZone);
         } catch (\DateMalformedStringException $e) {
             throw InvalidDateException::forParameter($parameter, $e);
         }
 
         if (null !== $timeZone) {
-            $date->setTimezone($timeZone);
+            $date = $date->setTimezone($timeZone);
         }
 
         return $date;
