@@ -35,4 +35,25 @@ final class CalendarControllerFiltersTest extends TestCase
             self::assertSame('Query parameter "filters" must be a JSON object or array', $e->getMessage());
         }
     }
+
+    public function testARelativeDateReturnsBadRequest(): void
+    {
+        $controller = new CalendarController(
+            self::createStub(EventDispatcherInterface::class),
+            self::createStub(SerializerInterface::class),
+            new RequestParser(),
+        );
+        $request = Request::create('/fc-load-events', 'GET', [
+            'start' => 'tomorrow',
+            'end' => '2024-01-31',
+        ]);
+
+        try {
+            $controller->load($request);
+            self::fail('Expected a bad request for a relative date.');
+        } catch (BadRequestHttpException $e) {
+            self::assertSame(400, $e->getStatusCode());
+            self::assertSame('Query parameter "start" is not a valid date', $e->getMessage());
+        }
+    }
 }
