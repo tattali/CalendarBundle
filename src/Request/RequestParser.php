@@ -12,6 +12,13 @@ use Symfony\Component\HttpFoundation\Request;
 
 final class RequestParser implements RequestParserInterface
 {
+    /**
+     * ISO 8601 calendar dates as FullCalendar sends them: a date, or a date
+     * and time (minutes, optional seconds and fraction) with "Z", a
+     * "+hh:mm" or "-hh:mm" offset, or no offset.
+     */
+    private const string ISO_8601_DATE = '/^(?<year>\d{4})-(?<month>0[1-9]|1[0-2])-(?<day>0[1-9]|[12]\d|3[01])(?:T(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d{1,6})?)?(?:Z|[+-](?:[01]\d|2[0-3]):[0-5]\d)?)?$/D';
+
     /** @var int<1, 512> */
     private readonly int $jsonMaxDepth;
 
@@ -61,6 +68,11 @@ final class RequestParser implements RequestParserInterface
 
         if ('' === $value) {
             throw InvalidDateException::missingParameter($parameter);
+        }
+
+        if (1 !== preg_match(self::ISO_8601_DATE, $value, $parts)
+            || !checkdate((int) $parts['month'], (int) $parts['day'], (int) $parts['year'])) {
+            throw InvalidDateException::forParameter($parameter);
         }
 
         try {

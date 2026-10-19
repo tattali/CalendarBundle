@@ -184,6 +184,21 @@ When a client sends `timeZone`, listeners receive `start` and `end` in that zone
 
 An unknown `timeZone` value now gives a `400 Bad Request` through the new `InvalidTimeZoneException`, which implements `CalendarExceptionInterface`. Before, the parameter was ignored.
 
+### start and end Must Be ISO 8601 Dates
+
+`/fc-load-events` now accepts `start` and `end` only in the ISO 8601 forms FullCalendar sends, and answers `400 Bad Request` (`Query parameter "start" is not a valid date`) for anything else. Before, any string PHP's `\DateTimeImmutable` understands was accepted, such as `tomorrow`, `next month`, `@1790000000` or `1 October 2026`, and an impossible date such as `2026-02-30` silently moved to the next month.
+
+| Accepted | Example |
+|----------|---------|
+| Date | `2026-10-01` |
+| Date and time with an offset | `2026-10-01T00:00:00+02:00` |
+| Date and time in UTC | `2026-10-01T00:00:00Z` |
+| Date and time without offset (read in `timeZone`, or the server's zone) | `2026-10-01T00:00:00` |
+
+Seconds are optional (`2026-10-01T08:30`) and may have a fraction of up to 6 digits (`2026-10-01T08:30:00.250Z`). The separator must be an upper-case `T` and the offset must have a colon (`+02:00`, not `+0200`).
+
+**Migration**: nothing to do for FullCalendar's JSON feed. Other clients that call the endpoint must send dates in one of the forms above, for example with `$date->format(\DateTimeInterface::ATOM)` in PHP or `date.toISOString()` in JavaScript.
+
 ### Event Dates Are Immutable
 
 `Event::getStart()` now returns `\DateTimeImmutable` and `Event::getEnd()` returns `?\DateTimeImmutable`. The protected `$start` and `$end` properties are typed the same way. A `\DateTime` passed to the constructor, `setStart()` or `setEnd()` is copied, so changing it afterwards no longer changes the event. `toArray()` and the JSON feed are unchanged.
