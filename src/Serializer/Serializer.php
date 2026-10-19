@@ -6,7 +6,7 @@ namespace CalendarBundle\Serializer;
 
 use CalendarBundle\Entity\Event;
 
-class Serializer implements SerializerInterface
+final class Serializer implements SerializerInterface
 {
     /**
      * @param Event[] $events
