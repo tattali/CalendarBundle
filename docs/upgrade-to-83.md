@@ -326,13 +326,25 @@ Overridden constructors are not affected.
    composer update tattali/calendar-bundle
    ```
 
-2. **If you subclass `Event`**: widen the `setStart()`/`setEnd()` overrides to `\DateTimeInterface`/`?\DateTimeInterface`, change the `getStart()`/`getEnd()` overrides to return `\DateTimeImmutable`/`?\DateTimeImmutable`, and assign `\DateTimeImmutable` values to `$start` and `$end`, if any.
+2. **If a shared cache or CDN must cache the events feed**: set `cache_public: true` (see "Events Feed Is Private by Default").
 
-3. **If you change event dates in place**: replace `$event->getStart()->modify(...)` and similar calls with `$event->setStart($event->getStart()->modify(...))`, and the same for the end. Accept `\DateTimeInterface` where you pass `getStart()` or `getEnd()` to code typed `\DateTime`.
+3. **If you extend `RequestParser` or `Serializer`**: implement `RequestParserInterface` or `SerializerInterface` instead, or decorate the service (see "RequestParser and Serializer Are Final").
 
-4. **If you have `SetDataEvent` listeners**: accept `\DateTimeInterface` where they pass `getStart()` or `getEnd()` to code typed `\DateTime`, and use the date returned by `setTimezone()`, `modify()` and the other modifiers instead of changing the dates in place.
+4. **If you extend the bundle's exception classes**: extend `\InvalidArgumentException` and implement `CalendarExceptionInterface` instead (see "Exception Classes Are Final").
 
-5. **Optional**: pass `\DateTimeImmutable` values to the `Event` constructor, `setStart()` and `setEnd()` directly and remove any `\DateTime::createFromImmutable()` conversions.
+5. **If your own code reads all-day dates from `toArray()` or the feed**: parse them as `Y-m-d` dates (see "All-Day Events Are Serialised as Dates").
+
+6. **If a client other than FullCalendar calls the feed**: send `start` and `end` as ISO 8601 dates and only known time zone names (see "start and end Must Be ISO 8601 Dates" and "Unknown Time Zones Answer 400").
+
+7. **If your listeners rely on the dates' time zone**: they now get the requested time zone (see "Listener Dates Follow the Requested Time Zone").
+
+8. **If you subclass `Event`**: widen the `setStart()`/`setEnd()` overrides to `\DateTimeInterface`/`?\DateTimeInterface`, change the `getStart()`/`getEnd()` overrides to return `\DateTimeImmutable`/`?\DateTimeImmutable`, and assign `\DateTimeImmutable` values to `$start` and `$end`, if any.
+
+9. **If you change event dates in place**: replace `$event->getStart()->modify(...)` and similar calls with `$event->setStart($event->getStart()->modify(...))`, and the same for the end. Accept `\DateTimeInterface` where you pass `getStart()` or `getEnd()` to code typed `\DateTime`.
+
+10. **If you have `SetDataEvent` listeners**: accept `\DateTimeInterface` where they pass `getStart()` or `getEnd()` to code typed `\DateTime`, and use the date returned by `setTimezone()`, `modify()` and the other modifiers instead of changing the dates in place.
+
+11. **Optional**: pass `\DateTimeImmutable` values to the `Event` constructor, `setStart()` and `setEnd()` directly and remove any `\DateTime::createFromImmutable()` conversions.
 
 ## No Changes Required by the DateTimeInterface Dates
 
