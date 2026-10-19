@@ -16,7 +16,7 @@ $event = new Event(
 );
 ```
 
-The event stores its dates as `\DateTimeImmutable`: an immutable date is kept as is, and a `\DateTime` is copied with the same date, time and time zone. See [Event Dates Are Immutable](#event-dates-are-immutable).
+The event stores its dates as `\DateTimeImmutable`. An immutable date is stored as is, the same instance, except the start of an all-day event, which is stored at midnight. A `\DateTime` is copied with the same date, time and time zone. See [Event Dates Are Immutable](#event-dates-are-immutable).
 
 ### DateTimeInterface Dates in setStart() and setEnd()
 
@@ -203,7 +203,25 @@ class MyEvent extends Event
 }
 ```
 
-The constructor still passes a `\DateTime` to these setters. Overridden constructors are not affected.
+The constructor passes its `$start` and `$end` to these setters as given, so an override receives a `\DateTimeImmutable` when one is passed to the constructor. An override that changes the date in place gets no error and no effect on an immutable date: use the date the modifier returns instead.
+
+```php
+// 8.2
+public function setStart(\DateTime $start): self
+{
+    $start->setTime(9, 0);
+
+    return parent::setStart($start);
+}
+
+// 8.3
+public function setStart(\DateTimeInterface $start): self
+{
+    return parent::setStart(\DateTimeImmutable::createFromInterface($start)->setTime(9, 0));
+}
+```
+
+Overridden constructors are not affected.
 
 ## Migration Steps
 
