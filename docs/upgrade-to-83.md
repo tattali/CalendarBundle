@@ -65,6 +65,19 @@ A GET request whose `If-None-Match` header matches the feed's ETag now gets an e
 
 The endpoint reads the `timeZone` parameter that FullCalendar sends when its `timeZone` option is not `local`, parses `start` and `end` in that zone and passes it to listeners as `SetDataEvent::getTimeZone()` (`null` when none was sent). See [timezone.md](timezone.md).
 
+### Replacing the Request Parser or the Serializer
+
+The controller of `/fc-load-events` now receives the services behind the `CalendarBundle\Request\RequestParserInterface` and `CalendarBundle\Serializer\SerializerInterface` aliases. Before, it was wired to the bundle's `RequestParser` and `Serializer` services, so pointing an alias to another service had no effect on the feed. Your own implementation can now replace the bundle's:
+
+```yaml
+# config/services.yaml
+services:
+    CalendarBundle\Serializer\SerializerInterface:
+        alias: App\Calendar\EventSerializer
+```
+
+Without such an alias, the bundle's services are used as before.
+
 ## Breaking Changes
 
 ### Events Feed Is Private by Default
