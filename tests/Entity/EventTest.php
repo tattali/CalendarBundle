@@ -37,8 +37,8 @@ final class EventTest extends TestCase
     public function testItHasRequireValues(): void
     {
         self::assertSame($this->title, $this->entity->getTitle());
-        self::assertSame($this->start, $this->entity->getStart());
-        self::assertSame($this->end, $this->entity->getEnd());
+        self::assertSame($this->start->format(\DateTime::ATOM), $this->entity->getStart()->format(\DateTime::ATOM));
+        self::assertSame($this->end->format(\DateTime::ATOM), $this->entity->getEnd()?->format(\DateTime::ATOM));
         self::assertSame($this->resourceId, $this->entity->getResourceId());
         self::assertSame($this->options, $this->entity->getOptions());
     }

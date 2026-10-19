@@ -35,15 +35,15 @@ final class EventConstructorTest extends TestCase
         self::assertSame('2024-01-15 14:30:00', $event->getStart()->format('Y-m-d H:i:s'));
     }
 
-    public function testMutableDatesOfATimedEventAreStoredAsGiven(): void
+    public function testMutableDatesOfATimedEventAreCopied(): void
     {
         $start = new \DateTime('2024-01-15 14:30:00');
         $end = new \DateTime('2024-01-15 16:00:00');
 
         $event = new Event('Title', $start, $end);
 
-        self::assertSame($start, $event->getStart());
-        self::assertSame($end, $event->getEnd());
+        self::assertSame('2024-01-15 14:30:00', $event->getStart()->format('Y-m-d H:i:s'));
+        self::assertSame('2024-01-15 16:00:00', $event->getEnd()?->format('Y-m-d H:i:s'));
     }
 
     #[DataProvider('provideAllDayCases')]
