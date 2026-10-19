@@ -31,8 +31,8 @@ public function onCalendarSetData(SetDataEvent $setDataEvent): void
 {
     $storageZone = new \DateTimeZone(date_default_timezone_get()); // the zone your dates are stored in
 
-    $start = (clone $setDataEvent->getStart())->setTimezone($storageZone);
-    $end = (clone $setDataEvent->getEnd())->setTimezone($storageZone);
+    $start = $setDataEvent->getStart()->setTimezone($storageZone);
+    $end = $setDataEvent->getEnd()->setTimezone($storageZone);
 
     $bookings = $this->bookingRepository
         ->createQueryBuilder('booking')
@@ -51,7 +51,7 @@ public function onCalendarSetData(SetDataEvent $setDataEvent): void
 }
 ```
 
-Clone the dates before changing them: `getStart()` and `getEnd()` return the event's own `\DateTime` objects.
+`getStart()` and `getEnd()` return `\DateTimeImmutable`: `setTimezone()` gives a new date and leaves the event's dates unchanged for the other listeners.
 
 ## All-day events
 

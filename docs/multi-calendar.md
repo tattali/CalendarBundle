@@ -53,7 +53,7 @@ class CalendarSubscriber implements EventSubscriberInterface
         }
     }
 
-    public function fillCalendarWithBookings(SetDataEvent $setDataEvent, \DateTime $start, \DateTime $end, array $filters)
+    public function fillCalendarWithBookings(SetDataEvent $setDataEvent, \DateTimeInterface $start, \DateTimeInterface $end, array $filters)
     {
         // Modify the query to fit to your entity and needs
         // Change booking.beginAt by your start date property
