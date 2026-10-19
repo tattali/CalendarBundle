@@ -20,8 +20,8 @@ services:
         autowire: true
         arguments:
             $eventDispatcher: '@event_dispatcher'
-            $serializer: '@CalendarBundle\Serializer\Serializer'
-            $requestParser: '@CalendarBundle\Request\RequestParser'
+            $serializer: '@CalendarBundle\Serializer\SerializerInterface'
+            $requestParser: '@CalendarBundle\Request\RequestParserInterface'
         tags:
             - controller.service_arguments
 
