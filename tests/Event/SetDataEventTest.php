@@ -6,7 +6,7 @@ namespace CalendarBundle\Tests\Event;
 
 use CalendarBundle\Entity\Event;
 use CalendarBundle\Event\SetDataEvent;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 
 final class SetDataEventTest extends TestCase
@@ -15,8 +15,8 @@ final class SetDataEventTest extends TestCase
     private \DateTime $end;
     /** @var mixed[] */
     private array $filters;
-    private Event&MockObject $eventEntity;
-    private Event&MockObject $eventEntity2;
+    private Event&Stub $eventEntity;
+    private Event&Stub $eventEntity2;
     private SetDataEvent $event;
 
     protected function setUp(): void
@@ -25,8 +25,8 @@ final class SetDataEventTest extends TestCase
         $this->end = new \DateTime('2019-03-18 08:41:31');
         $this->filters = [];
 
-        $this->eventEntity = $this->createMock(Event::class);
-        $this->eventEntity2 = $this->createMock(Event::class);
+        $this->eventEntity = self::createStub(Event::class);
+        $this->eventEntity2 = self::createStub(Event::class);
 
         $this->event = new SetDataEvent(
             $this->start,

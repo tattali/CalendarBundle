@@ -60,7 +60,7 @@ final class CalendarBundleTest extends TestCase
     {
         $bundle = new CalendarBundle();
         $treeBuilder = new TreeBuilder('calendar');
-        $loader = $this->createMock(DefinitionFileLoader::class);
+        $loader = self::createStub(DefinitionFileLoader::class);
 
         $configurator = new DefinitionConfigurator($treeBuilder, $loader, '', __FILE__);
         $bundle->configure($configurator);
@@ -77,7 +77,7 @@ final class CalendarBundleTest extends TestCase
     {
         $bundle = new CalendarBundle();
         $treeBuilder = new TreeBuilder('calendar');
-        $loader = $this->createMock(DefinitionFileLoader::class);
+        $loader = self::createStub(DefinitionFileLoader::class);
 
         $configurator = new DefinitionConfigurator($treeBuilder, $loader, '', __FILE__);
         $bundle->configure($configurator);
@@ -93,7 +93,7 @@ final class CalendarBundleTest extends TestCase
     {
         $bundle = new CalendarBundle();
         $treeBuilder = new TreeBuilder('calendar');
-        $loader = $this->createMock(DefinitionFileLoader::class);
+        $loader = self::createStub(DefinitionFileLoader::class);
 
         $configurator = new DefinitionConfigurator($treeBuilder, $loader, '', __FILE__);
         $bundle->configure($configurator);
