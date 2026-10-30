@@ -29,7 +29,7 @@
         "symfony/yaml": "^7.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^11.2",
+        "phpunit/phpunit": "^11.2 || ^12.5 || ^13.4",
         "friendsofphp/php-cs-fixer": "^3.65",
         "phpstan/phpstan": "^2.1",
         "phpstan/phpstan-strict-rules": "^2.0",

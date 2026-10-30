@@ -21,4 +21,5 @@ return (new Configuration())
         'phpstan/phpstan-strict-rules',
         'phpstan/phpstan-symfony',
         'shipmonk/composer-dependency-analyser',
-    ], [ErrorType::UNUSED_DEPENDENCY]);
+    ], [ErrorType::UNUSED_DEPENDENCY])
+;
