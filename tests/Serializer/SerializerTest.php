@@ -16,8 +16,8 @@ class SerializerTest extends TestCase
 
     public function setUp(): void
     {
-        $this->eventEntity1 = $this->createMock(Event::class);
-        $this->eventEntity2 = $this->createMock(Event::class);
+        $this->eventEntity1 = $this->createStub(Event::class);
+        $this->eventEntity2 = $this->createStub(Event::class);
 
         $this->serializer = new Serializer();
     }
