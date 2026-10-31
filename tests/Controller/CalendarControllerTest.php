@@ -10,6 +10,7 @@ use CalendarBundle\Event\SetDataEvent;
 use CalendarBundle\Serializer\SerializerInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,8 +19,8 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 final class CalendarControllerTest extends TestCase
 {
-    private MockObject&SetDataEvent $calendarEvent;
-    private MockObject&Event $event;
+    private Stub&SetDataEvent $calendarEvent;
+    private Stub&Event $event;
 
     private MockObject&EventDispatcherInterface $eventDispatcher;
     private MockObject&SerializerInterface $serializer;
@@ -28,8 +29,8 @@ final class CalendarControllerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->calendarEvent = $this->createMock(SetDataEvent::class);
-        $this->event = $this->createMock(Event::class);
+        $this->calendarEvent = self::createStub(SetDataEvent::class);
+        $this->event = self::createStub(Event::class);
 
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->serializer = $this->createMock(SerializerInterface::class);
@@ -46,7 +47,7 @@ final class CalendarControllerTest extends TestCase
             ->willReturn([$this->event])
         ;
 
-        $this->eventDispatcher->method('dispatch')
+        $this->eventDispatcher->expects(self::once())->method('dispatch')
             ->with(self::isInstanceOf(SetDataEvent::class))
             ->willReturn($this->calendarEvent)
         ;
@@ -65,7 +66,7 @@ final class CalendarControllerTest extends TestCase
             ],
         ]);
 
-        $this->serializer->method('serialize')
+        $this->serializer->expects(self::once())->method('serialize')
             ->with([$this->event])
             ->willReturn($data)
         ;
@@ -86,14 +87,14 @@ final class CalendarControllerTest extends TestCase
             ->willReturn([$this->event])
         ;
 
-        $this->eventDispatcher->method('dispatch')
+        $this->eventDispatcher->expects(self::once())->method('dispatch')
             ->with(self::isInstanceOf(SetDataEvent::class))
             ->willReturn($this->calendarEvent)
         ;
 
         $data = '';
 
-        $this->serializer->method('serialize')
+        $this->serializer->expects(self::once())->method('serialize')
             ->with([$this->event])
             ->willReturn($data)
         ;
@@ -111,6 +112,8 @@ final class CalendarControllerTest extends TestCase
     public function testItShouldThrowErrorOnStartParam(): void
     {
         $this->expectException(BadRequestHttpException::class);
+        $this->eventDispatcher->expects(self::never())->method('dispatch');
+        $this->serializer->expects(self::never())->method('serialize');
 
         $this->controller->load(Request::create('/', 'GET', [
             'start' => '',
@@ -121,6 +124,8 @@ final class CalendarControllerTest extends TestCase
     public function testItShouldThrowErrorOnEndParam(): void
     {
         $this->expectException(BadRequestHttpException::class);
+        $this->eventDispatcher->expects(self::never())->method('dispatch');
+        $this->serializer->expects(self::never())->method('serialize');
 
         $this->controller->load(Request::create('/', 'GET', [
             'start' => '2016-03-01',
@@ -131,10 +136,11 @@ final class CalendarControllerTest extends TestCase
     /**
      * @param array<string, string> $query
      */
-    #[DataProvider('queryWithAnInvalidDateProvider')]
+    #[DataProvider('provideItAnswersBadRequestWhenADateCannotBeParsedCases')]
     public function testItAnswersBadRequestWhenADateCannotBeParsed(array $query, string $message): void
     {
         $this->eventDispatcher->expects(self::never())->method('dispatch');
+        $this->serializer->expects(self::never())->method('serialize');
 
         try {
             $this->controller->load(Request::create('/', 'GET', $query));
@@ -148,7 +154,7 @@ final class CalendarControllerTest extends TestCase
     /**
      * @return iterable<string, array{array<string, string>, string}>
      */
-    public static function queryWithAnInvalidDateProvider(): iterable
+    public static function provideItAnswersBadRequestWhenADateCannotBeParsedCases(): iterable
     {
         yield 'start not a date' => [['start' => 'foo', 'end' => '2016-03-19'], 'Query parameter "start" is not a valid date'];
         yield 'end not a date' => [['start' => '2016-03-01', 'end' => 'foo'], 'Query parameter "end" is not a valid date'];
@@ -236,6 +242,8 @@ final class CalendarControllerTest extends TestCase
         $request->attributes->set('filters', null);
 
         $this->expectException(BadRequestHttpException::class);
+        $this->eventDispatcher->expects(self::never())->method('dispatch');
+        $this->serializer->expects(self::never())->method('serialize');
         $this->expectExceptionMessage('Query parameter "filters" is not valid');
 
         $this->controller->load($request);
@@ -252,7 +260,7 @@ final class CalendarControllerTest extends TestCase
             })
         ;
 
-        $this->serializer->method('serialize')
+        $this->serializer->expects(self::once())->method('serialize')
             ->willReturn('[]')
         ;
 
