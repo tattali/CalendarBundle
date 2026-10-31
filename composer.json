@@ -29,14 +29,15 @@
         "symfony/yaml": "^8.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^12.4",
+        "phpunit/phpunit": "^13.4",
         "friendsofphp/php-cs-fixer": "^3.90",
         "phpstan/phpstan": "^2.1",
         "phpstan/phpstan-strict-rules": "^2.0",
         "phpstan/phpstan-symfony": "^2.0",
         "phpstan/phpstan-phpunit": "^2.0",
         "infection/infection": "^0.35",
-        "shipmonk/composer-dependency-analyser": "^1.8"
+        "shipmonk/composer-dependency-analyser": "^1.8",
+        "symfony/event-dispatcher-contracts": "^2.5.3 || ^3.4.3"
     },
     "suggest": {
         "symfony/orm-pack": "To support Doctrine ORM and Migration.",
