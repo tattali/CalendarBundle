@@ -9,6 +9,7 @@ use CalendarBundle\Controller\CalendarController;
 use CalendarBundle\Entity\Event;
 use CalendarBundle\Event\CalendarEvent;
 use CalendarBundle\Serializer\SerializerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -107,6 +108,7 @@ class CalendarControllerTest extends TestCase
     /**
      * @dataProvider invalidQueryProvider
      */
+    #[DataProvider('invalidQueryProvider')]
     public function testItAnswersBadRequestForAnInvalidQuery(array $query, string $message): void
     {
         $this->eventDispatcher->dispatch(Argument::cetera())->shouldNotBeCalled();
