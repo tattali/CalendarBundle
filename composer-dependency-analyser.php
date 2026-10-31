@@ -12,6 +12,8 @@ return (new Configuration())
     ->ignoreErrorsOnPackage('symfony/framework-bundle', [ErrorType::UNUSED_DEPENDENCY])
     // the dependency-injection YamlFileLoader needs it to parse services.yaml: no PHP class of it is used.
     ->ignoreErrorsOnPackage('symfony/yaml', [ErrorType::UNUSED_DEPENDENCY])
+    // dev-only floor: the lowest install otherwise picks contracts whose dispatch() signature PHP 8.4+ deprecates
+    ->ignoreErrorsOnPackage('symfony/event-dispatcher-contracts', [ErrorType::UNUSED_DEPENDENCY])
     // command-line tools and PHPStan extensions, never referenced from the code
     ->ignoreErrorsOnPackages([
         'friendsofphp/php-cs-fixer',
