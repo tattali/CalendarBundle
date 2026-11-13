@@ -35,6 +35,7 @@ jobs:
           - { php: '8.5', symfony: '8.0.*', eol: true }
           - { php: '8.4', symfony: '8.1.*', current: true }
           - { php: '8.5', symfony: '8.1.*' }
+          - { php: '8.6', symfony: '8.1.*' }
           - { php: '8.6', symfony: 'next', nightly: true }
     steps:
       - uses: actions/checkout@v6
